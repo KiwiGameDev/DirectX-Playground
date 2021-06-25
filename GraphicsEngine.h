@@ -9,6 +9,7 @@ class GraphicsEngine : public Singleton<GraphicsEngine>
 	friend class SwapChain;
 	friend class ConstantBuffer;
 	friend class VertexBuffer;
+	friend class IndexBuffer;
 	friend class VertexShader;
 	friend class PixelShader;
 
@@ -17,6 +18,7 @@ public:
 		
 	SwapChain* createSwapChain();
 	VertexBuffer* createVertexBuffer();
+	IndexBuffer* createIndexBuffer();
 	ConstantBuffer* createConstantBuffer();
 	
 	VertexShader* createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code);
