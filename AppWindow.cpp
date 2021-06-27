@@ -1,4 +1,7 @@
 #include "AppWindow.h"
+
+#include <iostream>
+
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
 #include "GraphicsEngine.h"
@@ -9,6 +12,7 @@
 #include "VertexShader.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "InputSystem.h"
 #include <Windows.h>
 
 struct vertex
@@ -38,15 +42,16 @@ void AppWindow::updateQuadPosition()
 	
 	m_delta_scale += m_delta_time * 0.5f;
 
-	Matrix4x4 temp(1.0f);
+	Matrix4x4 transform(1.0f);
 	//temp *= Matrix4x4::scale(Vector3::Lerp(Vector3(-1.0f, -1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f), m_delta_scale));
 	//temp *= Matrix4x4::translation(Vector3::Lerp(Vector3(-2.0f, -2.0f, 0.0f), Vector3(2.0f, 2.0f, 0.0f), m_delta_pos));
-	temp *= Matrix4x4::rotationZ(m_delta_scale);
-	temp *= Matrix4x4::rotationY(m_delta_scale);
-	temp *= Matrix4x4::rotationX(m_delta_scale);
+	transform *= Matrix4x4::scale(Vector3(m_scale_cube, m_scale_cube, m_scale_cube));
+	transform *= Matrix4x4::rotationZ(0.0f);
+	transform *= Matrix4x4::rotationY(m_rot_y);
+	transform *= Matrix4x4::rotationX(m_rot_x);
 
 	cc.m_time = GetTickCount();
-	cc.m_world = temp;
+	cc.m_world = transform;
 	cc.m_view = Matrix4x4::identity();
 	cc.m_proj = Matrix4x4::orthoLH((rect.right - rect.left) / 300.0f, (rect.bottom - rect.top) / 300.0f, -4.0f, 4.0f);
 
@@ -56,7 +61,8 @@ void AppWindow::updateQuadPosition()
 void AppWindow::onCreate()
 {
 	Window::onCreate();
-	
+
+	InputSystem::get().addListener(this);
 	GraphicsEngine::get().init();
 
 	m_swap_chain = GraphicsEngine::get().createSwapChain();
@@ -119,27 +125,29 @@ void AppWindow::onUpdate()
 {
 	Window::onUpdate();
 
-	GraphicsEngine::get().getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
+	std::cout << "Delta Time: " << m_delta_time << '\n';
+	
+	InputSystem::get().update();
 
 	RECT rect = getClientWindowRect();
 
 	updateQuadPosition();
 
+	GraphicsEngine::get().getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
-	GraphicsEngine::get().getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);;
-	GraphicsEngine::get().getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);;
+	GraphicsEngine::get().getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
+	GraphicsEngine::get().getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
 	GraphicsEngine::get().getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get().getImmediateDeviceContext()->setPixelShader(m_ps);
 	GraphicsEngine::get().getImmediateDeviceContext()->setVertexBuffer(m_vb);
 	GraphicsEngine::get().getImmediateDeviceContext()->setIndexBuffer(m_ib);
-	
 	GraphicsEngine::get().getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 
 	m_swap_chain->present(false);
 
 	m_old_delta = m_new_delta;
-	m_new_delta = GetTickCount();
-	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000.0f : 0.0f;
+	m_new_delta = getMicrosecondsFromStart();
+	m_delta_time = (m_new_delta - m_old_delta) / 1000000.0f;
 }
 
 void AppWindow::onDestroy()
@@ -153,4 +161,85 @@ void AppWindow::onDestroy()
 	m_vs->release();
 	m_ps->release();
 	GraphicsEngine::get().release();
+	InputSystem::get().removeListener(this);
+}
+
+void AppWindow::onFocus()
+{
+	Window::onFocus();
+
+	InputSystem::get().addListener(this);
+}
+
+void AppWindow::onKillFocus()
+{
+	Window::onKillFocus();
+
+	InputSystem::get().removeListener(this);
+}
+
+void AppWindow::onKeyDown(int key)
+{
+	if (key == 'W')
+	{
+		m_rot_x += 3.14f * m_delta_time;
+	}
+	else if (key == 'S')
+	{
+		m_rot_x -= 3.14f * m_delta_time;
+	}
+	else if (key == 'A')
+	{
+		m_rot_y += 3.14f * m_delta_time;
+	}
+	else if (key == 'D')
+	{
+		m_rot_y -= 3.14f * m_delta_time;
+	}
+}
+
+void AppWindow::onKeyUp(int key)
+{
+
+}
+
+void AppWindow::onMouseMove(const Point& delta_mouse_pos)
+{
+	m_rot_x -= delta_mouse_pos.y * m_delta_time;
+	m_rot_y -= delta_mouse_pos.x * m_delta_time;
+}
+
+void AppWindow::onLeftMouseDown(const Point& mouse_pos)
+{
+	m_scale_cube = 0.5f;
+}
+
+void AppWindow::onLeftMouseUp(const Point& mouse_pos)
+{
+	m_scale_cube = 1.0f;
+}
+
+void AppWindow::onRightMouseDown(const Point& mouse_pos)
+{
+	m_scale_cube = 2.0f;
+}
+
+void AppWindow::onRightMouseUp(const Point& mouse_pos)
+{
+	m_scale_cube = 1.0f;
+}
+
+long long AppWindow::getMicrosecondsFromStart()
+{
+	static LARGE_INTEGER s_frequency;
+	static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
+
+	if (s_use_qpc)
+	{
+		LARGE_INTEGER now;
+		QueryPerformanceCounter(&now);
+		return (1000000LL * now.QuadPart) / s_frequency.QuadPart;
+	}
+
+	return GetTickCount();
 }
