@@ -1,7 +1,4 @@
 #include "AppWindow.h"
-
-#include <iostream>
-
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
 #include "GraphicsEngine.h"
@@ -14,6 +11,7 @@
 #include "Matrix4x4.h"
 #include "InputSystem.h"
 #include <Windows.h>
+#include <iostream>
 
 struct vertex
 {
@@ -31,29 +29,31 @@ struct constant
 	unsigned int m_time;
 };
 
-void AppWindow::updateQuadPosition()
+void AppWindow::update()
 {
-	RECT rect = getClientWindowRect();
+	RECT screen_rect = getClientWindowRect();
+	float screen_width = (float)(screen_rect.right - screen_rect.left);
+	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	constant cc;
 
-	m_delta_pos += m_delta_time * 0.1f;
-	if (m_delta_pos > 1.0f)
-		m_delta_pos -= 1.0f;
-	
-	m_delta_scale += m_delta_time * 0.5f;
+	Matrix4x4 cube_transform(1.0f);
+	cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
 
-	Matrix4x4 transform(1.0f);
-	//temp *= Matrix4x4::scale(Vector3::Lerp(Vector3(-1.0f, -1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f), m_delta_scale));
-	//temp *= Matrix4x4::translation(Vector3::Lerp(Vector3(-2.0f, -2.0f, 0.0f), Vector3(2.0f, 2.0f, 0.0f), m_delta_pos));
-	transform *= Matrix4x4::scale(Vector3(m_scale_cube, m_scale_cube, m_scale_cube));
-	transform *= Matrix4x4::rotationZ(0.0f);
-	transform *= Matrix4x4::rotationY(m_rot_y);
-	transform *= Matrix4x4::rotationX(m_rot_x);
+	Matrix4x4 world_camera(1.0f);
+	world_camera *= Matrix4x4::rotationX(m_rot_x);
+	world_camera *= Matrix4x4::rotationY(m_rot_y);
+	Vector3 new_camera_pos = m_world_camera.getTranslation() + world_camera.getZDirection() * (m_forward * 8.0f * m_delta_time) + world_camera.getXDirection() * (m_rightward * 8.0f * m_delta_time);
+	world_camera *= Matrix4x4::translation(new_camera_pos);
+
+	std::cout << "Rotation: " << m_rot_x << "     " << m_rot_y << '\n';
+	
+	m_world_camera = world_camera;
+	world_camera.inverse();
 
 	cc.m_time = GetTickCount();
-	cc.m_world = transform;
-	cc.m_view = Matrix4x4::identity();
-	cc.m_proj = Matrix4x4::orthoLH((rect.right - rect.left) / 300.0f, (rect.bottom - rect.top) / 300.0f, -4.0f, 4.0f);
+	cc.m_world = cube_transform;
+	cc.m_view = world_camera;
+	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.1f, 100.0f);
 
 	m_cb->update(GraphicsEngine::get().getImmediateDeviceContext(), &cc);
 }
@@ -63,10 +63,11 @@ void AppWindow::onCreate()
 	Window::onCreate();
 
 	InputSystem::get().addListener(this);
+	InputSystem::get().showCursor(false);
 	GraphicsEngine::get().init();
 
-	m_swap_chain = GraphicsEngine::get().createSwapChain();
 	RECT rect = getClientWindowRect();
+	m_swap_chain = GraphicsEngine::get().createSwapChain();
 	m_swap_chain->init(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Temporary create triangle
@@ -125,14 +126,11 @@ void AppWindow::onUpdate()
 {
 	Window::onUpdate();
 
-	std::cout << "Delta Time: " << m_delta_time << '\n';
-	
 	InputSystem::get().update();
 
+	update();
+
 	RECT rect = getClientWindowRect();
-
-	updateQuadPosition();
-
 	GraphicsEngine::get().getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
 	GraphicsEngine::get().getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
@@ -147,7 +145,7 @@ void AppWindow::onUpdate()
 
 	m_old_delta = m_new_delta;
 	m_new_delta = getMicrosecondsFromStart();
-	m_delta_time = (m_new_delta - m_old_delta) / 1000000.0f;
+	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000000.0f : 0.0f;
 }
 
 void AppWindow::onDestroy()
@@ -182,31 +180,44 @@ void AppWindow::onKeyDown(int key)
 {
 	if (key == 'W')
 	{
-		m_rot_x += 3.14f * m_delta_time;
+		m_forward = 1.0f;
 	}
 	else if (key == 'S')
 	{
-		m_rot_x -= 3.14f * m_delta_time;
+		m_forward = -1.0f;
 	}
 	else if (key == 'A')
 	{
-		m_rot_y += 3.14f * m_delta_time;
+		m_rightward = -1.0f;
 	}
 	else if (key == 'D')
 	{
-		m_rot_y -= 3.14f * m_delta_time;
+		m_rightward = 1.0f;
 	}
 }
 
 void AppWindow::onKeyUp(int key)
 {
-
+	if (key == 'W' || key == 'S')
+	{
+		m_forward = 0.0f;
+	}
+	else if (key == 'A' || key == 'D')
+	{
+		m_rightward = 0.0f;
+	}
 }
 
-void AppWindow::onMouseMove(const Point& delta_mouse_pos)
+void AppWindow::onMouseMove(const Point& mouse_pos)
 {
-	m_rot_x -= delta_mouse_pos.y * m_delta_time;
-	m_rot_y -= delta_mouse_pos.x * m_delta_time;
+	RECT screen_rect = getClientWindowRect();
+	float screen_width_half = (screen_rect.right - screen_rect.left) / 2.0f;
+	float screen_height_half = (screen_rect.bottom - screen_rect.top) / 2.0f;
+	
+	m_rot_x += (mouse_pos.y - screen_height_half) * m_delta_time * 1.0f;
+	m_rot_y += (mouse_pos.x - screen_width_half) * m_delta_time * 1.0f;
+
+	InputSystem::get().setCursorPosition(Point((int)screen_width_half, (int)screen_height_half));
 }
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)

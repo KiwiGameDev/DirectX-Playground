@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "IInputListener.h"
+#include "Matrix4x4.h"
 
 class IndexBuffer;
 class PixelShader;
@@ -12,7 +13,7 @@ class VertexShader;
 class AppWindow : public Window, public IInputListener
 {
 public:
-	void updateQuadPosition();
+	void update();
 	
 	void onCreate() override;
 	void onUpdate() override;
@@ -30,9 +31,7 @@ public:
 
 private:
 	static long long getMicrosecondsFromStart();
-
-
-private:
+	
 	SwapChain* m_swap_chain;
 	ConstantBuffer* m_cb;
 	VertexBuffer* m_vb;
@@ -49,4 +48,8 @@ private:
 	float m_rot_x = 0.0f;
 	float m_rot_y = 0.0f;
 	float m_scale_cube = 1.0f;
+	float m_forward = 0.0f;
+	float m_rightward = 0.0f;
+
+	Matrix4x4 m_world_camera;
 };
