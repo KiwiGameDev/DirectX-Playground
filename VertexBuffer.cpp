@@ -1,19 +1,10 @@
 #include "VertexBuffer.h"
-#include "GraphicsEngine.h"
+#include "RenderSystem.h"
+#include <exception>
 
-VertexBuffer::VertexBuffer()
-	: m_buffer(nullptr), m_layout(nullptr)
+VertexBuffer::VertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader, RenderSystem* system)
+	: m_system(system), m_buffer(nullptr), m_layout(nullptr)
 {
-	
-}
-
-bool VertexBuffer::load(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader)
-{
-	if (m_buffer)
-		m_buffer->Release();
-	if (m_layout)
-		m_layout->Release();
-	
 	D3D11_BUFFER_DESC buffer_desc = {};
 	buffer_desc.Usage = D3D11_USAGE_DEFAULT;
 	buffer_desc.ByteWidth = size_vertices * size_list;
@@ -27,8 +18,8 @@ bool VertexBuffer::load(void* list_vertices, UINT size_vertices, UINT size_list,
 	m_size_vertices = size_vertices;
 	m_size_list = size_list;
 
-	if (FAILED(GraphicsEngine::get().m_d3d_device->CreateBuffer(&buffer_desc, &init_data, &m_buffer)))
-		return false;
+	if (FAILED(m_system->m_d3d_device->CreateBuffer(&buffer_desc, &init_data, &m_buffer)))
+		throw std::exception("Vertex Buffer failed to initialize!");
 
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -37,11 +28,9 @@ bool VertexBuffer::load(void* list_vertices, UINT size_vertices, UINT size_list,
 		{ "COLOR", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	UINT size_layout = ARRAYSIZE(layout);
-	
-	if (FAILED(GraphicsEngine::get().m_d3d_device->CreateInputLayout(layout, size_layout, shader_byte_code, size_byte_shader, &m_layout)))
-		return false;
 
-	return true;
+	if (FAILED(m_system->m_d3d_device->CreateInputLayout(layout, size_layout, shader_byte_code, size_byte_shader, &m_layout)))
+		throw std::exception("Input Layout failed to initialize!");
 }
 
 UINT VertexBuffer::getSizeVertices()
@@ -49,10 +38,8 @@ UINT VertexBuffer::getSizeVertices()
 	return m_size_vertices;
 }
 
-bool VertexBuffer::release()
+VertexBuffer::~VertexBuffer()
 {
 	m_buffer->Release();
 	m_layout->Release();
-	delete this;
-	return true;
 }

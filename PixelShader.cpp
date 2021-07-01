@@ -1,17 +1,16 @@
 #include "PixelShader.h"
-#include "GraphicsEngine.h"
+#include "RenderSystem.h"
 #include <d3d11.h>
+#include <exception>
 
-bool PixelShader::init(const void* shader_byte_code, size_t size_byte_code)
+PixelShader::PixelShader(const void* shader_byte_code, size_t size_byte_code, RenderSystem* system)
+	: m_system(system)
 {
-	if (!SUCCEEDED(GraphicsEngine::get().m_d3d_device->CreatePixelShader(shader_byte_code, size_byte_code, nullptr, &m_ps)))
-		return false;
-
-	return true;
+	if (!SUCCEEDED(m_system->m_d3d_device->CreatePixelShader(shader_byte_code, size_byte_code, nullptr, &m_ps)))
+		throw std::exception("Pixel Shader failed to initialize!");
 }
 
-void PixelShader::release()
+PixelShader::~PixelShader()
 {
 	m_ps->Release();
-	delete this;
 }

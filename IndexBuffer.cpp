@@ -1,17 +1,10 @@
 #include "IndexBuffer.h"
-#include "GraphicsEngine.h"
+#include "RenderSystem.h"
+#include <exception>
 
-IndexBuffer::IndexBuffer()
-	: m_buffer(nullptr)
+IndexBuffer::IndexBuffer(void* list_indices, UINT size_list, RenderSystem* system)
+	: m_system(system)
 {
-
-}
-
-bool IndexBuffer::load(void* list_indices, UINT size_list)
-{
-	if (m_buffer)
-		m_buffer->Release();
-
 	D3D11_BUFFER_DESC buffer_desc = {};
 	buffer_desc.Usage = D3D11_USAGE_DEFAULT;
 	buffer_desc.ByteWidth = sizeof(int) * size_list;
@@ -24,10 +17,8 @@ bool IndexBuffer::load(void* list_indices, UINT size_list)
 
 	m_size_list = size_list;
 
-	if (FAILED(GraphicsEngine::get().m_d3d_device->CreateBuffer(&buffer_desc, &init_data, &m_buffer)))
-		return false;
-	
-	return true;
+	if (FAILED(m_system->m_d3d_device->CreateBuffer(&buffer_desc, &init_data, &m_buffer)))
+		throw std::exception("Index Buffer failed to initialize!");
 }
 
 UINT IndexBuffer::getSizeIndices()
@@ -35,9 +26,7 @@ UINT IndexBuffer::getSizeIndices()
 	return m_size_list;
 }
 
-bool IndexBuffer::release()
+IndexBuffer::~IndexBuffer()
 {
 	m_buffer->Release();
-	delete this;
-	return true;
 }

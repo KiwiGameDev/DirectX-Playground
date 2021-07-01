@@ -1,18 +1,20 @@
 #pragma once
-class GraphicsEngine;
+class RenderSystem;
 class DeviceContext;
 class ID3D11PixelShader;
 
 class PixelShader
 {
-	friend class GraphicsEngine;
+	friend class RenderSystem;
 	friend class DeviceContext;
 
 public:
-	void release();
+	PixelShader(const void* shader_byte_code, size_t size_byte_code, RenderSystem* system);
+	
+	~PixelShader();
 
 private:
-	bool init(const void* shader_byte_code, size_t size_byte_code);
-
 	ID3D11PixelShader* m_ps;
+
+	RenderSystem* m_system;
 };

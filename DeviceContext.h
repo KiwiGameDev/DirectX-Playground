@@ -1,14 +1,15 @@
 #pragma once
 #include <Windows.h>
 
-class ID3D11DeviceContext;
+class RenderSystem;
+class GraphicsEngine;
 class SwapChain;
 class ConstantBuffer;
 class VertexBuffer;
 class IndexBuffer;
 class VertexShader;
 class PixelShader;
-class GraphicsEngine;
+class ID3D11DeviceContext;
 
 class DeviceContext
 {
@@ -16,7 +17,7 @@ class DeviceContext
 	friend class ConstantBuffer;
 
 public:
-	DeviceContext(ID3D11DeviceContext* device_context);
+	DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system);
 	
 	void setConstantBuffer(VertexShader* vertex_shader, ConstantBuffer* constant_buffer);
 	void setConstantBuffer(PixelShader* pixel_shader, ConstantBuffer* constant_buffer);
@@ -31,8 +32,10 @@ public:
 	void drawIndexedTriangleList(UINT index_count, UINT start_index_location, UINT start_vertex_location);
 	void drawTriangleStrip(UINT vertex_count, UINT start_vertex_index);
 
-	bool release();
+	~DeviceContext();
 
 private:
 	ID3D11DeviceContext* m_device_context;
+	
+	RenderSystem* m_system;
 };

@@ -1,7 +1,8 @@
 #include "AppWindow.h"
+#include "GraphicsEngine.h"
+#include "RenderSystem.h"
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
-#include "GraphicsEngine.h"
 #include "PixelShader.h"
 #include "SwapChain.h"
 #include "VertexBuffer.h"
@@ -55,7 +56,7 @@ void AppWindow::update()
 	cc.m_view = world_camera;
 	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.1f, 100.0f);
 
-	m_cb->update(GraphicsEngine::get().getImmediateDeviceContext(), &cc);
+	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
 
 void AppWindow::onCreate()
@@ -67,8 +68,8 @@ void AppWindow::onCreate()
 	GraphicsEngine::get().init();
 
 	RECT rect = getClientWindowRect();
-	m_swap_chain = GraphicsEngine::get().createSwapChain();
-	m_swap_chain->init(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
+	
+	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Temporary create triangle
 	vertex cube_vertices[] =
@@ -101,25 +102,22 @@ void AppWindow::onCreate()
 	};
 	UINT size_cube_indices = ARRAYSIZE(cube_indices);
 
-	m_vb = GraphicsEngine::get().createVertexBuffer();
-	m_ib = GraphicsEngine::get().createIndexBuffer();
-	m_ib->load(cube_indices, size_cube_indices);
-	
+	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
+
 	void* shader_byte_code = nullptr;
 	size_t size_shader_byte_code = 0;
-	GraphicsEngine::get().compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
-	m_vs = GraphicsEngine::get().createVertexShader(shader_byte_code, size_shader_byte_code);
-	m_vb->load(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
-	GraphicsEngine::get().releaseCompiledShader();
+	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
+	m_vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
+	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
+	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 	
-	GraphicsEngine::get().compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
-	m_ps = GraphicsEngine::get().createPixelShader(shader_byte_code, size_shader_byte_code);
-	GraphicsEngine::get().releaseCompiledShader();
+	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
+	m_ps = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
+	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 
 	constant cc;
 	cc.m_time = 0;
-	m_cb = GraphicsEngine::get().createConstantBuffer();
-	m_cb->load(&cc, sizeof(constant));
+	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
 }
 
 void AppWindow::onUpdate()
@@ -131,15 +129,15 @@ void AppWindow::onUpdate()
 	update();
 
 	RECT rect = getClientWindowRect();
-	GraphicsEngine::get().getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
-	GraphicsEngine::get().getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
-	GraphicsEngine::get().getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
-	GraphicsEngine::get().getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
-	GraphicsEngine::get().getImmediateDeviceContext()->setVertexShader(m_vs);
-	GraphicsEngine::get().getImmediateDeviceContext()->setPixelShader(m_ps);
-	GraphicsEngine::get().getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get().getImmediateDeviceContext()->setIndexBuffer(m_ib);
-	GraphicsEngine::get().getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 
 	m_swap_chain->present(false);
 
@@ -152,12 +150,6 @@ void AppWindow::onDestroy()
 {
 	Window::onDestroy();
 
-	m_vb->release();
-	m_ib->release();
-	m_cb->release();
-	m_swap_chain->release();
-	m_vs->release();
-	m_ps->release();
 	GraphicsEngine::get().release();
 	InputSystem::get().removeListener(this);
 }
