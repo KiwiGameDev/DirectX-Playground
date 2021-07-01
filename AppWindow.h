@@ -34,10 +34,16 @@ private:
 	
 	SwapChain* m_swap_chain;
 	ConstantBuffer* m_cb;
-	VertexBuffer* m_vb;
-	IndexBuffer* m_ib;
+	VertexBuffer* m_vb_1;
+	VertexBuffer* m_vb_2;
+	VertexBuffer* m_vb_3;
+	IndexBuffer* m_ib_1;
+	IndexBuffer* m_ib_2;
+	IndexBuffer* m_ib_3;
 	VertexShader* m_vs;
+	VertexShader* m_vs_g;
 	PixelShader* m_ps;
+	PixelShader* m_ps_g;
 
 	long long m_old_delta = 0LL;
 	long long m_new_delta = 0LL;

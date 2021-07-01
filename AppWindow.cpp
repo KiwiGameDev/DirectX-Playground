@@ -35,10 +35,8 @@ void AppWindow::update()
 	RECT screen_rect = getClientWindowRect();
 	float screen_width = (float)(screen_rect.right - screen_rect.left);
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
-	constant cc;
 
 	Matrix4x4 cube_transform(1.0f);
-	cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
 
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
@@ -46,11 +44,10 @@ void AppWindow::update()
 	Vector3 new_camera_pos = m_world_camera.getTranslation() + world_camera.getZDirection() * (m_forward * 8.0f * m_delta_time) + world_camera.getXDirection() * (m_rightward * 8.0f * m_delta_time);
 	world_camera *= Matrix4x4::translation(new_camera_pos);
 
-	std::cout << "Rotation: " << m_rot_x << "     " << m_rot_y << '\n';
-	
 	m_world_camera = world_camera;
 	world_camera.inverse();
 
+	constant cc;
 	cc.m_time = GetTickCount();
 	cc.m_world = cube_transform;
 	cc.m_view = world_camera;
@@ -71,48 +68,78 @@ void AppWindow::onCreate()
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
-	// Temporary create triangle
-	vertex cube_vertices[] =
+	// Rainbow rectangle
+	vertex rectangle_rainbow_vertices[] =
 	{
-		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) },
-		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) }
+		{ Vector3(-2.0f, -0.5f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f) },
+		{ Vector3(-2.0f,  0.5f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) },
+		{ Vector3(-1.0f, -0.5f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
+		{ Vector3(-1.0f,  0.5f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) }
 	};
-	UINT size_cube_vertices = ARRAYSIZE(cube_vertices);
+	UINT size_rectangle_rainbow_vertices = ARRAYSIZE(rectangle_rainbow_vertices);
 
-	unsigned int cube_indices[] =
+	unsigned int rectangle_rainbow_indices[] =
 	{
 		0, 1, 2,
-		2, 3, 0,
-		4, 5, 6,
-		6, 7, 4,
-		1, 6, 5,
-		5, 2, 1,
-		7, 0, 3,
-		3, 4, 7,
-		3, 2, 5,
-		5, 4, 3,
-		7, 6, 1,
-		1, 0, 7
+		3, 2, 1,
 	};
-	UINT size_cube_indices = ARRAYSIZE(cube_indices);
+	UINT size_rectangle_rainbow_indices = ARRAYSIZE(rectangle_rainbow_indices);
+	m_ib_1 = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(rectangle_rainbow_indices, size_rectangle_rainbow_indices);
 
-	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
+	// Rainbow triangle
+	vertex triangle_vertices[] =
+	{
+		{ Vector3(-0.5f, -0.5f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
+		{ Vector3( 0.0f,  0.5f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
+		{ Vector3( 0.5f, -0.5f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) }
+	};
+	UINT size_triangle_vertices = ARRAYSIZE(triangle_vertices);
+
+	unsigned int triangle_indices[] =
+	{
+		0, 1, 2,
+	};
+	UINT size_triangle_indices = ARRAYSIZE(triangle_indices);
+	m_ib_2 = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(triangle_indices, size_triangle_indices);
+
+	// Green rectangle
+	vertex rectangle_green_vertices[] =
+	{
+		{ Vector3(1.0f, -0.5f, 0.0f) },
+		{ Vector3(1.0f,  0.5f, 0.0f) },
+		{ Vector3(2.0f, -0.5f, 0.0f) },
+		{ Vector3(2.0f,  0.5f, 0.0f) }
+	};
+	UINT size_rectangle_green_vertices = ARRAYSIZE(rectangle_green_vertices);
+
+	unsigned int rectangle_green_indices[] =
+	{
+		0, 1, 2,
+		3, 2, 1,
+	};
+	UINT size_rectangle_green_indices = ARRAYSIZE(rectangle_green_indices);
+	m_ib_3 = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(rectangle_green_indices, size_rectangle_green_indices);
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader_byte_code = 0;
+	
 	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
 	m_vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
+	m_vb_1 = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(rectangle_rainbow_vertices, sizeof(vertex), size_rectangle_rainbow_vertices, shader_byte_code, size_shader_byte_code);
+	m_vb_2 = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(triangle_vertices, sizeof(vertex), size_triangle_vertices, shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 	
+	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"GreenVertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
+	m_vs_g = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
+	m_vb_3 = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(rectangle_green_vertices, sizeof(vertex), size_rectangle_green_vertices, shader_byte_code, size_shader_byte_code);
+	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
+
 	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
 	m_ps = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
+	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
+	
+	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"GreenPixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
+	m_ps_g = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 
 	constant cc;
@@ -135,9 +162,20 @@ void AppWindow::onUpdate()
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
+	
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb_1);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib_1);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib_1->getSizeIndices(), 0, 0);
+	
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb_2);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib_2);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib_2->getSizeIndices(), 0, 0);
+	
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs_g);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps_g);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb_3);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib_3);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib_3->getSizeIndices(), 0, 0);
 
 	m_swap_chain->present(false);
 

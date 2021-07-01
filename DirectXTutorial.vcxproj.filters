@@ -151,5 +151,11 @@
     <FxCompile Include="PixelShader.hlsl">
       <Filter>App</Filter>
     </FxCompile>
+    <FxCompile Include="GreenPixelShader.hlsl">
+      <Filter>App</Filter>
+    </FxCompile>
+    <FxCompile Include="GreenVertexShader.hlsl">
+      <Filter>App</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
