@@ -1,4 +1,5 @@
 #pragma once
+#include <exception>
 
 template<typename T>
 class Singleton
@@ -6,13 +7,32 @@ class Singleton
 public:
 	static T& get()
 	{
-		static T instance;
-		return instance;
+		return *instance;
+	}
+
+	static void create()
+	{
+		if (instance)
+			throw std::exception("Singleton has already been created!");
+
+		instance = new T();
+	}
+
+	static void release()
+	{
+		if (instance == nullptr)
+			throw std::exception("Singleton has already been released!");
+
+		delete instance;
+		instance = nullptr;
 	}
 
 	Singleton(const Singleton&) = delete;
 	Singleton operator=(const Singleton&) = delete;
 
 protected:
-    Singleton() = default;
+	Singleton() = default;
+	~Singleton() = default;
+
+	static T* instance;
 };

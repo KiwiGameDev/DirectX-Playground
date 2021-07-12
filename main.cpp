@@ -1,20 +1,51 @@
 #include <iostream>
 #include "AppWindow.h"
+#include "GraphicsEngine.h"
+#include "InputSystem.h"
 
 int main()
 {
-	AppWindow app;
-
-	if(!app.init())
+	try
 	{
-		std::cerr << "Failed to initialize window!\n";
+		GraphicsEngine::create();
+		InputSystem::create();
+	}
+	catch(...)
+	{
 		return -1;
 	}
 
-	std::cout << "Starting window...\n";
-
-	while (app.isRunning())
+	try
 	{
-		app.broadcast();
+		AppWindow app;
+
+		std::cout << "Starting window...\n";
+
+		while (app.isRunning())
+			;
+	}
+	catch(...)
+	{
+		try
+		{
+			GraphicsEngine::release();
+			InputSystem::release();
+		}
+		catch (...)
+		{
+			return -1;
+		}
+		
+		return -1;
+	}
+
+	try
+	{
+		GraphicsEngine::release();
+		InputSystem::release();
+	}
+	catch(...)
+	{
+		return -1;
 	}
 }

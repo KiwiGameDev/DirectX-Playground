@@ -2,13 +2,7 @@
 #include "Window.h"
 #include "IInputListener.h"
 #include "Matrix4x4.h"
-
-class IndexBuffer;
-class PixelShader;
-class SwapChain;
-class ConstantBuffer;
-class VertexBuffer;
-class VertexShader;
+#include "Prerequisites.h"
 
 class AppWindow : public Window, public IInputListener
 {
@@ -32,12 +26,12 @@ public:
 private:
 	static long long getMicrosecondsFromStart();
 	
-	SwapChain* m_swap_chain;
-	ConstantBuffer* m_cb;
-	VertexBuffer* m_vb;
-	IndexBuffer* m_ib;
-	VertexShader* m_vs;
-	PixelShader* m_ps;
+	SwapChainPtr m_swap_chain;
+	ConstantBufferPtr m_cb;
+	VertexBufferPtr m_vb;
+	IndexBufferPtr m_ib;
+	VertexShaderPtr m_vs;
+	PixelShaderPtr m_ps;
 
 	long long m_old_delta = 0LL;
 	long long m_new_delta = 0LL;

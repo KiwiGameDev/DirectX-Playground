@@ -13,11 +13,6 @@
 
 RenderSystem::RenderSystem()
 {
-	
-}
-
-bool RenderSystem::init()
-{
 	D3D_DRIVER_TYPE driver_types[] =
 	{
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -54,24 +49,22 @@ bool RenderSystem::init()
 	}
 
 	if (FAILED(res))
-		return false;
+		throw std::exception("Render System failed to initialize!");
 
-	m_imm_device_context = new DeviceContext(imm_context, this);
+	m_imm_device_context = std::make_shared<DeviceContext>(imm_context, this);
 
 	m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device);
 	m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
 	m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgi_factory);
-
-	return true;
 }
 
-SwapChain* RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
+SwapChainPtr RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
 {
-	SwapChain* sc = nullptr;
+	SwapChainPtr sc = nullptr;
 	
 	try
 	{
-		sc = new SwapChain(hwnd, width, height, this);
+		sc = std::make_shared<SwapChain>(hwnd, width, height, this);
 	}
 	catch(...)
 	{
@@ -81,13 +74,13 @@ SwapChain* RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
 	return sc;
 }
 
-VertexBuffer* RenderSystem::createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader)
+VertexBufferPtr RenderSystem::createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader)
 {
-	VertexBuffer* vb = nullptr;
+	VertexBufferPtr vb = nullptr;
 	
 	try
 	{
-		vb = new VertexBuffer(list_vertices, size_vertices, size_list, shader_byte_code, size_byte_shader, this);
+		vb = std::make_shared<VertexBuffer>(list_vertices, size_vertices, size_list, shader_byte_code, size_byte_shader, this);
 	}
 	catch (...)
 	{
@@ -97,13 +90,13 @@ VertexBuffer* RenderSystem::createVertexBuffer(void* list_vertices, UINT size_ve
 	return vb;
 }
 
-IndexBuffer* RenderSystem::createIndexBuffer(void* list_indices, UINT size_list)
+IndexBufferPtr RenderSystem::createIndexBuffer(void* list_indices, UINT size_list)
 {
-	IndexBuffer* ib = nullptr;
+	IndexBufferPtr ib = nullptr;
 
 	try
 	{
-		ib = new IndexBuffer(list_indices, size_list, this);
+		ib = std::make_shared<IndexBuffer>(list_indices, size_list, this);
 	}
 	catch (...)
 	{
@@ -113,13 +106,13 @@ IndexBuffer* RenderSystem::createIndexBuffer(void* list_indices, UINT size_list)
 	return ib;
 }
 
-ConstantBuffer* RenderSystem::createConstantBuffer(void* buffer, UINT size_buffer)
+ConstantBufferPtr RenderSystem::createConstantBuffer(void* buffer, UINT size_buffer)
 {
-	ConstantBuffer* cb = nullptr;
+	ConstantBufferPtr cb = nullptr;
 
 	try
 	{
-		cb = new ConstantBuffer(buffer, size_buffer, this);
+		cb = std::make_shared<ConstantBuffer>(buffer, size_buffer, this);
 	}
 	catch (...)
 	{
@@ -130,13 +123,13 @@ ConstantBuffer* RenderSystem::createConstantBuffer(void* buffer, UINT size_buffe
 	
 }
 
-VertexShader* RenderSystem::createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code)
+VertexShaderPtr RenderSystem::createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code)
 {
-	VertexShader* vs = nullptr;
+	VertexShaderPtr vs = nullptr;
 
 	try
 	{
-		vs = new VertexShader(shader_byte_code, size_shader_byte_code, this);
+		vs = std::make_shared<VertexShader>(shader_byte_code, size_shader_byte_code, this);
 	}
 	catch (...)
 	{
@@ -146,13 +139,13 @@ VertexShader* RenderSystem::createVertexShader(const void* shader_byte_code, siz
 	return vs;
 }
 
-PixelShader* RenderSystem::createPixelShader(const void* shader_byte_code, size_t size_shader_byte_code)
+PixelShaderPtr RenderSystem::createPixelShader(const void* shader_byte_code, size_t size_shader_byte_code)
 {
-	PixelShader* ps = nullptr;
+	PixelShaderPtr ps = nullptr;
 
 	try
 	{
-		ps = new PixelShader(shader_byte_code, size_shader_byte_code, this);
+		ps = std::make_shared<PixelShader>(shader_byte_code, size_shader_byte_code, this);
 	}
 	catch (...)
 	{
@@ -202,23 +195,18 @@ void RenderSystem::releaseCompiledShader()
 		m_blob->Release();
 }
 
-DeviceContext* RenderSystem::getImmediateDeviceContext()
+DeviceContextPtr RenderSystem::getImmediateDeviceContext()
 {
 	return m_imm_device_context;
 }
 
-bool RenderSystem::release()
+RenderSystem::~RenderSystem()
 {
+	if (m_vsblob) m_vsblob->Release();
+	if (m_psblob) m_psblob->Release();
+	
 	m_dxgi_device->Release();
 	m_dxgi_adapter->Release();
 	m_dxgi_factory->Release();
 	m_d3d_device->Release();
-	delete m_imm_device_context;
-
-	return true;
-}
-
-RenderSystem::~RenderSystem()
-{
-	
 }

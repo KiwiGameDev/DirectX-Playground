@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <string>
+#include <exception>
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -7,16 +8,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 	case WM_CREATE:
 	{
-		Window* window = (Window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
-		window->setHWND(hwnd);
-		window->onCreate();
+		
 		break;
 	}
 	case WM_SETFOCUS:
 	{
 		Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-		window->onFocus();
+		if (window)
+			window->onFocus();
 		break;
 	}
 	case WM_KILLFOCUS:
@@ -39,7 +38,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return NULL;
 }
 
-bool Window::init()
+Window::Window()
 {
 	WNDCLASSEX wc = {};
 	wc.cbClsExtra = NULL;
@@ -54,9 +53,9 @@ bool Window::init()
 	wc.lpszMenuName = L"";
 	wc.style = NULL;
 	wc.lpfnWndProc = &WndProc;
-	
+
 	if (!::RegisterClassEx(&wc))
-		return false;
+		throw std::exception("Window failed to initialize successfully");
 
 	m_hwnd = ::CreateWindowEx(
 		WS_EX_OVERLAPPEDWINDOW,
@@ -70,21 +69,27 @@ bool Window::init()
 		NULL,
 		NULL,
 		NULL,
-		this);
+		NULL);
 
 	if (!m_hwnd)
-		return false;
+		throw std::exception("Window failed to initialize successfully");
 
 	::ShowWindow(m_hwnd, SW_SHOW);
 	::UpdateWindow(m_hwnd);
 
 	m_is_running = true;
-	
-	return true;
 }
 
 bool Window::broadcast()
 {
+	if (!m_is_init)
+	{
+		m_is_init = true;
+		
+		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+		onCreate();
+	}
+	
 	MSG msg;
 	
 	onUpdate();
@@ -125,13 +130,11 @@ void Window::onKillFocus()
 	
 }
 
-void Window::setHWND(HWND hwnd)
-{
-	m_hwnd = hwnd;
-}
-
 bool Window::isRunning()
 {
+	if (m_is_running)
+		broadcast();
+	
 	return m_is_running;
 }
 
@@ -142,10 +145,8 @@ RECT Window::getClientWindowRect()
 	return rect;
 }
 
-bool Window::release()
+Window::~Window()
 {
 	if (!::DestroyWindow(m_hwnd))
-		return false;
-
-	return true;
+		throw std::exception("Window failed to delete successfully");
 }

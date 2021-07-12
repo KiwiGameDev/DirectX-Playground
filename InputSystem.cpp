@@ -2,6 +2,8 @@
 #include "IInputListener.h"
 #include <Windows.h>
 
+InputSystem* InputSystem::instance = nullptr;
+
 void InputSystem::update()
 {
 	POINT current_mouse_pos_temp = {};

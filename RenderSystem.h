@@ -1,13 +1,6 @@
 #pragma once
+#include "Prerequisites.h"
 #include <d3d11.h>
-
-class DeviceContext;
-class SwapChain;
-class ConstantBuffer;
-class VertexBuffer;
-class IndexBuffer;
-class VertexShader;
-class PixelShader;
 
 class RenderSystem
 {
@@ -20,26 +13,24 @@ class RenderSystem
 
 public:
 	RenderSystem();
-	bool init();
 
-	SwapChain* createSwapChain(HWND hwnd, UINT width, UINT height);
-	VertexBuffer* createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader);
-	IndexBuffer* createIndexBuffer(void* list_indices, UINT size_list);
-	ConstantBuffer* createConstantBuffer(void* buffer, UINT size_buffer);
+	SwapChainPtr createSwapChain(HWND hwnd, UINT width, UINT height);
+	VertexBufferPtr createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader);
+	IndexBufferPtr createIndexBuffer(void* list_indices, UINT size_list);
+	ConstantBufferPtr createConstantBuffer(void* buffer, UINT size_buffer);
 
-	VertexShader* createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code);
-	PixelShader* createPixelShader(const void* shader_byte_code, size_t size_shader_byte_code);
+	VertexShaderPtr createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code);
+	PixelShaderPtr createPixelShader(const void* shader_byte_code, size_t size_shader_byte_code);
 	bool compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* size_shader_byte_code);
 	bool compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* size_shader_byte_code);
 	void releaseCompiledShader();
 
-	DeviceContext* getImmediateDeviceContext();
-
-	bool release();
+	DeviceContextPtr getImmediateDeviceContext();
+	
 	~RenderSystem();
 
 private:
-	DeviceContext* m_imm_device_context;
+	DeviceContextPtr m_imm_device_context;
 
 	ID3D11Device* m_d3d_device;
 	D3D_FEATURE_LEVEL m_feature_level;

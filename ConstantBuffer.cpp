@@ -20,7 +20,7 @@ ConstantBuffer::ConstantBuffer(void* buffer, UINT size_buffer, RenderSystem* sys
 		throw std::exception("Constant Buffer failed to initialize!");
 }
 
-void ConstantBuffer::update(DeviceContext* device_context, void* buffer)
+void ConstantBuffer::update(DeviceContextPtr device_context, void* buffer)
 {
 	device_context->m_device_context->UpdateSubresource(this->m_buffer, NULL, NULL, buffer, 0, 0);
 }

@@ -45,8 +45,6 @@ void AppWindow::update()
 	world_camera *= Matrix4x4::rotationY(m_rot_y);
 	Vector3 new_camera_pos = m_world_camera.getTranslation() + world_camera.getZDirection() * (m_forward * 8.0f * m_delta_time) + world_camera.getXDirection() * (m_rightward * 8.0f * m_delta_time);
 	world_camera *= Matrix4x4::translation(new_camera_pos);
-
-	std::cout << "Rotation: " << m_rot_x << "     " << m_rot_y << '\n';
 	
 	m_world_camera = world_camera;
 	world_camera.inverse();
@@ -65,8 +63,7 @@ void AppWindow::onCreate()
 
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
-	GraphicsEngine::get().init();
-
+	
 	RECT rect = getClientWindowRect();
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
@@ -149,8 +146,7 @@ void AppWindow::onUpdate()
 void AppWindow::onDestroy()
 {
 	Window::onDestroy();
-
-	GraphicsEngine::get().release();
+	
 	InputSystem::get().removeListener(this);
 }
 
@@ -206,9 +202,9 @@ void AppWindow::onMouseMove(const Point& mouse_pos)
 	float screen_width_half = (screen_rect.right - screen_rect.left) / 2.0f;
 	float screen_height_half = (screen_rect.bottom - screen_rect.top) / 2.0f;
 	
-	m_rot_x += (mouse_pos.y - screen_height_half) * m_delta_time * 1.0f;
-	m_rot_y += (mouse_pos.x - screen_width_half) * m_delta_time * 1.0f;
-
+	m_rot_x += (mouse_pos.y - screen_height_half) * m_delta_time * 8.0f;
+	m_rot_y += (mouse_pos.x - screen_width_half) * m_delta_time * 8.0f;
+	
 	InputSystem::get().setCursorPosition(Point((int)screen_width_half, (int)screen_height_half));
 }
 

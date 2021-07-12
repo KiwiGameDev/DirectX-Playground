@@ -6,15 +6,14 @@ class DeviceContext;
 
 class GraphicsEngine : public Singleton<GraphicsEngine>
 {
-public:
-	GraphicsEngine();
-	bool init();
+	friend class Singleton<GraphicsEngine>;
 
+public:
 	RenderSystem* getRenderSystem();
 
-	bool release();
+protected:
+	GraphicsEngine();
 	~GraphicsEngine();
-
-private:
+	
 	RenderSystem* m_render_system;
 };

@@ -13,9 +13,6 @@
     <Filter Include="GameEngine\WindowingSystem">
       <UniqueIdentifier>{de047c3f-4cee-42b1-a1a2-36617a41f092}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{8b2822d7-ca9c-4bd4-a7ac-90d5ea0253d8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameEngine\Math">
       <UniqueIdentifier>{f0c9020b-27dc-49e9-a87a-90692e96194b}</UniqueIdentifier>
     </Filter>
@@ -104,9 +101,6 @@
     <ClInclude Include="DeviceContext.h">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\DeviceContext</Filter>
     </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="VertexBuffer.h">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\VertexBuffer</Filter>
     </ClInclude>
@@ -142,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
       <Filter>GameEngine\GraphicsEngine\RenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Prerequisites.h">
+      <Filter>GameEngine\GraphicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

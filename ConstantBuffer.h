@@ -1,8 +1,8 @@
 #pragma once
 #include <Windows.h>
+#include "Prerequisites.h"
 
 class RenderSystem;
-class DeviceContext;
 class ID3D11Buffer;
 class ID3D11InputLayout;
 
@@ -13,7 +13,7 @@ class ConstantBuffer
 public:
 	ConstantBuffer(void* buffer, UINT size_buffer, RenderSystem* system);
 
-	void update(DeviceContext* device_context, void* buffer);
+	void update(DeviceContextPtr device_context, void* buffer);
 
 	~ConstantBuffer();
 
