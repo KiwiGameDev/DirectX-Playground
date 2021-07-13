@@ -6,7 +6,7 @@ InputSystem* InputSystem::instance = nullptr;
 
 void InputSystem::update()
 {
-	POINT current_mouse_pos_temp = {};
+	POINT current_mouse_pos_temp;
 	GetCursorPos(&current_mouse_pos_temp);
 	Point current_mouse_pos(current_mouse_pos_temp.x, current_mouse_pos_temp.y);
 
