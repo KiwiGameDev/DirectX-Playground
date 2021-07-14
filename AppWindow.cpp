@@ -13,12 +13,11 @@
 #include "InputSystem.h"
 #include <Windows.h>
 #include <iostream>
+#include <vector>
 
 struct vertex
 {
 	Vector3 position;
-	Vector3 color;
-	Vector3 color1;
 };
 
 __declspec(align(16))
@@ -38,8 +37,8 @@ void AppWindow::update()
 	constant cc;
 
 	Matrix4x4 cube_transform(1.0f);
-	cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
-
+	cube_transform *= Matrix4x4::scale({ 10.0f, 1.0f, 10.0f });
+	
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
 	world_camera *= Matrix4x4::rotationY(m_rot_y);
@@ -68,47 +67,48 @@ void AppWindow::onCreate()
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
-	// Temporary create triangle
-	vertex cube_vertices[] =
+	// Terrain
+	const float TERRAIN_SIZE_WIDTH = 10.0f;
+	const float TERRAIN_SIZE_DEPTH = 10.0f;
+	const int TERRAIN_SUBDIVISIONS_WIDTH = 3;
+	const int TERRAIN_SUBDIVISIONS_DEPTH = 3;
+	const int TERRAIN_VERTICES_WIDTH = TERRAIN_SUBDIVISIONS_WIDTH + 1;
+	std::vector<vertex> terrainVertices;
+	std::vector<unsigned int> terrainIndices;
+	for (int i = 0; i <= TERRAIN_SUBDIVISIONS_DEPTH; i++)
 	{
-		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) },
-		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) }
-	};
-	UINT size_cube_vertices = ARRAYSIZE(cube_vertices);
-
-	unsigned int cube_indices[] =
+		for (int j = 0; j <= TERRAIN_SUBDIVISIONS_WIDTH; j++)
+		{
+			terrainVertices.push_back({{(float)j / TERRAIN_SUBDIVISIONS_WIDTH, 0.0f, (float)i / TERRAIN_SUBDIVISIONS_DEPTH }});
+		}
+	}
+	for (int i = 0; i < TERRAIN_SUBDIVISIONS_DEPTH; i++)
 	{
-		0, 1, 2,
-		2, 3, 0,
-		4, 5, 6,
-		6, 7, 4,
-		1, 6, 5,
-		5, 2, 1,
-		7, 0, 3,
-		3, 4, 7,
-		3, 2, 5,
-		5, 4, 3,
-		7, 6, 1,
-		1, 0, 7
-	};
-	UINT size_cube_indices = ARRAYSIZE(cube_indices);
-
-	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
+		for (int j = 0; j < TERRAIN_SUBDIVISIONS_WIDTH; j++)
+		{
+			unsigned int botLeft = j + i * TERRAIN_VERTICES_WIDTH;
+			unsigned int topLeft = j + (i + 1) * TERRAIN_VERTICES_WIDTH;
+			unsigned int topRight = (j + 1) + (i + 1) * TERRAIN_VERTICES_WIDTH;
+			unsigned int botRight = (j + 1) + i * TERRAIN_VERTICES_WIDTH;
+			terrainIndices.push_back(botLeft);
+			terrainIndices.push_back(topLeft);
+			terrainIndices.push_back(topRight);
+			terrainIndices.push_back(botLeft);
+			terrainIndices.push_back(topRight);
+			terrainIndices.push_back(botRight);
+		}
+	}
+	
+	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(terrainIndices.data(), terrainIndices.size());
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader_byte_code = 0;
-	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
+	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"TerrainVertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
 	m_vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
+	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(terrainVertices.data(), sizeof(vertex), terrainVertices.size(), shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 	
-	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
+	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"TerrainPixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
 	m_ps = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 
@@ -126,15 +126,16 @@ void AppWindow::onUpdate()
 	update();
 
 	RECT rect = getClientWindowRect();
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
+	DeviceContextPtr deviceContext = GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext();
+	deviceContext->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
+	deviceContext->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
+	deviceContext->setConstantBuffer(m_vs, m_cb);
+	deviceContext->setConstantBuffer(m_ps, m_cb);
+	deviceContext->setVertexShader(m_vs);
+	deviceContext->setPixelShader(m_ps);
+	deviceContext->setVertexBuffer(m_vb);
+	deviceContext->setIndexBuffer(m_ib);
+	deviceContext->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 
 	m_swap_chain->present(false);
 

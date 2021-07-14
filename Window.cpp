@@ -141,7 +141,7 @@ bool Window::isRunning()
 RECT Window::getClientWindowRect()
 {
 	RECT rect;
-	::GetClientRect(m_hwnd, &rect);
+	GetClientRect(m_hwnd, &rect);
 	return rect;
 }
 

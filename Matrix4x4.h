@@ -108,7 +108,20 @@ struct Matrix4x4
 			}
 		}
 
-		memcpy(m_mat, out.m_mat, sizeof(float) * 16);
+		*this = out;
+	}
+
+	Matrix4x4& operator=(const Matrix4x4& other)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				m_mat[i][j] = other.m_mat[i][j];
+			}
+		}
+
+		return *this;
 	}
 	
 	float getDeterminant()
@@ -116,16 +129,16 @@ struct Matrix4x4
 		Vector4 minor, v1, v2, v3;
 		float det;
 
-		v1 = Vector4(this->m_mat[0][0], this->m_mat[1][0], this->m_mat[2][0], this->m_mat[3][0]);
-		v2 = Vector4(this->m_mat[0][1], this->m_mat[1][1], this->m_mat[2][1], this->m_mat[3][1]);
-		v3 = Vector4(this->m_mat[0][2], this->m_mat[1][2], this->m_mat[2][2], this->m_mat[3][2]);
+		v1 = Vector4(m_mat[0][0], m_mat[1][0], m_mat[2][0], m_mat[3][0]);
+		v2 = Vector4(m_mat[0][1], m_mat[1][1], m_mat[2][1], m_mat[3][1]);
+		v3 = Vector4(m_mat[0][2], m_mat[1][2], m_mat[2][2], m_mat[3][2]);
 
 		minor.cross(v1, v2, v3);
-		det = -(this->m_mat[0][3] * minor.x + this->m_mat[1][3] * minor.y + this->m_mat[2][3] * minor.z + this->m_mat[3][3] * minor.w);
+		det = -(m_mat[0][3] * minor.x + m_mat[1][3] * minor.y + m_mat[2][3] * minor.z + m_mat[3][3] * minor.w);
 
 		return det;
 	}
-
+		
 	Vector3 getXDirection()
 	{
 		return Vector3(m_mat[0][0], m_mat[0][1], m_mat[0][2]);
@@ -153,7 +166,7 @@ struct Matrix4x4
 		Vector4 v, vec[3];
 		float det = 0.0f;
 
-		det = this->getDeterminant();
+		det = getDeterminant();
 		if (!det)
 			return;
 		
@@ -165,10 +178,10 @@ struct Matrix4x4
 				{
 					a = j;
 					if (j > i) a = a - 1;
-					vec[a].x = (this->m_mat[j][0]);
-					vec[a].y = (this->m_mat[j][1]);
-					vec[a].z = (this->m_mat[j][2]);
-					vec[a].w = (this->m_mat[j][3]);
+					vec[a].x = m_mat[j][0];
+					vec[a].y = m_mat[j][1];
+					vec[a].z = m_mat[j][2];
+					vec[a].w = m_mat[j][3];
 				}
 			}
 			v.cross(vec[0], vec[1], vec[2]);
@@ -179,8 +192,8 @@ struct Matrix4x4
 			out.m_mat[3][i] = pow(-1.0f, i) * v.w / det;
 		}
 
-		memcpy(this, &out, sizeof(Matrix4x4));
+		*this = out;
 	}
 
-	float m_mat[4][4];
+	float m_mat[4][4] = { };
 };
