@@ -3,11 +3,13 @@
 #include "IInputListener.h"
 #include "Matrix4x4.h"
 #include "Prerequisites.h"
+#include "GameObject.h"
+#include <vector>
 
 class AppWindow : public Window, public IInputListener
 {
 public:
-	void update();
+	void updateCamera();
 	
 	void onCreate() override;
 	void onUpdate() override;
@@ -33,11 +35,11 @@ private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
 
+	std::vector<GameObject> gameObjects;
+	
 	long long m_old_delta = 0LL;
 	long long m_new_delta = 0LL;
 	float m_delta_time = 0.0f;
-	float m_delta_pos;
-	float m_delta_scale;
 
 	float m_rot_x = 0.0f;
 	float m_rot_y = 0.0f;
@@ -46,4 +48,5 @@ private:
 	float m_rightward = 0.0f;
 
 	Matrix4x4 m_world_camera;
+	constant cc;
 };

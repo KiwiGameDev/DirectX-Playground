@@ -11,6 +11,7 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "InputSystem.h"
+#include "GameObject.h"
 #include <Windows.h>
 #include <iostream>
 
@@ -21,38 +22,24 @@ struct vertex
 	Vector3 color1;
 };
 
-__declspec(align(16))
-struct constant
+void AppWindow::updateCamera()
 {
-	Matrix4x4 m_world;
-	Matrix4x4 m_view;
-	Matrix4x4 m_proj;
-	unsigned int m_time;
-};
-
-void AppWindow::update()
-{
-	RECT screen_rect = getClientWindowRect();
-	float screen_width = (float)(screen_rect.right - screen_rect.left);
-	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
-	constant cc;
-
-	Matrix4x4 cube_transform(1.0f);
-	cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
-
+	// Camera update
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
 	world_camera *= Matrix4x4::rotationY(m_rot_y);
 	Vector3 new_camera_pos = m_world_camera.getTranslation() + world_camera.getZDirection() * (m_forward * 8.0f * m_delta_time) + world_camera.getXDirection() * (m_rightward * 8.0f * m_delta_time);
 	world_camera *= Matrix4x4::translation(new_camera_pos);
-	
 	m_world_camera = world_camera;
 	world_camera.inverse();
 
-	cc.m_time = GetTickCount();
-	cc.m_world = cube_transform;
+	// Update constant
+	RECT screen_rect = getClientWindowRect();
+	float screen_width = (float)(screen_rect.right - screen_rect.left);
+	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	cc.m_view = world_camera;
 	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.1f, 100.0f);
+	cc.m_time = GetTickCount();
 
 	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
@@ -68,17 +55,13 @@ void AppWindow::onCreate()
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
-	// Temporary create triangle
+	// create quads
 	vertex cube_vertices[] =
 	{
 		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
 		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) },
 		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) }
+		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) }
 	};
 	UINT size_cube_vertices = ARRAYSIZE(cube_vertices);
 
@@ -86,16 +69,6 @@ void AppWindow::onCreate()
 	{
 		0, 1, 2,
 		2, 3, 0,
-		4, 5, 6,
-		6, 7, 4,
-		1, 6, 5,
-		5, 2, 1,
-		7, 0, 3,
-		3, 4, 7,
-		3, 2, 5,
-		5, 4, 3,
-		7, 6, 1,
-		1, 0, 7
 	};
 	UINT size_cube_indices = ARRAYSIZE(cube_indices);
 
@@ -115,6 +88,16 @@ void AppWindow::onCreate()
 	constant cc;
 	cc.m_time = 0;
 	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
+
+	// Push GameObjects
+	gameObjects.push_back(GameObject(m_vb, m_ib, m_cb, m_vs, m_ps));
+	gameObjects.push_back(GameObject(m_vb, m_ib, m_cb, m_vs, m_ps));
+	gameObjects.push_back(GameObject(m_vb, m_ib, m_cb, m_vs, m_ps));
+
+	// Edit their starting positions
+	gameObjects[0].position.x = -2.0f;
+	gameObjects[1].position.x =  0.0f;
+	gameObjects[2].position.x =  2.0f;
 }
 
 void AppWindow::onUpdate()
@@ -123,19 +106,21 @@ void AppWindow::onUpdate()
 
 	InputSystem::get().update();
 
-	update();
+	updateCamera();
 
 	RECT rect = getClientWindowRect();
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 
+	float offset = 0.0f;
+	for (GameObject& gameObject : gameObjects)
+	{
+		gameObject.position.y = sin(m_new_delta / 1000000.0f + offset);
+		offset += 1.0f;
+
+		gameObject.render(cc);
+	}
+	
 	m_swap_chain->present(false);
 
 	m_old_delta = m_new_delta;
