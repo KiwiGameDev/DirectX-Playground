@@ -3,11 +3,9 @@
 #include "RenderSystem.h"
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
-#include "PixelShader.h"
 #include "SwapChain.h"
-#include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include "VertexShader.h"
+#include "Vector2.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "InputSystem.h"
@@ -17,8 +15,7 @@
 struct vertex
 {
 	Vector3 position;
-	Vector3 color;
-	Vector3 color1;
+	Vector2 texcoord;
 };
 
 __declspec(align(16))
@@ -38,7 +35,7 @@ void AppWindow::update()
 	constant cc;
 
 	Matrix4x4 cube_transform(1.0f);
-	cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
+	//cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
 
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
@@ -52,7 +49,7 @@ void AppWindow::update()
 	cc.m_time = GetTickCount();
 	cc.m_world = cube_transform;
 	cc.m_view = world_camera;
-	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.1f, 100.0f);
+	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
 
 	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
@@ -63,49 +60,93 @@ void AppWindow::onCreate()
 
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
+
+	m_wood_tex = GraphicsEngine::get().getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
 	
 	RECT rect = getClientWindowRect();
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Temporary create triangle
-	vertex cube_vertices[] =
+	Vector3 position_list[] =
 	{
-		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) },
-		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(1.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) }
+		Vector3(-0.5f, -0.5f, -0.5f),
+		Vector3(-0.5f,  0.5f, -0.5f),
+		Vector3( 0.5f,  0.5f, -0.5f),
+		Vector3( 0.5f, -0.5f, -0.5f),
+		Vector3( 0.5f, -0.5f,  0.5f),
+		Vector3( 0.5f,  0.5f,  0.5f),
+		Vector3(-0.5f,  0.5f,  0.5f),
+		Vector3(-0.5f, -0.5f,  0.5f)
 	};
-	UINT size_cube_vertices = ARRAYSIZE(cube_vertices);
-
-	unsigned int cube_indices[] =
+	
+	Vector2 texcoord_list[] =
 	{
-		0, 1, 2,
-		2, 3, 0,
-		4, 5, 6,
-		6, 7, 4,
-		1, 6, 5,
-		5, 2, 1,
-		7, 0, 3,
-		3, 4, 7,
-		3, 2, 5,
-		5, 4, 3,
-		7, 6, 1,
-		1, 0, 7
+		Vector2(0.0f, 0.0f), 
+		Vector2(0.0f, 1.0f), 
+		Vector2(1.0f, 0.0f), 
+		Vector2(1.0f, 1.0f), 
 	};
-	UINT size_cube_indices = ARRAYSIZE(cube_indices);
 
-	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
+	vertex vertex_list[] =
+	{
+		{ position_list[0], texcoord_list[1] },
+		{ position_list[1], texcoord_list[0] },
+		{ position_list[2], texcoord_list[2] },
+		{ position_list[3], texcoord_list[3] },
+		
+		{ position_list[4], texcoord_list[1] },
+		{ position_list[5], texcoord_list[0] },
+		{ position_list[6], texcoord_list[2] },
+		{ position_list[7], texcoord_list[3] },
+		
+		{ position_list[1], texcoord_list[1] },
+		{ position_list[6], texcoord_list[0] },
+		{ position_list[5], texcoord_list[2] },
+		{ position_list[2], texcoord_list[3] },
+		
+		{ position_list[7], texcoord_list[1] },
+		{ position_list[0], texcoord_list[0] },
+		{ position_list[3], texcoord_list[2] },
+		{ position_list[4], texcoord_list[3] },
+		
+		{ position_list[3], texcoord_list[1] },
+		{ position_list[2], texcoord_list[0] },
+		{ position_list[5], texcoord_list[2] },
+		{ position_list[4], texcoord_list[3] },
+		
+		{ position_list[7], texcoord_list[1] },
+		{ position_list[6], texcoord_list[0] },
+		{ position_list[1], texcoord_list[2] },
+		{ position_list[0], texcoord_list[3] }
+	};
+	
+	UINT size_vertices = ARRAYSIZE(vertex_list);
+
+	unsigned int indices_list[] =
+	{
+		0,  1,  2,
+		2,  3,  0,
+		4,  5,  6,
+		6,  7,  4,
+		8,  9,  10,
+		10, 11, 8,
+		12, 13, 14,
+		14, 15, 12,
+		16, 17, 18,
+		18, 19, 16,
+		20, 21, 22,
+		22, 23, 20
+	};
+	UINT size_indices = ARRAYSIZE(indices_list);
+
+	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(indices_list, size_indices);
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader_byte_code = 0;
 	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
 	m_vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
+	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(vertex_list, sizeof(vertex), size_vertices, shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 	
 	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
@@ -128,10 +169,11 @@ void AppWindow::onUpdate()
 	RECT rect = getClientWindowRect();
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setTexturePixelShader(m_wood_tex);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);

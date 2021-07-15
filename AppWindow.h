@@ -33,6 +33,8 @@ private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
 
+	TexturePtr m_wood_tex;
+
 	long long m_old_delta = 0LL;
 	long long m_new_delta = 0LL;
 	float m_delta_time = 0.0f;
