@@ -3,11 +3,9 @@
 #include "RenderSystem.h"
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
-#include "PixelShader.h"
 #include "SwapChain.h"
-#include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include "VertexShader.h"
+#include "Vector2.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "InputSystem.h"
@@ -18,6 +16,7 @@
 struct vertex
 {
 	Vector3 position;
+	Vector2 texcoord;
 };
 
 __declspec(align(16))
@@ -37,8 +36,8 @@ void AppWindow::update()
 	constant cc;
 
 	Matrix4x4 cube_transform(1.0f);
-	cube_transform *= Matrix4x4::scale({ 10.0f, 1.0f, 10.0f });
-	
+	//cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
+
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
 	world_camera *= Matrix4x4::rotationY(m_rot_y);
@@ -51,7 +50,7 @@ void AppWindow::update()
 	cc.m_time = GetTickCount();
 	cc.m_world = cube_transform;
 	cc.m_view = world_camera;
-	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.1f, 100.0f);
+	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
 
 	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
@@ -62,6 +61,8 @@ void AppWindow::onCreate()
 
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
+
+	m_wood_tex = GraphicsEngine::get().getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
 	
 	RECT rect = getClientWindowRect();
 	
