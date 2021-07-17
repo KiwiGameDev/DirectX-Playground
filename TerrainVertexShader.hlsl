@@ -24,7 +24,7 @@ VS_OUTPUT vsmain(VS_INPUT input)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
     float4 position = input.pos;
-    position.y += Texture.SampleLevel(TextureSampler, input.pos.xz, 0) * 4.0f;
+    position.y += Texture.SampleLevel(TextureSampler, input.pos.xz, 0) * 8.0f;
     output.pos_world = mul(position, m_world);
     output.pos = mul(output.pos_world, m_view);
 	output.pos = mul(output.pos, m_proj);

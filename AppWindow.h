@@ -8,7 +8,8 @@ class AppWindow : public Window, public IInputListener
 {
 public:
 	void update();
-	
+	void GeneratePerlinNoiseSeed();
+
 	void onCreate() override;
 	void onUpdate() override;
 	void onDestroy() override;
@@ -34,8 +35,18 @@ private:
 	PixelShaderPtr m_ps;
 
 	HeightmapPtr heightmap = nullptr;
+	int HEIGHTMAP_SIZE = 128;
 	float* perlin_noise_seed;
 	float* perlin_noise;
+	const float TERRAIN_SIZE_WIDTH = 16.0f;
+	const float TERRAIN_SIZE_DEPTH = 16.0f;
+	const int TERRAIN_SUBDIVISIONS_WIDTH = 128;
+	const int TERRAIN_SUBDIVISIONS_DEPTH = 128;
+	const int TERRAIN_VERTICES_WIDTH = TERRAIN_SUBDIVISIONS_WIDTH + 1;
+	const int TERRAIN_VERTICES_DEPTH = TERRAIN_SUBDIVISIONS_DEPTH + 1;
+	unsigned long long seed = 0;
+	int octaves = 6;
+	float bias = 1.5f;
 	
 	long long m_old_delta = 0LL;
 	long long m_new_delta = 0LL;

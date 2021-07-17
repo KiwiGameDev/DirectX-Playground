@@ -56,6 +56,16 @@ void AppWindow::update()
 	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
 
+void AppWindow::GeneratePerlinNoiseSeed()
+{
+	std::default_random_engine randomEngine(seed);
+	std::uniform_real_distribution distribution(0.0f, 1.0f);
+	for (int i = 0; i < HEIGHTMAP_SIZE * HEIGHTMAP_SIZE; i++)
+	{
+		perlin_noise_seed[i] = distribution(randomEngine);
+	}
+}
+
 void AppWindow::onCreate()
 {
 	Window::onCreate();
@@ -68,12 +78,6 @@ void AppWindow::onCreate()
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Terrain
-	const float TERRAIN_SIZE_WIDTH = 16.0f;
-	const float TERRAIN_SIZE_DEPTH = 16.0f;
-	const int TERRAIN_SUBDIVISIONS_WIDTH = 32;
-	const int TERRAIN_SUBDIVISIONS_DEPTH = 32;
-	const int TERRAIN_VERTICES_WIDTH = TERRAIN_SUBDIVISIONS_WIDTH + 1;
-	const int TERRAIN_VERTICES_DEPTH = TERRAIN_SUBDIVISIONS_DEPTH + 1;
 	std::vector<vertex> terrainVertices;
 	std::vector<unsigned int> terrainIndices;
 	for (int i = 0; i <= TERRAIN_SUBDIVISIONS_DEPTH; i++)
@@ -100,24 +104,10 @@ void AppWindow::onCreate()
 		}
 	}
 
-	// Perlin Noise
-	int HEIGHTMAP_SIZE = 128;
 	perlin_noise_seed = (float*)malloc(HEIGHTMAP_SIZE * HEIGHTMAP_SIZE * sizeof(float));
 	perlin_noise = (float*)malloc(HEIGHTMAP_SIZE * HEIGHTMAP_SIZE * sizeof(float));
-	std::default_random_engine randomEngine;
-	std::uniform_real_distribution distribution(0.0f, 1.0f);
-
-	// Create seed
-	for (int i = 0; i < HEIGHTMAP_SIZE * HEIGHTMAP_SIZE; i++)
-	{
-		perlin_noise_seed[i] = distribution(randomEngine);
-	}
-
-	// Create heightmap buffer
-	Random::get().perlinNoise2D(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise_seed, 8, 2.0f, perlin_noise);
-
-	heightmap = GraphicsEngine::get().getRenderSystem()->createHeightmapTexture(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise);
-
+	GeneratePerlinNoiseSeed();
+	
 	// Create terrain index buffer
 	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(terrainIndices.data(), terrainIndices.size());
 
@@ -147,6 +137,10 @@ void AppWindow::onUpdate()
 	InputSystem::get().update();
 
 	update();
+
+	// Create heightmap buffer
+	Random::get().perlinNoise2D(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise_seed, octaves, bias, perlin_noise);
+	heightmap = GraphicsEngine::get().getRenderSystem()->createHeightmapTexture(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise);
 
 	RECT rect = getClientWindowRect();
 	DeviceContextPtr deviceContext = GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext();
@@ -218,6 +212,31 @@ void AppWindow::onKeyUp(int key)
 	else if (key == 'A' || key == 'D')
 	{
 		m_rightward = 0.0f;
+	}
+	else if (key == 'I')
+	{
+		bias *= 1.1f;
+	}
+	else if (key == 'K')
+	{
+		bias *= 0.9f;
+	}
+	else if (key == 'L')
+	{
+		octaves++;
+		if (octaves > 8)
+			octaves = 8;
+	}
+	else if (key == 'J')
+	{
+		octaves--;
+		if (octaves < 1)
+			octaves = 1;
+	}
+	else if (key == 'N')
+	{
+		seed = time(0);
+		GeneratePerlinNoiseSeed();
 	}
 }
 

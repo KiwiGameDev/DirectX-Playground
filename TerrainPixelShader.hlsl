@@ -14,5 +14,5 @@ cbuffer constant: register(b0)
 
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
-	return float4(0.0f, input.pos_world.y, 0.0f, 1.0f);
+	return float4(0.0f, input.pos_world.y / 8.0f, 0.0f, 1.0f);
 }
