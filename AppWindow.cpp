@@ -12,6 +12,9 @@
 #include <Windows.h>
 #include <iostream>
 
+#include "Mesh.h"
+#include "MeshManager.h"
+
 struct vertex
 {
 	Vector3 position;
@@ -61,8 +64,9 @@ void AppWindow::onCreate()
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
 
-	m_wood_tex = GraphicsEngine::get().getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
-	
+	m_wood_tex = GraphicsEngine::get().getTextureManager()->createTextureFromFile(L"Assets\\Textures\\brick.png");
+	m_mesh = GraphicsEngine::get().getMeshManager()->createMeshFromFile(L"Assets\\Meshes\\teapot.obj");
+
 	RECT rect = getClientWindowRect();
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
@@ -174,9 +178,9 @@ void AppWindow::onUpdate()
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setTexturePixelShader(m_wood_tex);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_mesh->getVertexBuffer());
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_mesh->getIndexBuffer());
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_mesh->getIndexBuffer()->getSizeIndices(), 0, 0);
 
 	m_swap_chain->present(false);
 

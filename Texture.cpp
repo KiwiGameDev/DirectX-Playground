@@ -3,7 +3,6 @@
 #include "RenderSystem.h"
 #include <DirectXTex.h>
 
-
 Texture::Texture(const wchar_t* full_path)
 	: Resource(full_path)
 {
