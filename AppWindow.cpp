@@ -12,11 +12,11 @@
 #include <Windows.h>
 #include <iostream>
 #include <vector>
+#include <random>
 
 struct vertex
 {
 	Vector3 position;
-	Vector2 texcoord;
 };
 
 __declspec(align(16))
@@ -35,8 +35,8 @@ void AppWindow::update()
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	constant cc;
 
-	Matrix4x4 cube_transform(1.0f);
-	//cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
+	Matrix4x4 terrain_transform(1.0f);
+	terrain_transform *= Matrix4x4::scale({ 6.0f, 1.0f, 6.0f });
 
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
@@ -48,7 +48,7 @@ void AppWindow::update()
 	world_camera.inverse();
 
 	cc.m_time = GetTickCount();
-	cc.m_world = cube_transform;
+	cc.m_world = terrain_transform;
 	cc.m_view = world_camera;
 	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
 
@@ -61,8 +61,6 @@ void AppWindow::onCreate()
 
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
-
-	m_wood_tex = GraphicsEngine::get().getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
 	
 	RECT rect = getClientWindowRect();
 	
@@ -71,9 +69,10 @@ void AppWindow::onCreate()
 	// Terrain
 	const float TERRAIN_SIZE_WIDTH = 10.0f;
 	const float TERRAIN_SIZE_DEPTH = 10.0f;
-	const int TERRAIN_SUBDIVISIONS_WIDTH = 3;
-	const int TERRAIN_SUBDIVISIONS_DEPTH = 3;
+	const int TERRAIN_SUBDIVISIONS_WIDTH = 5;
+	const int TERRAIN_SUBDIVISIONS_DEPTH = 5;
 	const int TERRAIN_VERTICES_WIDTH = TERRAIN_SUBDIVISIONS_WIDTH + 1;
+	const int TERRAIN_VERTICES_DEPTH = TERRAIN_SUBDIVISIONS_DEPTH + 1;
 	std::vector<vertex> terrainVertices;
 	std::vector<unsigned int> terrainIndices;
 	for (int i = 0; i <= TERRAIN_SUBDIVISIONS_DEPTH; i++)
@@ -99,7 +98,19 @@ void AppWindow::onCreate()
 			terrainIndices.push_back(botRight);
 		}
 	}
+
+	// Create heightmap
+	float* buffer = (float*)malloc(TERRAIN_VERTICES_WIDTH * TERRAIN_VERTICES_DEPTH * sizeof(float));
+	std::default_random_engine randomEngine(10);
+	std::uniform_real_distribution distribution(0.0f, 1.0f);
 	
+	for (int i = 0; i < TERRAIN_VERTICES_WIDTH * TERRAIN_VERTICES_DEPTH; i++)
+		buffer[i] = distribution(randomEngine);
+	
+	heightmap = GraphicsEngine::get().getRenderSystem()->createHeightmapTexture(TERRAIN_VERTICES_WIDTH, TERRAIN_VERTICES_DEPTH, buffer);
+	delete[] buffer;
+
+	// Create terrain index buffer
 	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(terrainIndices.data(), terrainIndices.size());
 
 	void* shader_byte_code = nullptr;
@@ -134,6 +145,7 @@ void AppWindow::onUpdate()
 	deviceContext->setConstantBuffer(m_ps, m_cb);
 	deviceContext->setVertexShader(m_vs);
 	deviceContext->setPixelShader(m_ps);
+	deviceContext->setHeightmapVertexShader(heightmap);
 	deviceContext->setVertexBuffer(m_vb);
 	deviceContext->setIndexBuffer(m_ib);
 	deviceContext->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);

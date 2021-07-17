@@ -33,13 +33,13 @@ private:
 	VertexShaderPtr m_vs;
 	PixelShaderPtr m_ps;
 
-	TexturePtr m_wood_tex;
-
+	HeightmapPtr heightmap = nullptr;
+	float* perlin_noise_seed;
+	float* perlin_noise;
+	
 	long long m_old_delta = 0LL;
 	long long m_new_delta = 0LL;
 	float m_delta_time = 0.0f;
-	float m_delta_pos;
-	float m_delta_scale;
 
 	float m_rot_x = 0.0f;
 	float m_rot_y = 0.0f;

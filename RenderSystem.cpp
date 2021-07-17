@@ -6,6 +6,7 @@
 #include "ConstantBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "Heightmap.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <iostream>
@@ -61,23 +62,23 @@ RenderSystem::RenderSystem()
 SwapChainPtr RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
 {
 	SwapChainPtr sc = nullptr;
-	
+
 	try
 	{
 		sc = std::make_shared<SwapChain>(hwnd, width, height, this);
 	}
-	catch(...)
+	catch (...)
 	{
-		
+
 	}
-	
+
 	return sc;
 }
 
 VertexBufferPtr RenderSystem::createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader)
 {
 	VertexBufferPtr vb = nullptr;
-	
+
 	try
 	{
 		vb = std::make_shared<VertexBuffer>(list_vertices, size_vertices, size_list, shader_byte_code, size_byte_shader, this);
@@ -86,7 +87,7 @@ VertexBufferPtr RenderSystem::createVertexBuffer(void* list_vertices, UINT size_
 	{
 
 	}
-	
+
 	return vb;
 }
 
@@ -120,7 +121,22 @@ ConstantBufferPtr RenderSystem::createConstantBuffer(void* buffer, UINT size_buf
 	}
 
 	return cb;
-	
+}
+
+HeightmapPtr RenderSystem::createHeightmapTexture(unsigned width, unsigned height, float* buffer)
+{
+	HeightmapPtr heightmap = nullptr;
+
+	try
+	{
+		heightmap = std::make_shared<Heightmap>(width, height, buffer);
+	}
+	catch (...)
+	{
+
+	}
+
+	return heightmap;
 }
 
 VertexShaderPtr RenderSystem::createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code)
@@ -135,7 +151,7 @@ VertexShaderPtr RenderSystem::createVertexShader(const void* shader_byte_code, s
 	{
 
 	}
-	
+
 	return vs;
 }
 
@@ -151,7 +167,7 @@ PixelShaderPtr RenderSystem::createPixelShader(const void* shader_byte_code, siz
 	{
 
 	}
-	
+
 	return ps;
 }
 
@@ -160,6 +176,9 @@ bool RenderSystem::compileVertexShader(const wchar_t* file_name, const char* ent
 	ID3DBlob* error_blob = nullptr;
 	if (!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob)))
 	{
+		char* err = (char*)error_blob->GetBufferPointer();
+		std::cerr << err << std::endl;
+
 		if (error_blob)
 			error_blob->Release();
 
@@ -177,6 +196,9 @@ bool RenderSystem::compilePixelShader(const wchar_t* file_name, const char* entr
 	ID3DBlob* error_blob = nullptr;
 	if (!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob)))
 	{
+		char* err = (char*)error_blob->GetBufferPointer();
+		std::cerr << err << std::endl;
+
 		if (error_blob)
 			error_blob->Release();
 
@@ -204,7 +226,7 @@ RenderSystem::~RenderSystem()
 {
 	if (m_vsblob) m_vsblob->Release();
 	if (m_psblob) m_psblob->Release();
-	
+
 	m_dxgi_device->Release();
 	m_dxgi_adapter->Release();
 	m_dxgi_factory->Release();

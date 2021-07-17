@@ -11,6 +11,7 @@ class RenderSystem
 	friend class VertexShader;
 	friend class PixelShader;
 	friend class Texture;
+	friend class Heightmap;
 
 public:
 	RenderSystem();
@@ -19,6 +20,7 @@ public:
 	VertexBufferPtr createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader);
 	IndexBufferPtr createIndexBuffer(void* list_indices, UINT size_list);
 	ConstantBufferPtr createConstantBuffer(void* buffer, UINT size_buffer);
+	HeightmapPtr createHeightmapTexture(unsigned int width, unsigned int height, float* buffer);
 
 	VertexShaderPtr createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code);
 	PixelShaderPtr createPixelShader(const void* shader_byte_code, size_t size_shader_byte_code);
@@ -27,7 +29,7 @@ public:
 	void releaseCompiledShader();
 
 	DeviceContextPtr getImmediateDeviceContext();
-	
+
 	~RenderSystem();
 
 private:

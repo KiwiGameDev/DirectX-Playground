@@ -6,8 +6,8 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "Texture.h"
+#include "Heightmap.h"
 #include <d3d11.h>
-
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
 	: m_device_context(device_context), m_system(system)
@@ -51,6 +51,16 @@ void DeviceContext::setTextureVertexShader(const TexturePtr& texture)
 void DeviceContext::setTexturePixelShader(const TexturePtr& texture)
 {
 	m_device_context->PSSetShaderResources(0, 1, &texture->m_shader_resource_view);
+}
+
+void DeviceContext::setHeightmapVertexShader(const HeightmapPtr& heightmap)
+{
+	m_device_context->VSSetShaderResources(0, 1, &heightmap->m_shader_resource_view);
+}
+
+void DeviceContext::setHeightmapPixelShader(const HeightmapPtr& heightmap)
+{
+	m_device_context->PSSetShaderResources(0, 1, &heightmap->m_shader_resource_view);
 }
 
 void DeviceContext::setVertexBuffer(const VertexBufferPtr& vertex_buffer)

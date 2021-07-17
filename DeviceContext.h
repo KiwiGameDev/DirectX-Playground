@@ -3,13 +3,6 @@
 #include <Windows.h>
 
 class RenderSystem;
-class GraphicsEngine;
-class SwapChain;
-class ConstantBuffer;
-class VertexBuffer;
-class IndexBuffer;
-class VertexShader;
-class PixelShader;
 class ID3D11DeviceContext;
 
 class DeviceContext
@@ -22,11 +15,13 @@ public:
 	
 	void setViewportSize(UINT width, UINT height);
 	void clearRenderTarget(SwapChainPtr swap_chain, float r, float g, float b, float a);
-	
+
 	void setConstantBuffer(const VertexShaderPtr& vertex_shader, const ConstantBufferPtr& constant_buffer);
 	void setConstantBuffer(const PixelShaderPtr& pixel_shader, const ConstantBufferPtr& constant_buffer);
 	void setTextureVertexShader(const TexturePtr& texture);
 	void setTexturePixelShader(const TexturePtr& texture);
+	void setHeightmapVertexShader(const HeightmapPtr& texture);
+	void setHeightmapPixelShader(const HeightmapPtr& texture);
 	void setVertexBuffer(const VertexBufferPtr& vertex_buffer);
 	void setIndexBuffer(const IndexBufferPtr& index_buffer);
 	void setVertexShader(const VertexShaderPtr& vertex_shader);
