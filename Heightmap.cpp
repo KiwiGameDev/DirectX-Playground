@@ -2,7 +2,6 @@
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
 #include <d3d11.h>
-#include <random>
 
 Heightmap::Heightmap(unsigned width, unsigned height, float* buffer)
 {
@@ -10,7 +9,7 @@ Heightmap::Heightmap(unsigned width, unsigned height, float* buffer)
 	D3D11_SUBRESOURCE_DATA data;
 
 	data.pSysMem = (void*)buffer;
-	data.SysMemPitch = width * height * sizeof(float);
+	data.SysMemPitch = width * sizeof(float);
 	data.SysMemSlicePitch = width * height * sizeof(float);
 
 	tdesc.Width = width;
@@ -34,7 +33,8 @@ Heightmap::Heightmap(unsigned width, unsigned height, float* buffer)
 	srv_desc.Texture2D.MipLevels = 1;
 	srv_desc.Texture2D.MostDetailedMip = 0;
 	
-	GraphicsEngine::get().getRenderSystem()->m_d3d_device->CreateShaderResourceView(m_texture, &srv_desc, &m_shader_resource_view);
+	if (FAILED(GraphicsEngine::get().getRenderSystem()->m_d3d_device->CreateShaderResourceView(m_texture, &srv_desc, &m_shader_resource_view)))
+		throw std::exception("Heightmap failed to initialize!");
 }
 
 Heightmap::~Heightmap()

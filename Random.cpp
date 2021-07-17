@@ -1,5 +1,7 @@
 #include "Random.h"
 
+Random* Random::instance = nullptr;
+
 Random::Random()
 	: random_engine(0)
 {
@@ -23,7 +25,7 @@ float Random::range(float x, float y)
 	return distribution(random_engine);
 }
 
-void Random::perlinNoise2D(int width, int height, float seed[], int octaves, float bias, float output[])
+void Random::perlinNoise2D(int width, int height, float* seed, int octaves, float bias, float* output)
 {
 	for (int x = 0; x < width; x++)
 	{

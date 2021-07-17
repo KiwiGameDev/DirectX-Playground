@@ -11,6 +11,7 @@ class ResourceManager;
 class TextureManager;
 class Resource;
 class Texture;
+class Mesh;
 class Heightmap;
 
 typedef std::shared_ptr<DeviceContext> DeviceContextPtr;
@@ -22,4 +23,5 @@ typedef std::shared_ptr<VertexShader> VertexShaderPtr;
 typedef std::shared_ptr<PixelShader> PixelShaderPtr;
 typedef std::shared_ptr<Resource> ResourcePtr;
 typedef std::shared_ptr<Texture> TexturePtr;
+typedef std::shared_ptr<Mesh> MeshPtr;
 typedef std::shared_ptr<Heightmap> HeightmapPtr;

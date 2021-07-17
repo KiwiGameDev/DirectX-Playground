@@ -11,7 +11,7 @@ public:
 
 	int range(int x, int y);
 	float range(float x, float y);
-	void perlinNoise2D(int width, int height, float seed[], int octaves, float bias, float output[]);
+	void perlinNoise2D(int width, int height, float* seed, int octaves, float bias, float* output);
 
 private:
 	Random();

@@ -9,6 +9,7 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "InputSystem.h"
+#include "Random.h"
 #include <Windows.h>
 #include <iostream>
 #include <vector>
@@ -36,7 +37,7 @@ void AppWindow::update()
 	constant cc;
 
 	Matrix4x4 terrain_transform(1.0f);
-	terrain_transform *= Matrix4x4::scale({ 6.0f, 1.0f, 6.0f });
+	terrain_transform *= Matrix4x4::scale({ 16.0f, 1.0f, 16.0f });
 
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
@@ -61,16 +62,16 @@ void AppWindow::onCreate()
 
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
-	
+
 	RECT rect = getClientWindowRect();
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Terrain
-	const float TERRAIN_SIZE_WIDTH = 10.0f;
-	const float TERRAIN_SIZE_DEPTH = 10.0f;
-	const int TERRAIN_SUBDIVISIONS_WIDTH = 5;
-	const int TERRAIN_SUBDIVISIONS_DEPTH = 5;
+	const float TERRAIN_SIZE_WIDTH = 16.0f;
+	const float TERRAIN_SIZE_DEPTH = 16.0f;
+	const int TERRAIN_SUBDIVISIONS_WIDTH = 32;
+	const int TERRAIN_SUBDIVISIONS_DEPTH = 32;
 	const int TERRAIN_VERTICES_WIDTH = TERRAIN_SUBDIVISIONS_WIDTH + 1;
 	const int TERRAIN_VERTICES_DEPTH = TERRAIN_SUBDIVISIONS_DEPTH + 1;
 	std::vector<vertex> terrainVertices;
@@ -99,16 +100,23 @@ void AppWindow::onCreate()
 		}
 	}
 
-	// Create heightmap
-	float* buffer = (float*)malloc(TERRAIN_VERTICES_WIDTH * TERRAIN_VERTICES_DEPTH * sizeof(float));
-	std::default_random_engine randomEngine(10);
+	// Perlin Noise
+	int HEIGHTMAP_SIZE = 128;
+	perlin_noise_seed = (float*)malloc(HEIGHTMAP_SIZE * HEIGHTMAP_SIZE * sizeof(float));
+	perlin_noise = (float*)malloc(HEIGHTMAP_SIZE * HEIGHTMAP_SIZE * sizeof(float));
+	std::default_random_engine randomEngine;
 	std::uniform_real_distribution distribution(0.0f, 1.0f);
-	
-	for (int i = 0; i < TERRAIN_VERTICES_WIDTH * TERRAIN_VERTICES_DEPTH; i++)
-		buffer[i] = distribution(randomEngine);
-	
-	heightmap = GraphicsEngine::get().getRenderSystem()->createHeightmapTexture(TERRAIN_VERTICES_WIDTH, TERRAIN_VERTICES_DEPTH, buffer);
-	delete[] buffer;
+
+	// Create seed
+	for (int i = 0; i < HEIGHTMAP_SIZE * HEIGHTMAP_SIZE; i++)
+	{
+		perlin_noise_seed[i] = distribution(randomEngine);
+	}
+
+	// Create heightmap buffer
+	Random::get().perlinNoise2D(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise_seed, 8, 2.0f, perlin_noise);
+
+	heightmap = GraphicsEngine::get().getRenderSystem()->createHeightmapTexture(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise);
 
 	// Create terrain index buffer
 	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(terrainIndices.data(), terrainIndices.size());
@@ -127,6 +135,9 @@ void AppWindow::onCreate()
 	constant cc;
 	cc.m_time = 0;
 	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
+
+	// Camera
+	m_world_camera *= Matrix4x4::translation({ 5.0f, 10.0f, -5.0f });
 }
 
 void AppWindow::onUpdate()

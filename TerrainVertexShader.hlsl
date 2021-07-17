@@ -1,4 +1,4 @@
-Texture2D<float> Texture: register(t0);
+Texture2D<float> Texture : register(t0);
 SamplerState TextureSampler : register(s0);
 
 struct VS_INPUT
@@ -24,7 +24,7 @@ VS_OUTPUT vsmain(VS_INPUT input)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
     float4 position = input.pos;
-    position.y += clamp(Texture.SampleLevel(TextureSampler, float2(input.pos.x, 1.0f - input.pos.z), 0).r, 0.0f, 1.0f);
+    position.y += Texture.SampleLevel(TextureSampler, input.pos.xz, 0) * 4.0f;
     output.pos_world = mul(position, m_world);
     output.pos = mul(output.pos_world, m_view);
 	output.pos = mul(output.pos, m_proj);
