@@ -37,7 +37,7 @@ void AppWindow::update()
 	constant cc;
 
 	Matrix4x4 terrain_transform(1.0f);
-	terrain_transform *= Matrix4x4::scale({ 16.0f, 1.0f, 16.0f });
+	terrain_transform *= Matrix4x4::scale({ 32.0f, 1.0f, 32.0f });
 
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
