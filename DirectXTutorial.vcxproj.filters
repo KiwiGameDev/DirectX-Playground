@@ -113,6 +113,8 @@
     </ClCompile>
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Heightmap.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="constant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -198,6 +200,9 @@
     <ClInclude Include="VertexMesh.h">
       <Filter>GameEngine\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="vertex.h" />
+    <ClInclude Include="constant.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">

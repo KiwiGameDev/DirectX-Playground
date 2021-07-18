@@ -7,6 +7,8 @@
 #include "IndexBuffer.h"
 #include "Vector2.h"
 #include "Vector3.h"
+#include "vertex.h"
+#include "constant.h"
 #include "Matrix4x4.h"
 #include "InputSystem.h"
 #include "Random.h"
@@ -15,29 +17,12 @@
 #include <vector>
 #include <random>
 
-struct vertex
-{
-	Vector3 position;
-};
-
-__declspec(align(16))
-struct constant
-{
-	Matrix4x4 m_world;
-	Matrix4x4 m_view;
-	Matrix4x4 m_proj;
-	unsigned int m_time;
-};
 
 void AppWindow::update()
 {
 	RECT screen_rect = getClientWindowRect();
 	float screen_width = (float)(screen_rect.right - screen_rect.left);
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
-	constant cc;
-
-	Matrix4x4 terrain_transform(1.0f);
-	terrain_transform *= Matrix4x4::scale({ 32.0f, 1.0f, 32.0f });
 
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
@@ -49,21 +34,11 @@ void AppWindow::update()
 	world_camera.inverse();
 
 	cc.m_time = GetTickCount();
-	cc.m_world = terrain_transform;
+	
 	cc.m_view = world_camera;
 	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
 
 	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
-}
-
-void AppWindow::GeneratePerlinNoiseSeed()
-{
-	std::default_random_engine randomEngine(seed);
-	std::uniform_real_distribution distribution(0.0f, 1.0f);
-	for (int i = 0; i < HEIGHTMAP_SIZE * HEIGHTMAP_SIZE; i++)
-	{
-		perlin_noise_seed[i] = distribution(randomEngine);
-	}
 }
 
 void AppWindow::onCreate()
@@ -74,58 +49,15 @@ void AppWindow::onCreate()
 	InputSystem::get().showCursor(false);
 
 	RECT rect = getClientWindowRect();
-	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
-	// Terrain
-	std::vector<vertex> terrainVertices;
-	std::vector<unsigned int> terrainIndices;
-	for (int i = 0; i <= TERRAIN_SUBDIVISIONS_DEPTH; i++)
-	{
-		for (int j = 0; j <= TERRAIN_SUBDIVISIONS_WIDTH; j++)
-		{
-			terrainVertices.push_back({{(float)j / TERRAIN_SUBDIVISIONS_WIDTH, 0.0f, (float)i / TERRAIN_SUBDIVISIONS_DEPTH }});
-		}
-	}
-	for (int i = 0; i < TERRAIN_SUBDIVISIONS_DEPTH; i++)
-	{
-		for (int j = 0; j < TERRAIN_SUBDIVISIONS_WIDTH; j++)
-		{
-			unsigned int botLeft = j + i * TERRAIN_VERTICES_WIDTH;
-			unsigned int topLeft = j + (i + 1) * TERRAIN_VERTICES_WIDTH;
-			unsigned int topRight = (j + 1) + (i + 1) * TERRAIN_VERTICES_WIDTH;
-			unsigned int botRight = (j + 1) + i * TERRAIN_VERTICES_WIDTH;
-			terrainIndices.push_back(botLeft);
-			terrainIndices.push_back(topLeft);
-			terrainIndices.push_back(topRight);
-			terrainIndices.push_back(botLeft);
-			terrainIndices.push_back(topRight);
-			terrainIndices.push_back(botRight);
-		}
-	}
-
-	perlin_noise_seed = (float*)malloc(HEIGHTMAP_SIZE * HEIGHTMAP_SIZE * sizeof(float));
-	perlin_noise = (float*)malloc(HEIGHTMAP_SIZE * HEIGHTMAP_SIZE * sizeof(float));
-	GeneratePerlinNoiseSeed();
-	
-	// Create terrain index buffer
-	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(terrainIndices.data(), terrainIndices.size());
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader_byte_code = 0;
-	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"TerrainVertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
-	m_vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(terrainVertices.data(), sizeof(vertex), terrainVertices.size(), shader_byte_code, size_shader_byte_code);
-	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
-	
-	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"TerrainPixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
-	m_ps = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
-	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
-
+	// Constant buffer
 	constant cc;
 	cc.m_time = 0;
 	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
 
+	// Terrain
+	terrain = new Terrain(128u, 128u, 128u, 128u);
 	// Camera
 	m_world_camera *= Matrix4x4::translation({ 5.0f, 10.0f, -5.0f });
 }
@@ -138,23 +70,15 @@ void AppWindow::onUpdate()
 
 	update();
 
-	// Create heightmap buffer
-	Random::get().perlinNoise2D(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise_seed, octaves, bias, perlin_noise);
-	heightmap = GraphicsEngine::get().getRenderSystem()->createHeightmapTexture(HEIGHTMAP_SIZE, HEIGHTMAP_SIZE, perlin_noise);
-
+	terrain->update();
+	
 	RECT rect = getClientWindowRect();
 	DeviceContextPtr deviceContext = GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext();
 	deviceContext->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	deviceContext->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
-	deviceContext->setConstantBuffer(m_vs, m_cb);
-	deviceContext->setConstantBuffer(m_ps, m_cb);
-	deviceContext->setVertexShader(m_vs);
-	deviceContext->setPixelShader(m_ps);
-	deviceContext->setHeightmapVertexShader(heightmap);
-	deviceContext->setVertexBuffer(m_vb);
-	deviceContext->setIndexBuffer(m_ib);
-	deviceContext->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 
+	terrain->draw(m_cb, cc);
+	
 	m_swap_chain->present(false);
 
 	m_old_delta = m_new_delta;
@@ -215,28 +139,28 @@ void AppWindow::onKeyUp(int key)
 	}
 	else if (key == 'I')
 	{
-		bias *= 1.1f;
+		terrain->bias *= 1.1f;
 	}
 	else if (key == 'K')
 	{
-		bias *= 0.9f;
+		terrain->bias *= 0.9f;
 	}
 	else if (key == 'L')
 	{
-		octaves++;
-		if (octaves > 8)
-			octaves = 8;
+		terrain->octaves++;
+		if (terrain->octaves > 8)
+			terrain->octaves = 8;
 	}
 	else if (key == 'J')
 	{
-		octaves--;
-		if (octaves < 1)
-			octaves = 1;
+		terrain->octaves--;
+		if (terrain->octaves < 1)
+			terrain->octaves = 1;
 	}
 	else if (key == 'N')
 	{
-		seed = time(0);
-		GeneratePerlinNoiseSeed();
+		terrain->seed = time(0);
+		terrain->GeneratePerlinNoiseSeed();
 	}
 }
 
