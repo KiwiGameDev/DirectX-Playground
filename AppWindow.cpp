@@ -14,6 +14,7 @@
 
 #include "Mesh.h"
 #include "MeshManager.h"
+#include "Time.h"
 
 struct vertex
 {
@@ -38,18 +39,18 @@ void AppWindow::update()
 	constant cc;
 
 	Matrix4x4 cube_transform(1.0f);
-	//cube_transform *= Matrix4x4::translation(Vector3(cos(m_new_delta / 1000000.0f), sin(m_new_delta / 1000000.0f), 2));
+	cube_transform *= Matrix4x4::translation(Vector3(cos(Time::get().timeSinceApplicationStart()), sin(Time::get().timeSinceApplicationStart()), 2));
 
 	Matrix4x4 world_camera(1.0f);
 	world_camera *= Matrix4x4::rotationX(m_rot_x);
 	world_camera *= Matrix4x4::rotationY(m_rot_y);
-	Vector3 new_camera_pos = m_world_camera.getTranslation() + world_camera.getZDirection() * (m_forward * 8.0f * m_delta_time) + world_camera.getXDirection() * (m_rightward * 8.0f * m_delta_time);
+	Vector3 new_camera_pos = m_world_camera.getTranslation() + world_camera.getZDirection() * (m_forward * 8.0f * Time::get().deltaTime()) + world_camera.getXDirection() * (m_rightward * 8.0f * Time::get().deltaTime());
 	world_camera *= Matrix4x4::translation(new_camera_pos);
 	
 	m_world_camera = world_camera;
 	world_camera.inverse();
 
-	cc.m_time = GetTickCount();
+	cc.m_time = Time::get().timeSinceApplicationStart();
 	cc.m_world = cube_transform;
 	cc.m_view = world_camera;
 	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
@@ -63,15 +64,14 @@ void AppWindow::onCreate()
 
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
-
+	
 	m_wood_tex = GraphicsEngine::get().getTextureManager()->createTextureFromFile(L"Assets\\Textures\\brick.png");
-	m_mesh = GraphicsEngine::get().getMeshManager()->createMeshFromFile(L"Assets\\Meshes\\teapot.obj");
 
 	RECT rect = getClientWindowRect();
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
-	// Temporary create triangle
+	// Cube
 	Vector3 position_list[] =
 	{
 		Vector3(-0.5f, -0.5f, -0.5f),
@@ -178,15 +178,11 @@ void AppWindow::onUpdate()
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setTexturePixelShader(m_wood_tex);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_mesh->getVertexBuffer());
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_mesh->getIndexBuffer());
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_mesh->getIndexBuffer()->getSizeIndices(), 0, 0);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 
 	m_swap_chain->present(false);
-
-	m_old_delta = m_new_delta;
-	m_new_delta = getMicrosecondsFromStart();
-	m_delta_time = m_old_delta ? (m_new_delta - m_old_delta) / 1000000.0f : 0.0f;
 }
 
 void AppWindow::onDestroy()
@@ -248,8 +244,8 @@ void AppWindow::onMouseMove(const Point& mouse_pos)
 	float screen_width_half = (screen_rect.right - screen_rect.left) / 2.0f;
 	float screen_height_half = (screen_rect.bottom - screen_rect.top + 1) / 2.0f;
 	
-	m_rot_x += (mouse_pos.y - screen_height_half) * m_delta_time * 4.0f;
-	m_rot_y += (mouse_pos.x - screen_width_half) * m_delta_time * 4.0f;
+	m_rot_x += (mouse_pos.y - screen_height_half) * Time::get().deltaTime() * 4.0f;
+	m_rot_y += (mouse_pos.x - screen_width_half) * Time::get().deltaTime() * 4.0f;
 
 	InputSystem::get().setCursorPosition(Point((int)screen_width_half, (int)screen_height_half));
 }
@@ -272,19 +268,4 @@ void AppWindow::onRightMouseDown(const Point& mouse_pos)
 void AppWindow::onRightMouseUp(const Point& mouse_pos)
 {
 	m_scale_cube = 1.0f;
-}
-
-long long AppWindow::getMicrosecondsFromStart()
-{
-	static LARGE_INTEGER s_frequency;
-	static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
-
-	if (s_use_qpc)
-	{
-		LARGE_INTEGER now;
-		QueryPerformanceCounter(&now);
-		return (1000000LL * now.QuadPart) / s_frequency.QuadPart;
-	}
-
-	return GetTickCount();
 }

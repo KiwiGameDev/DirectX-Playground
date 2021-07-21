@@ -2,7 +2,7 @@
 #include "IInputListener.h"
 #include <Windows.h>
 
-InputSystem* InputSystem::instance = nullptr;
+InputSystem* Singleton<InputSystem>::instance = nullptr;
 
 void InputSystem::update()
 {

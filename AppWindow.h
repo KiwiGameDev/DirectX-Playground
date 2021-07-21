@@ -24,8 +24,6 @@ public:
 	void onRightMouseUp(const Point& mouse_pos) override;
 
 private:
-	static long long getMicrosecondsFromStart();
-	
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 	VertexBufferPtr m_vb;
@@ -34,11 +32,6 @@ private:
 	PixelShaderPtr m_ps;
 
 	TexturePtr m_wood_tex;
-	MeshPtr m_mesh;
-
-	long long m_old_delta = 0LL;
-	long long m_new_delta = 0LL;
-	float m_delta_time = 0.0f;
 
 	float m_rot_x = 0.0f;
 	float m_rot_y = 0.0f;

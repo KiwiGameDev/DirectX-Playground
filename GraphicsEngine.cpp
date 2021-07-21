@@ -2,7 +2,7 @@
 #include "RenderSystem.h"
 #include "MeshManager.h"
 
-GraphicsEngine* GraphicsEngine::instance = nullptr;
+GraphicsEngine* Singleton<GraphicsEngine>::instance = nullptr;
 
 GraphicsEngine::GraphicsEngine()
 {

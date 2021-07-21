@@ -2,11 +2,13 @@
 #include "AppWindow.h"
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
+#include "Time.h"
 
 int main()
 {
 	try
 	{
+		Time::create();
 		GraphicsEngine::create();
 		InputSystem::create();
 	}
@@ -28,8 +30,9 @@ int main()
 	{
 		try
 		{
-			GraphicsEngine::release();
 			InputSystem::release();
+			GraphicsEngine::release();
+			Time::release();
 		}
 		catch (...)
 		{
@@ -43,6 +46,7 @@ int main()
 	{
 		GraphicsEngine::release();
 		InputSystem::release();
+		Time::release();
 	}
 	catch(...)
 	{

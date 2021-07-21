@@ -2,6 +2,8 @@
 #include <string>
 #include <exception>
 
+#include "Time.h"
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	switch (msg)
@@ -82,10 +84,11 @@ Window::Window()
 
 bool Window::broadcast()
 {
+	Time::get().logStart();
+	
 	if (!m_is_init)
 	{
 		m_is_init = true;
-		
 		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 		onCreate();
 	}
@@ -102,6 +105,8 @@ bool Window::broadcast()
 
 	Sleep(0);
 
+	Time::get().logEnd();
+	
 	return true;
 }
 
