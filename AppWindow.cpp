@@ -18,8 +18,10 @@
 
 struct vertex
 {
-	Vector3 position;
-	Vector2 texcoord;
+	Vector3 position_start;
+	Vector3 position_end;
+	Vector3 color_start;
+	Vector3 color_end;
 };
 
 __declspec(align(16))
@@ -28,7 +30,7 @@ struct constant
 	Matrix4x4 m_world;
 	Matrix4x4 m_view;
 	Matrix4x4 m_proj;
-	unsigned int m_time;
+	float m_time;
 };
 
 void AppWindow::update()
@@ -38,22 +40,21 @@ void AppWindow::update()
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	constant cc;
 
-	Matrix4x4 cube_transform(1.0f);
-	cube_transform *= Matrix4x4::translation(Vector3(cos(Time::get().timeSinceApplicationStart()), sin(Time::get().timeSinceApplicationStart()), 2));
+	//m_timer += Time::get().deltaTime() * sin(Time::get().timeSinceApplicationStart() * 0.33f) * 3.0f;
+	m_timer += Time::get().deltaTime();
 
-	Matrix4x4 world_camera(1.0f);
-	world_camera *= Matrix4x4::rotationX(m_rot_x);
-	world_camera *= Matrix4x4::rotationY(m_rot_y);
-	Vector3 new_camera_pos = m_world_camera.getTranslation() + world_camera.getZDirection() * (m_forward * 8.0f * Time::get().deltaTime()) + world_camera.getXDirection() * (m_rightward * 8.0f * Time::get().deltaTime());
-	world_camera *= Matrix4x4::translation(new_camera_pos);
+	//Matrix4x4 cube_transform(1.0f);
+
+	//Matrix4x4 world_camera(1.0f);
+	//world_camera *= Matrix4x4::translation({ 0.0f, 0.0f, 5.0f });
 	
-	m_world_camera = world_camera;
-	world_camera.inverse();
+	//m_world_camera = world_camera;
+	//world_camera.inverse();
 
-	cc.m_time = Time::get().timeSinceApplicationStart();
-	cc.m_world = cube_transform;
-	cc.m_view = world_camera;
-	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
+	cc.m_time = m_timer;
+	//cc.m_world = cube_transform;
+	//cc.m_view = world_camera;
+	//cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
 
 	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
@@ -72,75 +73,52 @@ void AppWindow::onCreate()
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Cube
-	Vector3 position_list[] =
+	Vector3 position_start[] =
 	{
-		Vector3(-0.5f, -0.5f, -0.5f),
-		Vector3(-0.5f,  0.5f, -0.5f),
-		Vector3( 0.5f,  0.5f, -0.5f),
-		Vector3( 0.5f, -0.5f, -0.5f),
-		Vector3( 0.5f, -0.5f,  0.5f),
-		Vector3( 0.5f,  0.5f,  0.5f),
-		Vector3(-0.5f,  0.5f,  0.5f),
-		Vector3(-0.5f, -0.5f,  0.5f)
+		Vector3(-0.8f, -0.9f, 0.0f),
+		Vector3(-0.9f,  0.1f, 0.0f),
+		Vector3(-0.5f, -0.5f, 0.0f),
+		Vector3(-0.1f, -0.6f, 0.0f)
 	};
 	
-	Vector2 texcoord_list[] =
+	Vector3 position_end[] =
 	{
-		Vector2(0.0f, 0.0f), 
-		Vector2(0.0f, 1.0f), 
-		Vector2(1.0f, 0.0f), 
-		Vector2(1.0f, 1.0f), 
+		Vector3(0.4f, 0.3f, 0.0f),
+		Vector3(0.6f, 0.9f, 0.0f),
+		Vector3(0.9f, 0.9f, 0.0f),
+		Vector3(0.8f, 0.5f, 0.0f)
+	};
+	
+	Vector3 color_start[] =
+	{
+		Vector3(0.0f, 0.0f, 0.0f),
+		Vector3(1.0f, 1.0f, 0.0f),
+		Vector3(1.0f, 1.0f, 1.0f),
+		Vector3(0.0f, 0.0f, 1.0f)
+	};
+	
+	Vector3 color_end[] =
+	{
+		Vector3(0.0f, 1.0f, 0.0f),
+		Vector3(1.0f, 1.0f, 0.0f),
+		Vector3(0.0f, 0.0f, 1.0f),
+		Vector3(1.0f, 0.0f, 0.0f)
 	};
 
 	vertex vertex_list[] =
 	{
-		{ position_list[0], texcoord_list[1] },
-		{ position_list[1], texcoord_list[0] },
-		{ position_list[2], texcoord_list[2] },
-		{ position_list[3], texcoord_list[3] },
-		
-		{ position_list[4], texcoord_list[1] },
-		{ position_list[5], texcoord_list[0] },
-		{ position_list[6], texcoord_list[2] },
-		{ position_list[7], texcoord_list[3] },
-		
-		{ position_list[1], texcoord_list[1] },
-		{ position_list[6], texcoord_list[0] },
-		{ position_list[5], texcoord_list[2] },
-		{ position_list[2], texcoord_list[3] },
-		
-		{ position_list[7], texcoord_list[1] },
-		{ position_list[0], texcoord_list[0] },
-		{ position_list[3], texcoord_list[2] },
-		{ position_list[4], texcoord_list[3] },
-		
-		{ position_list[3], texcoord_list[1] },
-		{ position_list[2], texcoord_list[0] },
-		{ position_list[5], texcoord_list[2] },
-		{ position_list[4], texcoord_list[3] },
-		
-		{ position_list[7], texcoord_list[1] },
-		{ position_list[6], texcoord_list[0] },
-		{ position_list[1], texcoord_list[2] },
-		{ position_list[0], texcoord_list[3] }
+		{ position_start[0], position_end[0], color_start[0], color_end[0] },
+		{ position_start[1], position_end[1], color_start[1], color_end[1] },
+		{ position_start[2], position_end[2], color_start[2], color_end[2] },
+		{ position_start[3], position_end[3], color_start[3], color_end[3] }
 	};
 	
 	UINT size_vertices = ARRAYSIZE(vertex_list);
 
 	unsigned int indices_list[] =
 	{
-		0,  1,  2,
-		2,  3,  0,
-		4,  5,  6,
-		6,  7,  4,
-		8,  9,  10,
-		10, 11, 8,
-		12, 13, 14,
-		14, 15, 12,
-		16, 17, 18,
-		18, 19, 16,
-		20, 21, 22,
-		22, 23, 20
+		3,  0,  1,
+		1,  2,  3
 	};
 	UINT size_indices = ARRAYSIZE(indices_list);
 
@@ -177,7 +155,6 @@ void AppWindow::onUpdate()
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setTexturePixelShader(m_wood_tex);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
@@ -219,10 +196,12 @@ void AppWindow::onKeyDown(int key)
 	else if (key == 'A')
 	{
 		m_rightward = -1.0f;
+		m_delta_time_multiplier -= Time::get().deltaTime();
 	}
 	else if (key == 'D')
 	{
 		m_rightward = 1.0f;
+		m_delta_time_multiplier += Time::get().deltaTime();
 	}
 }
 

@@ -33,6 +33,8 @@ private:
 
 	TexturePtr m_wood_tex;
 
+	float m_timer = 0.0f;
+	float m_delta_time_multiplier = 1.0f;
 	float m_rot_x = 0.0f;
 	float m_rot_y = 0.0f;
 	float m_scale_cube = 1.0f;
