@@ -1,8 +1,10 @@
 #pragma once
 #include "Window.h"
 #include "IInputListener.h"
+#include "Cube.h"
 #include "Matrix4x4.h"
 #include "Prerequisites.h"
+#include <vector>
 
 class AppWindow : public Window, public IInputListener
 {
@@ -26,13 +28,9 @@ public:
 private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
-	VertexBufferPtr m_vb;
-	IndexBufferPtr m_ib;
-	VertexShaderPtr m_vs;
-	PixelShaderPtr m_ps;
 
-	TexturePtr m_wood_tex;
-
+	std::vector<Cube> cubes;
+	
 	float m_timer = 0.0f;
 	float m_delta_time_multiplier = 1.0f;
 	float m_rot_x = 0.0f;

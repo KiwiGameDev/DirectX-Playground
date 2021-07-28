@@ -1,8 +1,7 @@
 struct PS_INPUT
 {
-	float4 pos		: SV_POSITION;
-    float3 color0	: COLOR0;
-    float3 color1	: COLOR1;
+	float4 pos : SV_POSITION;
+    float3 color : COLOR0;
 };
 
 cbuffer constant: register(b0)
@@ -15,5 +14,5 @@ cbuffer constant: register(b0)
 
 float4 psmain(PS_INPUT input) : SV_TARGET
 {
-    return float4(lerp(input.color0, input.color1, (sin(m_time) + 1.0f) / 2.0f).rgb, 1.0f);
+    return float4(input.color.rgb, 1.0f);
 }

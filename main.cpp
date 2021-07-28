@@ -3,11 +3,13 @@
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
 #include "Time.h"
+#include "Random.h"
 
 int main()
 {
 	try
 	{
+		Random::create();
 		Time::create();
 		GraphicsEngine::create();
 		InputSystem::create();
@@ -33,6 +35,7 @@ int main()
 			InputSystem::release();
 			GraphicsEngine::release();
 			Time::release();
+			Random::release();
 		}
 		catch (...)
 		{
@@ -47,6 +50,7 @@ int main()
 		GraphicsEngine::release();
 		InputSystem::release();
 		Time::release();
+		Random::release();
 	}
 	catch(...)
 	{

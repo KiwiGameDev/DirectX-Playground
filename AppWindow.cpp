@@ -2,35 +2,22 @@
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
 #include "ConstantBuffer.h"
+#include "ConstantBufferData.h"
 #include "DeviceContext.h"
 #include "SwapChain.h"
-#include "IndexBuffer.h"
-#include "Vector2.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "InputSystem.h"
+#include "Time.h"
+#include "Random.h"
 #include <Windows.h>
 #include <iostream>
-
-#include "Mesh.h"
-#include "MeshManager.h"
-#include "Time.h"
+#include <random>
 
 struct vertex
 {
-	Vector3 position_start;
-	Vector3 position_end;
-	Vector3 color_start;
-	Vector3 color_end;
-};
-
-__declspec(align(16))
-struct constant
-{
-	Matrix4x4 m_world;
-	Matrix4x4 m_view;
-	Matrix4x4 m_proj;
-	float m_time;
+	Vector3 position;
+	Vector3 color;
 };
 
 void AppWindow::update()
@@ -38,25 +25,24 @@ void AppWindow::update()
 	RECT screen_rect = getClientWindowRect();
 	float screen_width = (float)(screen_rect.right - screen_rect.left);
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
-	constant cc;
+	ConstantBufferData cc;
 
-	//m_timer += Time::get().deltaTime() * sin(Time::get().timeSinceApplicationStart() * 0.33f) * 3.0f;
 	m_timer += Time::get().deltaTime();
-
-	//Matrix4x4 cube_transform(1.0f);
-
-	//Matrix4x4 world_camera(1.0f);
-	//world_camera *= Matrix4x4::translation({ 0.0f, 0.0f, 5.0f });
 	
-	//m_world_camera = world_camera;
-	//world_camera.inverse();
+	Matrix4x4 world_camera(1.0f);
+
+	m_world_camera = world_camera;
+	world_camera.inverse();
 
 	cc.m_time = m_timer;
-	//cc.m_world = cube_transform;
-	//cc.m_view = world_camera;
-	//cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
+	cc.m_view = world_camera;
+	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
 
-	m_cb->update(GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext(), &cc);
+	for (Cube& cube : cubes)
+	{
+		cube.update(Time::get().deltaTime());
+		cube.draw(m_cb, cc);
+	}
 }
 
 void AppWindow::onCreate()
@@ -66,78 +52,68 @@ void AppWindow::onCreate()
 	InputSystem::get().addListener(this);
 	InputSystem::get().showCursor(false);
 	
-	m_wood_tex = GraphicsEngine::get().getTextureManager()->createTextureFromFile(L"Assets\\Textures\\brick.png");
-
 	RECT rect = getClientWindowRect();
 	
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Cube
-	Vector3 position_start[] =
+	vertex cube_vertices[] =
 	{
-		Vector3(-0.8f, -0.9f, 0.0f),
-		Vector3(-0.9f,  0.1f, 0.0f),
-		Vector3(-0.5f, -0.5f, 0.0f),
-		Vector3(-0.1f, -0.6f, 0.0f)
+		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f) },
+		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f) },
+		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f) },
+		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f) },
+		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f) },
+		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 1.0f) },
+		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 1.0f) },
+		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f) }
 	};
-	
-	Vector3 position_end[] =
-	{
-		Vector3(0.4f, 0.3f, 0.0f),
-		Vector3(0.6f, 0.9f, 0.0f),
-		Vector3(0.9f, 0.9f, 0.0f),
-		Vector3(0.8f, 0.5f, 0.0f)
-	};
-	
-	Vector3 color_start[] =
-	{
-		Vector3(0.0f, 0.0f, 0.0f),
-		Vector3(1.0f, 1.0f, 0.0f),
-		Vector3(1.0f, 1.0f, 1.0f),
-		Vector3(0.0f, 0.0f, 1.0f)
-	};
-	
-	Vector3 color_end[] =
-	{
-		Vector3(0.0f, 1.0f, 0.0f),
-		Vector3(1.0f, 1.0f, 0.0f),
-		Vector3(0.0f, 0.0f, 1.0f),
-		Vector3(1.0f, 0.0f, 0.0f)
-	};
+	UINT size_cube_vertices = ARRAYSIZE(cube_vertices);
 
-	vertex vertex_list[] =
+	unsigned int cube_indices[] =
 	{
-		{ position_start[0], position_end[0], color_start[0], color_end[0] },
-		{ position_start[1], position_end[1], color_start[1], color_end[1] },
-		{ position_start[2], position_end[2], color_start[2], color_end[2] },
-		{ position_start[3], position_end[3], color_start[3], color_end[3] }
+		0, 1, 2,
+		2, 3, 0,
+		4, 5, 6,
+		6, 7, 4,
+		1, 6, 5,
+		5, 2, 1,
+		7, 0, 3,
+		3, 4, 7,
+		3, 2, 5,
+		5, 4, 3,
+		7, 6, 1,
+		1, 0, 7
 	};
+	UINT size_cube_indices = ARRAYSIZE(cube_indices);
 	
-	UINT size_vertices = ARRAYSIZE(vertex_list);
-
-	unsigned int indices_list[] =
-	{
-		3,  0,  1,
-		1,  2,  3
-	};
-	UINT size_indices = ARRAYSIZE(indices_list);
-
-	m_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(indices_list, size_indices);
+	IndexBufferPtr ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader_byte_code = 0;
 	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
-	m_vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	m_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(vertex_list, sizeof(vertex), size_vertices, shader_byte_code, size_shader_byte_code);
+	VertexShaderPtr vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
+	VertexBufferPtr vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 	
 	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
-	m_ps = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
+	PixelShaderPtr ps = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 
-	constant cc;
-	cc.m_time = 0;
-	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
+	// Create constant buffer
+	ConstantBufferData cb;
+	cb.m_time = 0;
+	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cb, sizeof(ConstantBufferData));
+
+	// Create cubes
+	std::default_random_engine engine;
+	std::uniform_real_distribution distribution(-4.0f, 4.0f);
+	for (int i = 0; i < 100; i++)
+	{
+		Cube cube = Cube("Cube_" + i, vb, ib, vs, ps);
+		cube.setPosition(Vector3(distribution(engine), distribution(engine), 5.0f));
+		cubes.push_back(cube);
+	}
 }
 
 void AppWindow::onUpdate()
@@ -146,19 +122,12 @@ void AppWindow::onUpdate()
 
 	InputSystem::get().update();
 
-	update();
-
 	RECT rect = getClientWindowRect();
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 
+	update();
+	
 	m_swap_chain->present(false);
 }
 

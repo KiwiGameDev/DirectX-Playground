@@ -112,6 +112,11 @@
       <Filter>GameEngine\GraphicsEngine\ResourceManager\MeshManager</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Random.cpp" />
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameEngine\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -196,6 +201,10 @@
       <Filter>GameEngine\Math</Filter>
     </ClInclude>
     <ClInclude Include="Time.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="ConstantBufferData.h" />
+    <ClInclude Include="Random.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
