@@ -113,10 +113,11 @@
     </ClCompile>
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="Random.cpp" />
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Random.cpp">
       <Filter>GameEngine\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -204,7 +205,13 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="ConstantBufferData.h" />
-    <ClInclude Include="Random.h" />
+    <ClInclude Include="Random.h">
+      <Filter>GameEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Mathf.h">
+      <Filter>GameEngine\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">

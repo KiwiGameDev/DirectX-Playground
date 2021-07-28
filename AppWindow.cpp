@@ -1,7 +1,6 @@
 #include "AppWindow.h"
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
-#include "ConstantBuffer.h"
 #include "ConstantBufferData.h"
 #include "DeviceContext.h"
 #include "SwapChain.h"
@@ -9,7 +8,7 @@
 #include "Matrix4x4.h"
 #include "InputSystem.h"
 #include "Time.h"
-#include "Random.h"
+#include "Mathf.h"
 #include <Windows.h>
 #include <iostream>
 #include <random>
@@ -25,23 +24,32 @@ void AppWindow::update()
 	RECT screen_rect = getClientWindowRect();
 	float screen_width = (float)(screen_rect.right - screen_rect.left);
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
-	ConstantBufferData cc;
+	ConstantBufferData cbd;
 
 	m_timer += Time::get().deltaTime();
+
+	Matrix4x4 camera_transform = m_camera.getTransform();
+	Vector3 new_camera_pos = m_camera.getLocalPosition() + camera_transform.getZDirection() * m_forward * 4.0f * Time::get().deltaTime() + camera_transform.getXDirection() * m_rightward * 4.0f * Time::get().deltaTime();
+	m_camera.setPosition(new_camera_pos);
+
+	Matrix4x4 view = m_camera.getTransform();
+	view.inverse();
 	
-	Matrix4x4 world_camera(1.0f);
+	cbd.m_time = m_timer;
+	cbd.m_view = view;
+	cbd.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
 
-	m_world_camera = world_camera;
-	world_camera.inverse();
-
-	cc.m_time = m_timer;
-	cc.m_view = world_camera;
-	cc.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
-
+	// Cubes
 	for (Cube& cube : cubes)
 	{
 		cube.update(Time::get().deltaTime());
-		cube.draw(m_cb, cc);
+		cube.draw(m_cb, cbd);
+	}
+
+	// Other GameObjects
+	for (GameObject& gameobject : gameobjects)
+	{
+		gameobject.draw(m_cb, cbd);
 	}
 }
 
@@ -86,14 +94,33 @@ void AppWindow::onCreate()
 		1, 0, 7
 	};
 	UINT size_cube_indices = ARRAYSIZE(cube_indices);
-	
-	IndexBufferPtr ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
 
+	// Quad
+	vertex quad_vertices[] =
+	{
+		{ Vector3(-0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
+		{ Vector3(-0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
+		{ Vector3( 0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
+		{ Vector3( 0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) }
+	};
+	UINT size_quad_vertices = ARRAYSIZE(cube_vertices);
+
+	unsigned int quad_indices[] =
+	{
+		0, 1, 2,
+		2, 3, 0
+	};
+	UINT size_quad_indices = ARRAYSIZE(cube_indices);
+	
+	IndexBufferPtr cube_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
+	IndexBufferPtr quad_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(quad_indices, size_quad_indices);
+	
 	void* shader_byte_code = nullptr;
 	size_t size_shader_byte_code = 0;
 	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
 	VertexShaderPtr vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	VertexBufferPtr vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
+	VertexBufferPtr cube_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
+	VertexBufferPtr quad_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(quad_vertices, sizeof(vertex), size_quad_vertices, shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 	
 	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
@@ -106,14 +133,19 @@ void AppWindow::onCreate()
 	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cb, sizeof(ConstantBufferData));
 
 	// Create cubes
-	std::default_random_engine engine;
-	std::uniform_real_distribution distribution(-4.0f, 4.0f);
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 1; i++)
 	{
-		Cube cube = Cube("Cube_" + i, vb, ib, vs, ps);
-		cube.setPosition(Vector3(distribution(engine), distribution(engine), 5.0f));
+		Cube cube = Cube("Cube_" + i, cube_vb, cube_ib, vs, ps);
+		cube.setPosition(0.0f, -1.0f, 1.0f);
 		cubes.push_back(cube);
 	}
+
+	// Create plane
+	GameObject plane("Plane", quad_vb, quad_ib, vs, ps);
+	plane.setRotation(90.0f * Mathf::deg2rad, 0.0f, 0.0f);
+	plane.setPosition(0.0f, -1.0f, 1.0f);
+	plane.setScale(8.0f, 8.0f, 1.0f);
+	gameobjects.push_back(plane);
 }
 
 void AppWindow::onUpdate()
@@ -192,8 +224,8 @@ void AppWindow::onMouseMove(const Point& mouse_pos)
 	float screen_width_half = (screen_rect.right - screen_rect.left) / 2.0f;
 	float screen_height_half = (screen_rect.bottom - screen_rect.top + 1) / 2.0f;
 	
-	m_rot_x += (mouse_pos.y - screen_height_half) * Time::get().deltaTime() * 4.0f;
-	m_rot_y += (mouse_pos.x - screen_width_half) * Time::get().deltaTime() * 4.0f;
+	m_camera.setRotationX(m_camera.getLocalRotationX() + (mouse_pos.y - screen_height_half) * Time::get().deltaTime() * 4.0f);
+	m_camera.setRotationY(m_camera.getLocalRotationY() + (mouse_pos.x - screen_width_half) * Time::get().deltaTime() * 4.0f);
 
 	InputSystem::get().setCursorPosition(Point((int)screen_width_half, (int)screen_height_half));
 }

@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppWindow.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
@@ -181,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferData.h" />
     <ClInclude Include="Cube.h" />
@@ -190,6 +192,7 @@
     <ClInclude Include="IInputListener.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="Mathf.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />

@@ -14,6 +14,11 @@ GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, I
 	scale = Vector3(1.0f, 1.0f, 1.0f);
 }
 
+void GameObject::update(float deltaTime)
+{
+		
+}
+
 void GameObject::draw(const ConstantBufferPtr& cb, ConstantBufferData& cbd)
 {
 	DeviceContextPtr device_context = GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext();

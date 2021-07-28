@@ -4,6 +4,7 @@
 #include "Cube.h"
 #include "Matrix4x4.h"
 #include "Prerequisites.h"
+#include "Camera.h"
 #include <vector>
 
 class AppWindow : public Window, public IInputListener
@@ -30,14 +31,13 @@ private:
 	ConstantBufferPtr m_cb;
 
 	std::vector<Cube> cubes;
+	std::vector<GameObject> gameobjects;
 	
 	float m_timer = 0.0f;
 	float m_delta_time_multiplier = 1.0f;
-	float m_rot_x = 0.0f;
-	float m_rot_y = 0.0f;
 	float m_scale_cube = 1.0f;
 	float m_forward = 0.0f;
 	float m_rightward = 0.0f;
 
-	Matrix4x4 m_world_camera;
+	Camera m_camera;
 };

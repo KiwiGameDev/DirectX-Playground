@@ -9,7 +9,7 @@ class GameObject
 public:
 	GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader);;
 
-	virtual void update(float deltaTime) = 0;
+	virtual void update(float deltaTime);
 	void draw(const ConstantBufferPtr& cb, ConstantBufferData& cbd);
 
 	void setPosition(float x, float y, float z);
