@@ -1,10 +1,18 @@
 #include "Camera.h"
 #include "Time.h"
 
+Camera::Camera(float fov, float aspect, float near, float far)
+	: m_fov(fov), m_aspect(aspect), m_near(near), m_far(far)
+{
+	m_proj = Matrix4x4::perspectiveFovLH(fov, aspect, near, far);
+}
+
 void Camera::update()
 {
 	Matrix4x4 camera_transform = getTransform();
-	Position = Position + camera_transform.getZDirection() * m_forward * 4.0f * Time::get().deltaTime() + camera_transform.getXDirection() * m_rightward * 4.0f * Time::get().deltaTime();
+	Vector3 move_z = camera_transform.getZDirection() * m_forward * 4.0f * Time::get().deltaTime();
+	Vector3 move_x = camera_transform.getXDirection() * m_rightward * 4.0f * Time::get().deltaTime();
+	setPosition(getPosition() + move_z + move_x);
 }
 
 void Camera::onKeyDown(int key)
@@ -43,7 +51,37 @@ void Camera::onMouseMove(const Vector2& window_size, const Point& mouse_pos)
 {
 	float window_width_half = window_size.x / 2.0f;
 	float window_height_half = window_size.y / 2.0f;
-	
-	Rotation.x += (mouse_pos.y - window_height_half) * Time::get().deltaTime() * 4.0f;
-	Rotation.y += (mouse_pos.x - window_width_half) * Time::get().deltaTime() * 4.0f;
+
+	Vector3 rotation = getRotation();
+	rotation.x += (mouse_pos.y - window_height_half) * Time::get().deltaTime() * 4.0f;
+	rotation.y += (mouse_pos.x - window_width_half) * Time::get().deltaTime() * 4.0f;
+	setRotation(rotation);
+}
+
+void Camera::setFOV(float new_fov)
+{
+	m_fov = new_fov;
+	m_is_proj_dirty = true;
+}
+
+void Camera::setAspectRatio(float new_aspect)
+{
+	m_aspect = new_aspect;
+	m_is_proj_dirty = true;
+}
+
+Matrix4x4 Camera::getViewMatrix()
+{
+	return getInverseTransform();
+}
+
+Matrix4x4 Camera::getProjectionMatrix()
+{
+	if (m_is_proj_dirty)
+	{
+		m_proj = Matrix4x4::perspectiveFovLH(m_fov, m_aspect, m_near, m_far);
+		m_is_proj_dirty = false;
+	}
+
+	return m_proj;
 }

@@ -1,8 +1,7 @@
 #include "Window.h"
+#include "Time.h"
 #include <string>
 #include <exception>
-
-#include "Time.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -66,8 +65,8 @@ Window::Window()
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		1024,
-		768,
+		(int)DEFAULT_WIDTH,
+		(int)DEFAULT_HEIGHT,
 		NULL,
 		NULL,
 		NULL,

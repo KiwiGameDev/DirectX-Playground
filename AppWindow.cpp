@@ -1,48 +1,22 @@
 #include "AppWindow.h"
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
-#include "ConstantBufferData.h"
 #include "DeviceContext.h"
 #include "SwapChain.h"
-#include "Vector3.h"
-#include "Matrix4x4.h"
 #include "InputSystem.h"
-#include "Time.h"
+#include "CameraManager.h"
+#include "ConstantBufferData.h"
+#include "Vector3.h"
+#include "Vertex.h"
 #include "Mathf.h"
 #include <Windows.h>
 #include <iostream>
 #include <random>
 
-#include "Vertex.h"
-
-void AppWindow::update()
+AppWindow::AppWindow()
+	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
 {
-	RECT screen_rect = getClientWindowRect();
-	float screen_width = (float)(screen_rect.right - screen_rect.left);
-	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
-	ConstantBufferData cbd;
-
-	m_timer += Time::get().deltaTime();
-
-	m_camera.update();
-	Matrix4x4 view = m_camera.getInverseTransform();
-	
-	cbd.m_time = m_timer;
-	cbd.m_view = view;
-	cbd.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
-
-	// Cubes
-	for (Cube& cube : cubes)
-	{
-		cube.update();
-		cube.draw(m_cb, cbd);
-	}
-
-	// Other GameObjects
-	for (GameObject& gameobject : gameobjects)
-	{
-		gameobject.draw(m_cb, cbd);
-	}
+	CameraManager::get().setEditorCamera(&m_editor_camera);
 }
 
 void AppWindow::onCreate()
@@ -120,23 +94,23 @@ void AppWindow::onCreate()
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 
 	// Create constant buffer
-	ConstantBufferData cb;
-	cb.m_time = 0;
-	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cb, sizeof(ConstantBufferData));
+	ConstantBufferData cbd;
+	cbd.m_time = 0;
+	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cbd, sizeof(ConstantBufferData));
 
 	// Create cubes
 	for (int i = 0; i < 1; i++)
 	{
-		Cube cube = Cube("Cube_" + i, cube_vb, cube_ib, vs, ps);
-		cube.Position = Vector3(0.0f, -1.0f, 1.0f);
+		Cube cube = Cube("Cube_" + i, cube_vb, cube_ib, m_cb, vs, ps);
+		cube.setPosition(Vector3(0.0f, -1.0f, 1.0f));
 		cubes.push_back(cube);
 	}
 
 	// Create plane
-	GameObject plane("Plane", quad_vb, quad_ib, vs, ps);
-	plane.Scale = Vector3(8.0f, 8.0f, 1.0f);
-	plane.Rotation = Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f);
-	plane.Position = Vector3(0.0f, -1.0f, 1.0f);
+	GameObject plane("Plane", quad_vb, quad_ib, m_cb, vs, ps);
+	plane.setScale(Vector3(8.0f, 8.0f, 1.0f));
+	plane.setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
+	plane.setPosition(Vector3(0.0f, -1.0f, 1.0f));
 	gameobjects.push_back(plane);
 }
 
@@ -145,12 +119,29 @@ void AppWindow::onUpdate()
 	Window::onUpdate();
 
 	InputSystem::get().update();
-
-	RECT rect = getClientWindowRect();
+	
+	RECT screen_rect = getClientWindowRect();
+	float screen_width = (float)(screen_rect.right - screen_rect.left);
+	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(rect.right - rect.left, rect.bottom - rect.top);
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(screen_width, screen_height);
 
-	update();
+	// Camera
+	m_editor_camera.update();
+	
+	// Cubes
+	for (Cube& cube : cubes)
+	{
+		cube.update();
+		cube.draw();
+	}
+
+	// Other GameObjects
+	for (GameObject& gameobject : gameobjects)
+	{
+		gameobject.update();
+		gameobject.draw();
+	}
 	
 	m_swap_chain->present(false);
 }
@@ -176,12 +167,12 @@ void AppWindow::onKillFocus()
 
 void AppWindow::onKeyDown(int key)
 {
-	m_camera.onKeyDown(key);
+	m_editor_camera.onKeyDown(key);
 }
 
 void AppWindow::onKeyUp(int key)
 {
-	m_camera.onKeyUp(key);
+	m_editor_camera.onKeyUp(key);
 }
 
 void AppWindow::onMouseMove(const Point& mouse_pos)
@@ -192,7 +183,7 @@ void AppWindow::onMouseMove(const Point& mouse_pos)
 	float window_height = window_size.bottom - window_size.top + 1L;
 	float window_height_half = window_height / 2.0f;
 	
-	m_camera.onMouseMove(Vector2(window_width, window_height), mouse_pos);
+	m_editor_camera.onMouseMove(Vector2(window_width, window_height), mouse_pos);
 
 	InputSystem::get().setCursorPosition(Point((int)window_width_half, (int)window_height_half));
 }

@@ -2,8 +2,8 @@
 #include "Random.h"
 #include "Time.h"
 
-Cube::Cube(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
-	: GameObject(name, std::move(vertex_buffer), std::move(index_buffer), std::move(vertex_shader), std::move(pixel_shader))
+Cube::Cube(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
+	: GameObject(name, std::move(vertex_buffer), std::move(index_buffer), std::move(constant_buffer), std::move(vertex_shader), std::move(pixel_shader))
 {
 	float x = Random::get().range(-7.0f, 7.0f);
 	float y = Random::get().range(-7.0f, 7.0f);
@@ -13,7 +13,9 @@ Cube::Cube(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPt
 
 void Cube::update()
 {
-	Rotation.x += rotation_update.x * Time::get().deltaTime();
-	Rotation.y += rotation_update.y * Time::get().deltaTime();
-	Rotation.z += rotation_update.z * Time::get().deltaTime();
+	Vector3 rotation = getRotation();
+	rotation.x += rotation_update.x * Time::get().deltaTime();
+	rotation.y += rotation_update.y * Time::get().deltaTime();
+	rotation.z += rotation_update.z * Time::get().deltaTime();
+	setRotation(rotation);
 }

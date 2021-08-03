@@ -9,7 +9,7 @@
 class AppWindow : public Window, public IInputListener
 {
 public:
-	void update();
+	AppWindow();
 	
 	void onCreate() override;
 	void onUpdate() override;
@@ -29,7 +29,7 @@ private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 
-	Camera m_camera;
+	Camera m_editor_camera;
 	
 	std::vector<Cube> cubes;
 	std::vector<GameObject> gameobjects;

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "AppWindow.h"
+#include "CameraManager.h"
 #include "GraphicsEngine.h"
 #include "InputSystem.h"
 #include "Time.h"
@@ -13,6 +14,7 @@ int main()
 		Time::create();
 		GraphicsEngine::create();
 		InputSystem::create();
+		CameraManager::create();
 	}
 	catch(...)
 	{
@@ -36,6 +38,7 @@ int main()
 			GraphicsEngine::release();
 			Time::release();
 			Random::release();
+			CameraManager::release();
 		}
 		catch (...)
 		{
@@ -51,6 +54,7 @@ int main()
 		InputSystem::release();
 		Time::release();
 		Random::release();
+		CameraManager::release();
 	}
 	catch(...)
 	{

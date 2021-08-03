@@ -1,15 +1,17 @@
 #include "GameObject.h"
-
-#include <utility>
 #include "ConstantBuffer.h"
 #include "ConstantBufferData.h"
 #include "IndexBuffer.h"
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
 #include "DeviceContext.h"
+#include <utility>
 
-GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
-	: name(name), vb(std::move(vertex_buffer)), ib(std::move(index_buffer)), vs(std::move(vertex_shader)), ps(std::move(pixel_shader))
+#include "CameraManager.h"
+#include "Time.h"
+
+GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
+	: name(name), m_vb(std::move(vertex_buffer)), m_ib(std::move(index_buffer)), m_cb(std::move(constant_buffer)), m_vs(std::move(vertex_shader)), m_ps(std::move(pixel_shader))
 {
 	
 }
@@ -19,23 +21,22 @@ void GameObject::update()
 	
 }
 
-void GameObject::draw(const ConstantBufferPtr& cb, ConstantBufferData& cbd)
+void GameObject::draw()
 {
 	DeviceContextPtr device_context = GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext();
 	
-	cbd.m_world = Matrix4x4::identity();
-	cbd.m_world *= Matrix4x4::scale(Scale);
-	cbd.m_world *= Matrix4x4::rotationX(Rotation.x);
-	cbd.m_world *= Matrix4x4::rotationY(Rotation.y);
-	cbd.m_world *= Matrix4x4::rotationZ(Rotation.z);
-	cbd.m_world *= Matrix4x4::translation(Position);
-	cb->update(device_context, &cbd);
+	ConstantBufferData cbd;
+	cbd.m_world = getTransform();
+	cbd.m_view = CameraManager::get().getEditorCamera()->getViewMatrix();
+	cbd.m_proj = CameraManager::get().getEditorCamera()->getProjectionMatrix();
+	cbd.m_time = Time::get().timeSinceApplicationStart();
+	m_cb->update(device_context, &cbd);
 	
-	device_context->setVertexShader(vs);
-	device_context->setPixelShader(ps);
-	device_context->setConstantBuffer(vs, cb);
-	device_context->setConstantBuffer(ps, cb);
-	device_context->setVertexBuffer(vb);
-	device_context->setIndexBuffer(ib);
-	device_context->drawIndexedTriangleList(ib->getSizeIndices(), 0, 0);
+	device_context->setVertexShader(m_vs);
+	device_context->setPixelShader(m_ps);
+	device_context->setConstantBuffer(m_vs, m_cb);
+	device_context->setConstantBuffer(m_ps, m_cb);
+	device_context->setVertexBuffer(m_vb);
+	device_context->setIndexBuffer(m_ib);
+	device_context->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
 }
