@@ -13,11 +13,7 @@
 #include <iostream>
 #include <random>
 
-struct vertex
-{
-	Vector3 position;
-	Vector3 color;
-};
+#include "Vertex.h"
 
 void AppWindow::update()
 {
@@ -28,12 +24,8 @@ void AppWindow::update()
 
 	m_timer += Time::get().deltaTime();
 
-	Matrix4x4 camera_transform = m_camera.getTransform();
-	Vector3 new_camera_pos = m_camera.getLocalPosition() + camera_transform.getZDirection() * m_forward * 4.0f * Time::get().deltaTime() + camera_transform.getXDirection() * m_rightward * 4.0f * Time::get().deltaTime();
-	m_camera.setPosition(new_camera_pos);
-
-	Matrix4x4 view = m_camera.getTransform();
-	view.inverse();
+	m_camera.update();
+	Matrix4x4 view = m_camera.getInverseTransform();
 	
 	cbd.m_time = m_timer;
 	cbd.m_view = view;
@@ -42,7 +34,7 @@ void AppWindow::update()
 	// Cubes
 	for (Cube& cube : cubes)
 	{
-		cube.update(Time::get().deltaTime());
+		cube.update();
 		cube.draw(m_cb, cbd);
 	}
 
@@ -65,7 +57,7 @@ void AppWindow::onCreate()
 	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Cube
-	vertex cube_vertices[] =
+	Vertex cube_vertices[] =
 	{
 		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f) },
 		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f) },
@@ -96,7 +88,7 @@ void AppWindow::onCreate()
 	UINT size_cube_indices = ARRAYSIZE(cube_indices);
 
 	// Quad
-	vertex quad_vertices[] =
+	Vertex quad_vertices[] =
 	{
 		{ Vector3(-0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
 		{ Vector3(-0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
@@ -119,8 +111,8 @@ void AppWindow::onCreate()
 	size_t size_shader_byte_code = 0;
 	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
 	VertexShaderPtr vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	VertexBufferPtr cube_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
-	VertexBufferPtr quad_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(quad_vertices, sizeof(vertex), size_quad_vertices, shader_byte_code, size_shader_byte_code);
+	VertexBufferPtr cube_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(Vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
+	VertexBufferPtr quad_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(quad_vertices, sizeof(Vertex), size_quad_vertices, shader_byte_code, size_shader_byte_code);
 	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
 	
 	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
@@ -136,15 +128,15 @@ void AppWindow::onCreate()
 	for (int i = 0; i < 1; i++)
 	{
 		Cube cube = Cube("Cube_" + i, cube_vb, cube_ib, vs, ps);
-		cube.setPosition(0.0f, -1.0f, 1.0f);
+		cube.Position = Vector3(0.0f, -1.0f, 1.0f);
 		cubes.push_back(cube);
 	}
 
 	// Create plane
 	GameObject plane("Plane", quad_vb, quad_ib, vs, ps);
-	plane.setRotation(90.0f * Mathf::deg2rad, 0.0f, 0.0f);
-	plane.setPosition(0.0f, -1.0f, 1.0f);
-	plane.setScale(8.0f, 8.0f, 1.0f);
+	plane.Scale = Vector3(8.0f, 8.0f, 1.0f);
+	plane.Rotation = Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f);
+	plane.Position = Vector3(0.0f, -1.0f, 1.0f);
 	gameobjects.push_back(plane);
 }
 
@@ -166,8 +158,6 @@ void AppWindow::onUpdate()
 void AppWindow::onDestroy()
 {
 	Window::onDestroy();
-	
-	InputSystem::get().removeListener(this);
 }
 
 void AppWindow::onFocus()
@@ -186,66 +176,43 @@ void AppWindow::onKillFocus()
 
 void AppWindow::onKeyDown(int key)
 {
-	if (key == 'W')
-	{
-		m_forward = 1.0f;
-	}
-	else if (key == 'S')
-	{
-		m_forward = -1.0f;
-	}
-	else if (key == 'A')
-	{
-		m_rightward = -1.0f;
-		m_delta_time_multiplier -= Time::get().deltaTime();
-	}
-	else if (key == 'D')
-	{
-		m_rightward = 1.0f;
-		m_delta_time_multiplier += Time::get().deltaTime();
-	}
+	m_camera.onKeyDown(key);
 }
 
 void AppWindow::onKeyUp(int key)
 {
-	if (key == 'W' || key == 'S')
-	{
-		m_forward = 0.0f;
-	}
-	else if (key == 'A' || key == 'D')
-	{
-		m_rightward = 0.0f;
-	}
+	m_camera.onKeyUp(key);
 }
 
 void AppWindow::onMouseMove(const Point& mouse_pos)
 {
-	RECT screen_rect = getClientWindowRect();
-	float screen_width_half = (screen_rect.right - screen_rect.left) / 2.0f;
-	float screen_height_half = (screen_rect.bottom - screen_rect.top + 1) / 2.0f;
+	RECT window_size = getClientWindowRect();
+	float window_width = window_size.right - window_size.left;
+	float window_width_half = window_width / 2.0f;
+	float window_height = window_size.bottom - window_size.top + 1L;
+	float window_height_half = window_height / 2.0f;
 	
-	m_camera.setRotationX(m_camera.getLocalRotationX() + (mouse_pos.y - screen_height_half) * Time::get().deltaTime() * 4.0f);
-	m_camera.setRotationY(m_camera.getLocalRotationY() + (mouse_pos.x - screen_width_half) * Time::get().deltaTime() * 4.0f);
+	m_camera.onMouseMove(Vector2(window_width, window_height), mouse_pos);
 
-	InputSystem::get().setCursorPosition(Point((int)screen_width_half, (int)screen_height_half));
+	InputSystem::get().setCursorPosition(Point((int)window_width_half, (int)window_height_half));
 }
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 {
-	m_scale_cube = 0.5f;
+	
 }
 
 void AppWindow::onLeftMouseUp(const Point& mouse_pos)
 {
-	m_scale_cube = 1.0f;
+	
 }
 
 void AppWindow::onRightMouseDown(const Point& mouse_pos)
 {
-	m_scale_cube = 2.0f;
+	
 }
 
 void AppWindow::onRightMouseUp(const Point& mouse_pos)
 {
-	m_scale_cube = 1.0f;
+	
 }

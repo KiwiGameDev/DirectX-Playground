@@ -1,6 +1,6 @@
 #include "Cube.h"
 #include "Random.h"
-#include <utility>
+#include "Time.h"
 
 Cube::Cube(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
 	: GameObject(name, std::move(vertex_buffer), std::move(index_buffer), std::move(vertex_shader), std::move(pixel_shader))
@@ -11,9 +11,9 @@ Cube::Cube(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPt
 	rotation_update = Vector3(x, y, z);
 }
 
-void Cube::update(float deltaTime)
+void Cube::update()
 {
-	rotation.x += rotation_update.x * deltaTime;
-	rotation.y += rotation_update.y * deltaTime;
-	rotation.z += rotation_update.z * deltaTime;
+	Rotation.x += rotation_update.x * Time::get().deltaTime();
+	Rotation.y += rotation_update.y * Time::get().deltaTime();
+	Rotation.z += rotation_update.z * Time::get().deltaTime();
 }

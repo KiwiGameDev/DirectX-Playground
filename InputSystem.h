@@ -7,7 +7,7 @@ class IInputListener;
 
 class InputSystem : public Singleton<InputSystem>
 {
-	friend class Singleton <InputSystem>;
+	friend class Singleton<InputSystem>;
 	
 public:
 	void update();
