@@ -13,7 +13,7 @@ Cube::Cube(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPt
 
 void Cube::update(float deltaTime)
 {
-	rotation.x += rotation_update.x * deltaTime;
-	rotation.y += rotation_update.y * deltaTime;
-	rotation.z += rotation_update.z * deltaTime;
+	// rotation.x += rotation_update.x * deltaTime;
+	// rotation.y += rotation_update.y * deltaTime;
+	// rotation.z += rotation_update.z * deltaTime;
 }

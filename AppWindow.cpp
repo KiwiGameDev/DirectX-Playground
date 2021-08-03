@@ -13,10 +13,13 @@
 #include <iostream>
 #include <random>
 
+#include "Random.h"
+
 struct vertex
 {
 	Vector3 position;
-	Vector3 color;
+	Vector3 color1;
+	Vector3 color2;
 };
 
 void AppWindow::update()
@@ -26,7 +29,7 @@ void AppWindow::update()
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	ConstantBufferData cbd;
 
-	m_timer += Time::get().deltaTime();
+	m_timer += Time::get().deltaTime() * 2.0f;
 
 	Matrix4x4 camera_transform = m_camera.getTransform();
 	Vector3 new_camera_pos = m_camera.getLocalPosition() + camera_transform.getZDirection() * m_forward * 4.0f * Time::get().deltaTime() + camera_transform.getXDirection() * m_rightward * 4.0f * Time::get().deltaTime();
@@ -37,12 +40,13 @@ void AppWindow::update()
 	
 	cbd.m_time = m_timer;
 	cbd.m_view = view;
-	cbd.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.01f, 100.0f);
+	cbd.m_proj = Matrix4x4::perspectiveFovLH(1.57f, screen_width / screen_height, 0.0001f, 100.0f);
 
 	// Cubes
 	for (Cube& cube : cubes)
 	{
-		cube.update(Time::get().deltaTime());
+		//cube.update(Time::get().deltaTime());
+		//cube.setScale(Vector3::Lerp(Vector3(1.0f, 1.0f, 1.0f), Vector3(6.0f, 6.0f, 0.0f), (sin(m_timer) + 1.0f) / 2.0f));
 		cube.draw(m_cb, cbd);
 	}
 
@@ -67,14 +71,14 @@ void AppWindow::onCreate()
 	// Cube
 	vertex cube_vertices[] =
 	{
-		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f) }
+		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.9f, 0.2f, 0.3f), Vector3(0.2f, 0.1f, 0.9f) },
+		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(0.1f, 0.9f, 0.3f), Vector3(0.5f, 0.9f, 0.2f) },
+		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(0.2f, 0.6f, 0.9f), Vector3(0.9f, 0.1f, 0.1f) },
+		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(0.1f, 0.9f, 0.2f), Vector3(0.1f, 0.9f, 0.2f) },
+		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(0.9f, 0.1f, 0.4f), Vector3(0.9f, 0.2f, 0.9f) },
+		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.9f, 0.9f, 0.9f), Vector3(0.2f, 0.2f, 0.2f) },
+		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(0.8f, 0.8f, 0.2f), Vector3(0.8f, 0.1f, 0.9f) },
+		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.8f, 0.1f, 0.9f), Vector3(0.8f, 0.9f, 0.2f) }
 	};
 	UINT size_cube_vertices = ARRAYSIZE(cube_vertices);
 
@@ -98,10 +102,10 @@ void AppWindow::onCreate()
 	// Quad
 	vertex quad_vertices[] =
 	{
-		{ Vector3(-0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
-		{ Vector3(-0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
-		{ Vector3( 0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
-		{ Vector3( 0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) }
+		{ Vector3(-0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f), Vector3(0.9f, 0.9f, 0.9f) },
+		{ Vector3(-0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f), Vector3(0.9f, 0.9f, 0.9f) },
+		{ Vector3( 0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f), Vector3(0.9f, 0.9f, 0.9f) },
+		{ Vector3( 0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f), Vector3(0.9f, 0.9f, 0.9f) }
 	};
 	UINT size_quad_vertices = ARRAYSIZE(cube_vertices);
 
@@ -133,18 +137,30 @@ void AppWindow::onCreate()
 	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cb, sizeof(ConstantBufferData));
 
 	// Create cubes
-	for (int i = 0; i < 1; i++)
+	/*for (int i = 0; i < 50; i++)
 	{
 		Cube cube = Cube("Cube_" + i, cube_vb, cube_ib, vs, ps);
-		cube.setPosition(0.0f, -1.0f, 1.0f);
+		cube.setPosition(0, 0, 0);
 		cubes.push_back(cube);
-	}
+	}*/
+
+	Cube cube1 = Cube("Cube_01", cube_vb, cube_ib, vs, ps);
+	cube1.setPosition(0, 0.9, 0);
+	cubes.push_back(cube1);
+	
+	Cube cube2 = Cube("Cube_02", cube_vb, cube_ib, vs, ps);
+	cube2.setPosition(-1.5, 2.0, 0);
+	cubes.push_back(cube2);
+	
+	Cube cube3 = Cube("Cube_03", cube_vb, cube_ib, vs, ps);
+	cube3.setPosition(-1.5, 3.0, -2.0);
+	cubes.push_back(cube3);
 
 	// Create plane
 	GameObject plane("Plane", quad_vb, quad_ib, vs, ps);
 	plane.setRotation(90.0f * Mathf::deg2rad, 0.0f, 0.0f);
-	plane.setPosition(0.0f, -1.0f, 1.0f);
-	plane.setScale(8.0f, 8.0f, 1.0f);
+	plane.setPosition(0.0f, 0.0f, 0.0f);
+	plane.setScale(12.0f, 12.0f, 1.0f);
 	gameobjects.push_back(plane);
 }
 
