@@ -56,6 +56,17 @@ RenderSystem::RenderSystem()
 	m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device);
 	m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
 	m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgi_factory);
+
+	// Rasterizers
+	D3D11_RASTERIZER_DESC rasterizer_desc;
+	ZeroMemory(&rasterizer_desc, sizeof(D3D11_RASTERIZER_DESC));
+	rasterizer_desc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterizer_desc.CullMode = D3D11_CULL_NONE;
+	m_d3d_device->CreateRasterizerState(&rasterizer_desc, &m_rasterizer_wireframe);
+	ZeroMemory(&rasterizer_desc, sizeof(D3D11_RASTERIZER_DESC));
+	rasterizer_desc.FillMode = D3D11_FILL_SOLID;
+	rasterizer_desc.CullMode = D3D11_CULL_BACK;
+	m_d3d_device->CreateRasterizerState(&rasterizer_desc, &m_rasterizer_solid);
 }
 
 SwapChainPtr RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
@@ -118,9 +129,8 @@ ConstantBufferPtr RenderSystem::createConstantBuffer(void* buffer, UINT size_buf
 	{
 
 	}
-
-	return cb;
 	
+	return cb;
 }
 
 VertexShaderPtr RenderSystem::createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code)
@@ -209,4 +219,7 @@ RenderSystem::~RenderSystem()
 	m_dxgi_adapter->Release();
 	m_dxgi_factory->Release();
 	m_d3d_device->Release();
+
+	m_rasterizer_solid->Release();
+	m_rasterizer_wireframe->Release();
 }

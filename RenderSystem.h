@@ -11,6 +11,7 @@ class RenderSystem
 	friend class VertexShader;
 	friend class PixelShader;
 	friend class Texture;
+	friend class DeviceContext;
 
 public:
 	RenderSystem();
@@ -32,12 +33,15 @@ public:
 
 private:
 	DeviceContextPtr m_imm_device_context;
-
+	
 	ID3D11Device* m_d3d_device;
 	D3D_FEATURE_LEVEL m_feature_level;
 	IDXGIDevice* m_dxgi_device;
 	IDXGIAdapter* m_dxgi_adapter;
 	IDXGIFactory* m_dxgi_factory;
+
+	ID3D11RasterizerState* m_rasterizer_solid;
+	ID3D11RasterizerState* m_rasterizer_wireframe;
 
 	ID3DBlob* m_blob = nullptr;
 

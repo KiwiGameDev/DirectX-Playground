@@ -8,6 +8,8 @@
 #include "Texture.h"
 #include <d3d11.h>
 
+#include "RenderSystem.h"
+
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
 	: m_device_context(device_context), m_system(system)
@@ -28,7 +30,7 @@ void DeviceContext::setViewportSize(UINT width, UINT height)
 void DeviceContext::clearRenderTarget(const SwapChainPtr swap_chain, float r, float g, float b, float a)
 {
 	float clear_color[] = { r, g, b, a };
-
+	
 	m_device_context->ClearRenderTargetView(swap_chain->m_rtv, clear_color);
 	m_device_context->ClearDepthStencilView(swap_chain->m_dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	m_device_context->OMSetRenderTargets(1, &swap_chain->m_rtv, swap_chain->m_dsv);
@@ -76,6 +78,16 @@ void DeviceContext::setVertexShader(const VertexShaderPtr& vertex_shader)
 void DeviceContext::setPixelShader(const PixelShaderPtr& pixel_shader)
 {
 	m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0);
+}
+
+void DeviceContext::setSolidRasterizerState()
+{
+	m_device_context->RSSetState(m_system->m_rasterizer_solid);
+}
+
+void DeviceContext::setWireframeRasterizerState()
+{
+	m_device_context->RSSetState(m_system->m_rasterizer_wireframe);
 }
 
 void DeviceContext::drawTriangleList(UINT vertex_count, UINT start_vertex_index)

@@ -14,7 +14,7 @@
 #include <random>
 
 AppWindow::AppWindow()
-	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
+	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f), m_game_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
 {
 	CameraManager::get().setEditorCamera(&m_editor_camera);
 }
@@ -128,6 +128,9 @@ void AppWindow::onUpdate()
 
 	// Camera
 	m_editor_camera.update();
+	m_game_camera.update();
+
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setWireframeRasterizerState();
 	
 	// Cubes
 	for (Cube& cube : cubes)
@@ -135,6 +138,8 @@ void AppWindow::onUpdate()
 		cube.update();
 		cube.draw();
 	}
+
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setSolidRasterizerState();
 
 	// Other GameObjects
 	for (GameObject& gameobject : gameobjects)
