@@ -1,14 +1,14 @@
 #include "GameObject.h"
-#include "ConstantBuffer.h"
-#include "ConstantBufferData.h"
-#include "IndexBuffer.h"
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
 #include "DeviceContext.h"
-#include <utility>
-
+#include "IndexBuffer.h"
+#include "ConstantBuffer.h"
+#include "ConstantBufferData.h"
 #include "CameraManager.h"
 #include "Time.h"
+#include <utility>
+
 
 GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
 	: name(name), m_vb(std::move(vertex_buffer)), m_ib(std::move(index_buffer)), m_cb(std::move(constant_buffer)), m_vs(std::move(vertex_shader)), m_ps(std::move(pixel_shader))

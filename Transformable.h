@@ -2,10 +2,10 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
-class ITransformable
+class Transformable
 {
 public:
-	ITransformable();
+	Transformable();
 
 	Matrix4x4 getTransform();
 	Matrix4x4 getInverseTransform();

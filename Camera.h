@@ -1,10 +1,10 @@
 #pragma once
 #include "IUpdateable.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 #include "Vector2.h"
 #include "Point.h"
 
-class Camera : public IUpdateable, public ITransformable
+class Camera : public IUpdateable, public Transformable
 {
 public:
 	Camera(float fov, float aspect, float near, float far);

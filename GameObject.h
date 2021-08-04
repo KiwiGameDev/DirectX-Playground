@@ -1,10 +1,10 @@
 #pragma once
 #include "IUpdateable.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 #include "Prerequisites.h"
 #include <string>
 
-class GameObject : public IUpdateable, public ITransformable
+class GameObject : public IUpdateable, public Transformable
 {
 public:
 	GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader);

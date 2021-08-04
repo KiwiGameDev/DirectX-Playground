@@ -118,7 +118,7 @@
     <ClCompile Include="Time.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
-    <ClCompile Include="ITransformable.cpp">
+    <ClCompile Include="Transformable.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -221,7 +221,7 @@
     <ClInclude Include="Time.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ITransformable.h">
+    <ClInclude Include="Transformable.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBufferData.h">
