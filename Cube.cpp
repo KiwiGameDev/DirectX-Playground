@@ -14,8 +14,8 @@ Cube::Cube(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPt
 void Cube::update()
 {
 	Vector3 rotation = getRotation();
-	rotation.x += rotation_update.x * Time::get().deltaTime();
-	rotation.y += rotation_update.y * Time::get().deltaTime();
-	rotation.z += rotation_update.z * Time::get().deltaTime();
+	//rotation.x += rotation_update.x * Time::get().deltaTime();
+	//rotation.y += rotation_update.y * Time::get().deltaTime();
+	//rotation.z += rotation_update.z * Time::get().deltaTime();
 	setRotation(rotation);
 }

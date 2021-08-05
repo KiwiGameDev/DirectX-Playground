@@ -102,7 +102,7 @@ void AppWindow::onCreate()
 	for (int i = 0; i < 1; i++)
 	{
 		Cube cube = Cube("Cube_" + i, cube_vb, cube_ib, m_cb, vs, ps);
-		cube.setPosition(Vector3(0.0f, -1.0f, 1.0f));
+		cube.setPosition(Vector3(0.0f, 0.0f, 0.0f));
 		cubes.push_back(cube);
 	}
 
@@ -110,8 +110,12 @@ void AppWindow::onCreate()
 	GameObject plane("Plane", quad_vb, quad_ib, m_cb, vs, ps);
 	plane.setScale(Vector3(8.0f, 8.0f, 1.0f));
 	plane.setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
-	plane.setPosition(Vector3(0.0f, -1.0f, 1.0f));
+	plane.setPosition(Vector3(0.0f, -3.0f, 0.0f));
 	gameobjects.push_back(plane);
+
+	// Frustum Visualization
+	m_frustum = new FrustumGO("Frustum", cube_vb, cube_ib, m_cb, vs, ps, &m_game_camera);
+	m_frustum->setPosition(0.0f, 0.0f, 0.0f);
 }
 
 void AppWindow::onUpdate()
@@ -130,7 +134,7 @@ void AppWindow::onUpdate()
 	m_editor_camera.update();
 	m_game_camera.update();
 
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setWireframeRasterizerState();
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setSolidRasterizerState();
 	
 	// Cubes
 	for (Cube& cube : cubes)
@@ -139,7 +143,6 @@ void AppWindow::onUpdate()
 		cube.draw();
 	}
 
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setSolidRasterizerState();
 
 	// Other GameObjects
 	for (GameObject& gameobject : gameobjects)
@@ -147,6 +150,11 @@ void AppWindow::onUpdate()
 		gameobject.update();
 		gameobject.draw();
 	}
+
+	// Frustum Visualization
+	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setWireframeRasterizerState();
+	m_frustum->update();
+	m_frustum->draw();
 	
 	m_swap_chain->present(false);
 }

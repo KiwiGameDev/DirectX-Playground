@@ -11,9 +11,9 @@ public:
 
 	void update() override;
 	
-	void draw();
+	virtual void draw();
 
-private:
+protected:
 	std::string name;
 	
 	VertexBufferPtr m_vb;

@@ -89,6 +89,7 @@ struct Matrix4x4
 		mat.m_mat[2][2] = zfar / (zfar - znear);
 		mat.m_mat[2][3] = 1.0f;
 		mat.m_mat[3][2] = (-znear * zfar) / (zfar - znear);
+		// mat.m_mat[3][3] = 0.0f;
 		return mat;
 	}
 
@@ -165,10 +166,10 @@ struct Matrix4x4
 				{
 					a = j;
 					if (j > i) a = a - 1;
-					vec[a].x = (this->m_mat[j][0]);
-					vec[a].y = (this->m_mat[j][1]);
-					vec[a].z = (this->m_mat[j][2]);
-					vec[a].w = (this->m_mat[j][3]);
+					vec[a].x = m_mat[j][0];
+					vec[a].y = m_mat[j][1];
+					vec[a].z = m_mat[j][2];
+					vec[a].w = m_mat[j][3];
 				}
 			}
 			v.cross(vec[0], vec[1], vec[2]);
@@ -180,6 +181,19 @@ struct Matrix4x4
 		}
 
 		memcpy(this, &out, sizeof(Matrix4x4));
+	}
+
+	void divideByW()
+	{
+		float w = m_mat[3][3];
+
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				m_mat[i][j] /= w;
+			}
+		}
 	}
 
 	float m_mat[4][4];

@@ -3,6 +3,7 @@
 #include "IInputListener.h"
 #include "Cube.h"
 #include "Camera.h"
+#include "FrustumGO.h"
 #include "Prerequisites.h"
 #include <vector>
 
@@ -31,6 +32,7 @@ private:
 
 	Camera m_editor_camera;
 	Camera m_game_camera;
+	FrustumGO* m_frustum;
 	
 	std::vector<Cube> cubes;
 	std::vector<GameObject> gameobjects;
