@@ -83,13 +83,12 @@ struct Matrix4x4
 	{
 		float yScale = 1.0f / tan(fov / 2.0f);
 		float xScale = yScale / aspect;
-		Matrix4x4 mat(1.0f);
+		Matrix4x4 mat(0.0f);
 		mat.m_mat[0][0] = xScale;
 		mat.m_mat[1][1] = yScale;
 		mat.m_mat[2][2] = zfar / (zfar - znear);
 		mat.m_mat[2][3] = 1.0f;
 		mat.m_mat[3][2] = (-znear * zfar) / (zfar - znear);
-		// mat.m_mat[3][3] = 0.0f;
 		return mat;
 	}
 
@@ -183,17 +182,15 @@ struct Matrix4x4
 		memcpy(this, &out, sizeof(Matrix4x4));
 	}
 
-	void divideByW()
+	Vector4 operator*(const Vector4& vec)
 	{
-		float w = m_mat[3][3];
-
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				m_mat[i][j] /= w;
-			}
-		}
+		return Vector4
+		(
+			m_mat[0][0] * vec.x + m_mat[0][1] * vec.y + m_mat[0][2] * vec.z + m_mat[0][3] * vec.w,
+			m_mat[1][0] * vec.x + m_mat[1][1] * vec.y + m_mat[1][2] * vec.z + m_mat[1][3] * vec.w,
+			m_mat[2][0] * vec.x + m_mat[2][1] * vec.y + m_mat[2][2] * vec.z + m_mat[2][3] * vec.w,
+			m_mat[3][0] * vec.x + m_mat[3][1] * vec.y + m_mat[3][2] * vec.z + m_mat[3][3] * vec.w
+		);
 	}
 
 	float m_mat[4][4];

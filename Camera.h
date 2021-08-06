@@ -18,6 +18,11 @@ public:
 	void setFOV(float new_fov);
 	void setAspectRatio(float new_aspect);
 
+	float getAspectRatio() const;
+	float getFOV() const;
+	float getFarZ() const;
+	float getNearZ() const;
+
 	Matrix4x4 getViewMatrix();
 	Matrix4x4 getProjectionMatrix();
 
@@ -27,7 +32,7 @@ private:
 	bool m_is_proj_dirty = true;
 	
 	float m_fov;
-	float m_aspect;
+	float m_ar;
 	float m_near;
 	float m_far;
 	

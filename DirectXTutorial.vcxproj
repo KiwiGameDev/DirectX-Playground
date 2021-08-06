@@ -161,7 +161,6 @@
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
-    <ClCompile Include="FrustumGO.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -191,7 +190,6 @@
     <ClInclude Include="ConstantBufferData.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DeviceContext.h" />
-    <ClInclude Include="FrustumGO.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="IInputListener.h" />

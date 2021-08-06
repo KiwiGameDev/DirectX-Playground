@@ -2,7 +2,7 @@
 #include "Time.h"
 
 Camera::Camera(float fov, float aspect, float near, float far)
-	: m_fov(fov), m_aspect(aspect), m_near(near), m_far(far)
+	: m_fov(fov), m_ar(aspect), m_near(near), m_far(far)
 {
 	m_proj = Matrix4x4::perspectiveFovLH(fov, aspect, near, far);
 }
@@ -66,8 +66,28 @@ void Camera::setFOV(float new_fov)
 
 void Camera::setAspectRatio(float new_aspect)
 {
-	m_aspect = new_aspect;
+	m_ar = new_aspect;
 	m_is_proj_dirty = true;
+}
+
+float Camera::getAspectRatio() const
+{
+	return m_ar;
+}
+
+float Camera::getFOV() const
+{
+	return m_fov;
+}
+
+float Camera::getFarZ() const
+{
+	return m_far;
+}
+
+float Camera::getNearZ() const
+{
+	return m_near;
 }
 
 Matrix4x4 Camera::getViewMatrix()
@@ -79,7 +99,7 @@ Matrix4x4 Camera::getProjectionMatrix()
 {
 	if (m_is_proj_dirty)
 	{
-		m_proj = Matrix4x4::perspectiveFovLH(m_fov, m_aspect, m_near, m_far);
+		m_proj = Matrix4x4::perspectiveFovLH(m_fov, m_ar, m_near, m_far);
 		m_is_proj_dirty = false;
 	}
 

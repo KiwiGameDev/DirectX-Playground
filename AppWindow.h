@@ -3,7 +3,6 @@
 #include "IInputListener.h"
 #include "Cube.h"
 #include "Camera.h"
-#include "FrustumGO.h"
 #include "Prerequisites.h"
 #include <vector>
 
@@ -30,9 +29,9 @@ private:
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 
-	Camera m_editor_camera;
-	Camera m_game_camera;
-	FrustumGO* m_frustum;
+	Camera* m_editor_camera;
+	Camera* m_game_camera;
+	GameObject* m_frustum;
 	
 	std::vector<Cube> cubes;
 	std::vector<GameObject> gameobjects;

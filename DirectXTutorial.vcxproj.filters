@@ -128,7 +128,6 @@
       <Filter>GameEngine</Filter>
     </ClCompile>
     <ClCompile Include="CameraManager.cpp" />
-    <ClCompile Include="FrustumGO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -241,7 +240,6 @@
       <Filter>GameEngine</Filter>
     </ClInclude>
     <ClInclude Include="CameraManager.h" />
-    <ClInclude Include="FrustumGO.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
