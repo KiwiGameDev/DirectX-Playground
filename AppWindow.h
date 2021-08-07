@@ -33,8 +33,7 @@ private:
 	Camera* m_game_camera;
 	GameObject* m_frustum;
 	
-	std::vector<Cube> cubes;
-	std::vector<GameObject> gameobjects;
+	std::vector<GameObject*> gameobjects;
 
 	float m_timer = 0.0f;
 };

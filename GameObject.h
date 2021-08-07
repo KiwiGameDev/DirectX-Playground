@@ -8,10 +8,9 @@ class GameObject : public IUpdateable, public Transformable
 {
 public:
 	GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader);
-
-	void update() override;
 	
-	virtual void draw();
+	void update() override;
+	void draw(bool is_project);
 
 protected:
 	std::string name;

@@ -21,14 +21,17 @@ void GameObject::update()
 	
 }
 
-void GameObject::draw()
+void GameObject::draw(bool is_project)
 {
 	DeviceContextPtr device_context = GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext();
 	
 	ConstantBufferData cbd;
 	cbd.m_world = getTransform();
-	cbd.m_view = CameraManager::get().getEditorCamera()->getViewMatrix();
-	cbd.m_proj = CameraManager::get().getEditorCamera()->getProjectionMatrix();
+	cbd.m_game_cam = CameraManager::get().getGameCamera()->getViewMatrix();
+	cbd.m_game_cam *= CameraManager::get().getGameCamera()->getProjectionMatrix();
+	cbd.m_editor_view = CameraManager::get().getEditorCamera()->getViewMatrix();
+	cbd.m_editor_proj = CameraManager::get().getEditorCamera()->getProjectionMatrix();
+	cbd.m_is_project = is_project;
 	cbd.m_time = Time::get().timeSinceApplicationStart();
 	m_cb->update(device_context, &cbd);
 	

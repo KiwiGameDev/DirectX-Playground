@@ -5,7 +5,9 @@ __declspec(align(16))
 struct ConstantBufferData
 {
 	Matrix4x4 m_world;
-	Matrix4x4 m_view;
-	Matrix4x4 m_proj;
+	Matrix4x4 m_game_cam;
+	Matrix4x4 m_editor_view;
+	Matrix4x4 m_editor_proj;
+	int m_is_project;
 	float m_time;
 };

@@ -92,6 +92,17 @@ struct Matrix4x4
 		return mat;
 	}
 
+	Vector4 operator*(const Vector4& vec)
+	{
+		return Vector4
+		(
+			m_mat[0][0] * vec.x + m_mat[0][1] * vec.y + m_mat[0][2] * vec.z + m_mat[0][3] * vec.w,
+			m_mat[1][0] * vec.x + m_mat[1][1] * vec.y + m_mat[1][2] * vec.z + m_mat[1][3] * vec.w,
+			m_mat[2][0] * vec.x + m_mat[2][1] * vec.y + m_mat[2][2] * vec.z + m_mat[2][3] * vec.w,
+			m_mat[3][0] * vec.x + m_mat[3][1] * vec.y + m_mat[3][2] * vec.z + m_mat[3][3] * vec.w
+		);
+	}
+
 	void operator*=(const Matrix4x4& other)
 	{
 		Matrix4x4 out;
@@ -180,17 +191,6 @@ struct Matrix4x4
 		}
 
 		memcpy(this, &out, sizeof(Matrix4x4));
-	}
-
-	Vector4 operator*(const Vector4& vec)
-	{
-		return Vector4
-		(
-			m_mat[0][0] * vec.x + m_mat[0][1] * vec.y + m_mat[0][2] * vec.z + m_mat[0][3] * vec.w,
-			m_mat[1][0] * vec.x + m_mat[1][1] * vec.y + m_mat[1][2] * vec.z + m_mat[1][3] * vec.w,
-			m_mat[2][0] * vec.x + m_mat[2][1] * vec.y + m_mat[2][2] * vec.z + m_mat[2][3] * vec.w,
-			m_mat[3][0] * vec.x + m_mat[3][1] * vec.y + m_mat[3][2] * vec.z + m_mat[3][3] * vec.w
-		);
 	}
 
 	float m_mat[4][4];
