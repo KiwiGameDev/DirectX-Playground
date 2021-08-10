@@ -8,7 +8,7 @@ IndexBuffer::IndexBuffer(void* list_indices, UINT size_list, RenderSystem* syste
 	D3D11_BUFFER_DESC buffer_desc = {};
 	buffer_desc.Usage = D3D11_USAGE_DEFAULT;
 	buffer_desc.ByteWidth = sizeof(int) * size_list;
-	buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	buffer_desc.CPUAccessFlags = 0;
 	buffer_desc.MiscFlags = 0;
 

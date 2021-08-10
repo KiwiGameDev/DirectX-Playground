@@ -15,7 +15,7 @@
 
 AppWindow::AppWindow()
 {
-	m_game_camera = new Camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 2.0f, 10.0f);
+	m_game_camera = new Camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 1.0f, 10.0f);
 	m_editor_camera = new Camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 1.0f, 100.0f);
 	CameraManager::get().setGameCamera(m_game_camera);
 	CameraManager::get().setEditorCamera(m_editor_camera);
@@ -127,26 +127,34 @@ void AppWindow::onCreate()
 	cbd.m_time = 0;
 	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cbd, sizeof(ConstantBufferData));
 
-	// Create cubes
+	// Cubes
 	GameObject* cube1 = new GameObject("Cube_01", cube_vb, cube_ib, m_cb, vs, ps);
-	cube1->setScale(Vector3(4.0f, 4.0f, 4.0f));
-	cube1->setPosition(Vector3(0.0f, 0.0f, 6.0f));
-	gameobjects.push_back(cube1);
-	
+	cube1->setScale(Vector3(2.0f, 2.0f, 2.0f));
+	cube1->setPosition(Vector3(4.0f, 0.0f, 8.0f));
 	GameObject* cube2 = new GameObject("Cube_02", cube_vb, cube_ib, m_cb, vs, ps);
 	cube2->setScale(Vector3(2.0f, 2.0f, 2.0f));
-	gameobjects.push_back(cube2);
+	cube2->setPosition(Vector3(0.0f, 0.0f, 2.0f));
+
+	// NDC Cube
+	GameObject* cube_ndc = new GameObject("Cube_03", cube_vb, cube_ib, m_cb, vs, ps);
+	cube_ndc->setScale(Vector3(2.0f, 2.0f, 1.0f));
+	cube_ndc->setPosition(Vector3(0.0f, 0.0f, 0.5f));
 	
 	// Create plane
 	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, vs, ps);
 	plane->setScale(Vector3(8.0f, 8.0f, 1.0f));
 	plane->setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
 	plane->setPosition(Vector3(0.0f, -3.0f, 0.0f));
+	
+	gameobjects.push_back(cube1);
+	gameobjects.push_back(cube2);
 	gameobjects.push_back(plane);
+	gameobjects.push_back(cube_ndc);
 
 	// Frustum Visualization
 	m_frustum = new GameObject("Frustum", frustum_vb, cube_ib, m_cb, vs, ps);
 	m_frustum->setPosition(0.0f, 0.0f, 0.0f);
+	m_game_camera->setPosition(0.0, 0.0f, 0.0f);
 }
 
 void AppWindow::onUpdate()
@@ -165,21 +173,13 @@ void AppWindow::onUpdate()
 	m_editor_camera->update();
 	m_game_camera->update();
 
-	// Animating cube
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setSolidRasterizerState();
-	gameobjects[0]->draw(true);
-	
-	// NDC Cube
+	gameobjects[0]->draw(true); // Cube 1
+	gameobjects[1]->draw(true); // Cube 2
+	gameobjects[2]->draw(false); // Plane
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setWireframeRasterizerState();
-	gameobjects[1]->draw(false);
-
-	// Plane
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setSolidRasterizerState();
-	gameobjects[2]->draw(false);
-
-	// Frustum Visualization
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setWireframeRasterizerState();
-	m_frustum->draw(false);
+	gameobjects[3]->draw(false); // NDC Cube
+	m_frustum->draw(false); // Frustum Visualization
 	
 	m_swap_chain->present(false);
 }

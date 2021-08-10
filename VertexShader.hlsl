@@ -32,6 +32,10 @@ VS_OUTPUT vsmain(VS_INPUT input)
     if (m_is_project)
     {
 		float4 ndc = mul(pos, m_game_cam);
+        ndc.x = ndc.x / ndc.w;
+        ndc.y = ndc.y / ndc.w;
+        ndc.z = ndc.z / ndc.w;
+        ndc.w = 1.0f;
         output.pos = lerp(pos, ndc, (sin(m_time) + 1.0f) / 2.0f);
     }
 	else
