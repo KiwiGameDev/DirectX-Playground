@@ -78,14 +78,9 @@ void DeviceContext::setPixelShader(const PixelShaderPtr& pixel_shader)
 	m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0);
 }
 
-void DeviceContext::setSolidRasterizerState()
+void DeviceContext::setRasterizerState(ID3D11RasterizerState* rasterizer_state)
 {
-	m_device_context->RSSetState(m_system->m_rasterizer_solid);
-}
-
-void DeviceContext::setWireframeRasterizerState()
-{
-	m_device_context->RSSetState(m_system->m_rasterizer_wireframe);
+	m_device_context->RSSetState(rasterizer_state);
 }
 
 void DeviceContext::drawTriangleList(UINT vertex_count, UINT start_vertex_index)

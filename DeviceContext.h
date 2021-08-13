@@ -1,6 +1,7 @@
 #pragma once
 #include "Prerequisites.h"
 #include <Windows.h>
+#include <d3d11.h>
 
 class RenderSystem;
 class GraphicsEngine;
@@ -32,8 +33,7 @@ public:
 	void setVertexShader(const VertexShaderPtr& vertex_shader);
 	void setPixelShader(const PixelShaderPtr& pixel_shader);
 
-	void setSolidRasterizerState();
-	void setWireframeRasterizerState();
+	void setRasterizerState(ID3D11RasterizerState* rasterizer_state);
 
 	void drawTriangleList(UINT vertex_count, UINT start_vertex_index);
 	void drawIndexedTriangleList(UINT index_count, UINT start_index_location, UINT start_vertex_location);

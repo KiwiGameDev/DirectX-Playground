@@ -205,6 +205,16 @@ void RenderSystem::releaseCompiledShader()
 		m_blob->Release();
 }
 
+void RenderSystem::setSolidRasterizerState()
+{
+	m_imm_device_context->setRasterizerState(m_rasterizer_solid);
+}
+
+void RenderSystem::setWireframeRasterizerState()
+{
+	m_imm_device_context->setRasterizerState(m_rasterizer_wireframe);
+}
+
 DeviceContextPtr RenderSystem::getImmediateDeviceContext()
 {
 	return m_imm_device_context;

@@ -28,6 +28,9 @@ public:
 	bool compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* size_shader_byte_code);
 	void releaseCompiledShader();
 
+	void setSolidRasterizerState();
+	void setWireframeRasterizerState();
+
 	DeviceContextPtr getImmediateDeviceContext();
 	
 	~RenderSystem();
