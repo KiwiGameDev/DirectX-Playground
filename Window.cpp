@@ -172,12 +172,12 @@ bool Window::isRunning()
 RECT Window::getClientWindowRect()
 {
 	RECT rect;
-	::GetClientRect(m_hwnd, &rect);
+	GetClientRect(m_hwnd, &rect);
 	return rect;
 }
 
 Window::~Window()
 {
-	if (!::DestroyWindow(m_hwnd))
+	if (!DestroyWindow(m_hwnd))
 		throw std::exception("Window failed to delete successfully");
 }

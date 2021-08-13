@@ -13,7 +13,7 @@ public:
 
 	void onKeyDown(int key);
 	void onKeyUp(int key);
-	void onMouseMove(const Vector2& window_size, const Point& mouse_pos);
+	void onMouseMove(const Vector2& delta_pos);
 	
 	void setFOV(float new_fov);
 	void setAspectRatio(float new_aspect);

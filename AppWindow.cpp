@@ -27,7 +27,6 @@ void AppWindow::onCreate()
 	Window::onCreate();
 
 	InputSystem::get().addListener(this);
-	InputSystem::get().showCursor(false);
 	
 	RECT rect = getClientWindowRect();
 	
@@ -154,8 +153,13 @@ void AppWindow::onUpdate()
 	ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGui::End();
 
-	ImGui::Begin("Test");
-	ImGui::Text("Hello world");
+	ImGui::Begin("Credits");
+	ImGui::Text("About");
+	ImGui::Text("Scene Editor v0.0.1");
+	ImGui::Text("By Bruce Anakin C. Miranda");
+	ImGui::Text("Acknowledgements:");
+	ImGui::Text("PardCode");
+	ImGui::Text("Sir Neil");
 	ImGui::End();
 	
 	// Camera
@@ -212,15 +216,12 @@ void AppWindow::onKeyUp(int key)
 
 void AppWindow::onMouseMove(const Point& mouse_pos)
 {
-	RECT window_size = getClientWindowRect();
-	float window_width = window_size.right - window_size.left;
-	float window_width_half = window_width / 2.0f;
-	float window_height = window_size.bottom - window_size.top + 1L;
-	float window_height_half = window_height / 2.0f;
-	
-	m_editor_camera.onMouseMove(Vector2(window_width, window_height), mouse_pos);
+	if (m_is_mouse_locked)
+	{
+		m_editor_camera.onMouseMove(Vector2(mouse_pos.x - m_mouse_locked_pos.x, mouse_pos.y - m_mouse_locked_pos.y));
 
-	InputSystem::get().setCursorPosition(Point((int)window_width_half, (int)window_height_half));
+		InputSystem::get().setCursorPosition(m_mouse_locked_pos);
+	}
 }
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)
@@ -235,10 +236,13 @@ void AppWindow::onLeftMouseUp(const Point& mouse_pos)
 
 void AppWindow::onRightMouseDown(const Point& mouse_pos)
 {
-	
+	m_is_mouse_locked = true;
+	m_mouse_locked_pos = mouse_pos;
+	InputSystem::get().showCursor(false);
 }
 
 void AppWindow::onRightMouseUp(const Point& mouse_pos)
 {
-	
+	m_is_mouse_locked = false;
+	InputSystem::get().showCursor(true);
 }

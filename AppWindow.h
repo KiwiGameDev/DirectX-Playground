@@ -33,5 +33,6 @@ private:
 	
 	std::vector<GameObject*> gameobjects;
 
-	float m_timer = 0.0f;
+	bool m_is_mouse_locked = false;
+	Point m_mouse_locked_pos;
 };

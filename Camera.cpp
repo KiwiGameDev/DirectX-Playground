@@ -47,14 +47,11 @@ void Camera::onKeyUp(int key)
 	}
 }
 
-void Camera::onMouseMove(const Vector2& window_size, const Point& mouse_pos)
+void Camera::onMouseMove(const Vector2& delta_pos)
 {
-	float window_width_half = window_size.x / 2.0f;
-	float window_height_half = window_size.y / 2.0f;
-
 	Vector3 rotation = getRotation();
-	rotation.x += (mouse_pos.y - window_height_half) * Time::get().deltaTime() * 4.0f;
-	rotation.y += (mouse_pos.x - window_width_half) * Time::get().deltaTime() * 4.0f;
+	rotation.x += delta_pos.y * Time::get().deltaTime() * 4.0f;
+	rotation.y += delta_pos.x * Time::get().deltaTime() * 4.0f;
 	setRotation(rotation);
 }
 
