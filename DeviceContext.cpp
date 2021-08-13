@@ -1,4 +1,5 @@
 #include "DeviceContext.h"
+#include "RenderSystem.h"
 #include "SwapChain.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -7,9 +8,6 @@
 #include "PixelShader.h"
 #include "Texture.h"
 #include <d3d11.h>
-
-#include "RenderSystem.h"
-
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
 	: m_device_context(device_context), m_system(system)

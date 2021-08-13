@@ -9,6 +9,9 @@
 #include "Vector3.h"
 #include "Vertex.h"
 #include "Mathf.h"
+#include "imgui.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
 #include <Windows.h>
 #include <iostream>
 #include <random>
@@ -126,12 +129,39 @@ void AppWindow::onUpdate()
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(screen_width, screen_height);
 
+	// ImGui
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	// Create the docking environment
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
+		ImGuiWindowFlags_NoBackground;
+
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowViewport(viewport->ID);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+	ImGui::Begin("InvisibleWindow", nullptr, windowFlags);
+	ImGui::PopStyleVar(3);
+	ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
+	ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::End();
+
+	ImGui::Begin("Test");
+	ImGui::Text("Hello world");
+	ImGui::End();
+	
 	// Camera
 	m_editor_camera.update();
 	m_game_camera.update();
 
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setWireframeRasterizerState();
-	
 	// Cubes
 	for (Cube& cube : cubes)
 	{
@@ -139,13 +169,21 @@ void AppWindow::onUpdate()
 		cube.draw();
 	}
 
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setSolidRasterizerState();
-
 	// Other GameObjects
 	for (GameObject& gameobject : gameobjects)
 	{
 		gameobject.update();
 		gameobject.draw();
+	}
+
+	// Render UI
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
 	}
 	
 	m_swap_chain->present(false);

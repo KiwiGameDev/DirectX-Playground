@@ -16,6 +16,7 @@ class DeviceContext
 {
 	friend class GraphicsEngine;
 	friend class ConstantBuffer;
+	friend class Window;
 
 public:
 	DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system);

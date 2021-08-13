@@ -1,10 +1,20 @@
 #include "Window.h"
+#include "DeviceContext.h"
+#include "GraphicsEngine.h"
+#include "RenderSystem.h"
 #include "Time.h"
-#include <string>
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
 #include <exception>
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+		return true;
+	
 	switch (msg)
 	{
 	case WM_CREATE:
@@ -75,8 +85,25 @@ Window::Window()
 	if (!m_hwnd)
 		throw std::exception("Window failed to initialize successfully");
 
-	::ShowWindow(m_hwnd, SW_SHOW);
-	::UpdateWindow(m_hwnd);
+	// ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ImGui_ImplWin32_Init(m_hwnd);
+	RenderSystem* render_system = GraphicsEngine::get().getRenderSystem();
+	ImGui_ImplDX11_Init(render_system->m_d3d_device, render_system->m_imm_device_context->m_device_context);
+	ImGui::StyleColorsDark();
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+	
+	ShowWindow(m_hwnd, SW_SHOW);
+	UpdateWindow(m_hwnd);
 
 	m_is_running = true;
 }
