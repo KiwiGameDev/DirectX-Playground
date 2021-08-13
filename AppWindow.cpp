@@ -17,7 +17,7 @@
 #include <random>
 
 AppWindow::AppWindow()
-	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f), m_game_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
+	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
 {
 	CameraManager::get().setEditorCamera(&m_editor_camera);
 }
@@ -104,16 +104,16 @@ void AppWindow::onCreate()
 	// Create cubes
 	for (int i = 0; i < 1; i++)
 	{
-		Cube cube = Cube("Cube_" + i, cube_vb, cube_ib, m_cb, vs, ps);
-		cube.setPosition(Vector3(0.0f, -1.0f, 1.0f));
-		cubes.push_back(cube);
+		Cube* cube = new Cube("Cube_" + i, cube_vb, cube_ib, m_cb, vs, ps);
+		cube->setPosition(Vector3(0.0f, -1.0f, 1.0f));
+		gameobjects.push_back(cube);
 	}
 
 	// Create plane
-	GameObject plane("Plane", quad_vb, quad_ib, m_cb, vs, ps);
-	plane.setScale(Vector3(8.0f, 8.0f, 1.0f));
-	plane.setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
-	plane.setPosition(Vector3(0.0f, -1.0f, 1.0f));
+	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, vs, ps);
+	plane->setScale(Vector3(8.0f, 8.0f, 1.0f));
+	plane->setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
+	plane->setPosition(Vector3(0.0f, -1.0f, 1.0f));
 	gameobjects.push_back(plane);
 }
 
@@ -160,20 +160,12 @@ void AppWindow::onUpdate()
 	
 	// Camera
 	m_editor_camera.update();
-	m_game_camera.update();
-
-	// Cubes
-	for (Cube& cube : cubes)
-	{
-		cube.update();
-		cube.draw();
-	}
 
 	// Other GameObjects
-	for (GameObject& gameobject : gameobjects)
+	for (GameObject* gameobject : gameobjects)
 	{
-		gameobject.update();
-		gameobject.draw();
+		gameobject->update();
+		gameobject->draw();
 	}
 
 	// Render UI

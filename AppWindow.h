@@ -30,10 +30,8 @@ private:
 	ConstantBufferPtr m_cb;
 
 	Camera m_editor_camera;
-	Camera m_game_camera;
 	
-	std::vector<Cube> cubes;
-	std::vector<GameObject> gameobjects;
+	std::vector<GameObject*> gameobjects;
 
 	float m_timer = 0.0f;
 };
