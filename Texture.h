@@ -8,6 +8,8 @@ class Texture : public Resource
 
 public:
 	Texture(const wchar_t* full_path);
+	
+	ID3D11ShaderResourceView* getShaderResourceView() const;
 
 	~Texture();
 

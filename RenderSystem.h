@@ -12,7 +12,7 @@ class RenderSystem
 	friend class PixelShader;
 	friend class Texture;
 	friend class DeviceContext;
-	friend class Window;
+	friend class UI;
 
 public:
 	RenderSystem();

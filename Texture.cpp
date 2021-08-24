@@ -28,6 +28,11 @@ Texture::Texture(const wchar_t* full_path)
 	GraphicsEngine::get().getRenderSystem()->m_d3d_device->CreateShaderResourceView(m_texture, &desc, &m_shader_resource_view);
 }
 
+ID3D11ShaderResourceView* Texture::getShaderResourceView() const
+{
+	return m_shader_resource_view;
+}
+
 Texture::~Texture()
 {
 	m_texture->Release();

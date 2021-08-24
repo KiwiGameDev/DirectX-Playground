@@ -3,6 +3,8 @@
 
 class Window
 {
+	friend class UI;
+
 public:
 	Window();
 

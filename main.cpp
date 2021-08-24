@@ -1,20 +1,21 @@
 #include <iostream>
 #include "AppWindow.h"
-#include "CameraManager.h"
 #include "GraphicsEngine.h"
+#include "CameraManager.h"
 #include "InputSystem.h"
-#include "Time.h"
 #include "Random.h"
+#include "Time.h"
+#include "UI.h"
 
 int main()
 {
 	try
 	{
-		Random::create();
 		Time::create();
-		GraphicsEngine::create();
+		Random::create();
 		InputSystem::create();
 		CameraManager::create();
+		GraphicsEngine::create();
 	}
 	catch(...)
 	{
@@ -24,6 +25,7 @@ int main()
 	try
 	{
 		AppWindow app;
+		UI::create(app);
 
 		std::cout << "Starting window...\n";
 
@@ -34,11 +36,11 @@ int main()
 	{
 		try
 		{
-			InputSystem::release();
 			GraphicsEngine::release();
-			Time::release();
-			Random::release();
 			CameraManager::release();
+			InputSystem::release();
+			Random::release();
+			Time::release();
 		}
 		catch (...)
 		{
@@ -51,10 +53,10 @@ int main()
 	try
 	{
 		GraphicsEngine::release();
-		InputSystem::release();
-		Time::release();
-		Random::release();
 		CameraManager::release();
+		InputSystem::release();
+		Random::release();
+		Time::release();
 	}
 	catch(...)
 	{

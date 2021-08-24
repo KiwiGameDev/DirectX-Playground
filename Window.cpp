@@ -1,11 +1,8 @@
 #include "Window.h"
 #include "DeviceContext.h"
-#include "GraphicsEngine.h"
 #include "RenderSystem.h"
 #include "Time.h"
 #include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
 #include <exception>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -84,23 +81,6 @@ Window::Window()
 
 	if (!m_hwnd)
 		throw std::exception("Window failed to initialize successfully");
-
-	// ImGui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	ImGui_ImplWin32_Init(m_hwnd);
-	RenderSystem* render_system = GraphicsEngine::get().getRenderSystem();
-	ImGui_ImplDX11_Init(render_system->m_d3d_device, render_system->m_imm_device_context->m_device_context);
-	ImGui::StyleColorsDark();
-	ImGuiStyle& style = ImGui::GetStyle();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
 	
 	ShowWindow(m_hwnd, SW_SHOW);
 	UpdateWindow(m_hwnd);
@@ -178,6 +158,5 @@ RECT Window::getClientWindowRect()
 
 Window::~Window()
 {
-	if (!DestroyWindow(m_hwnd))
-		throw std::exception("Window failed to delete successfully");
+	DestroyWindow(m_hwnd);
 }

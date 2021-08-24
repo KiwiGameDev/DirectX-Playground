@@ -1,4 +1,5 @@
 #include "AppWindow.h"
+#include "UI.h"
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
 #include "DeviceContext.h"
@@ -10,8 +11,6 @@
 #include "Vertex.h"
 #include "Mathf.h"
 #include "imgui.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_win32.h"
 #include <Windows.h>
 #include <iostream>
 #include <random>
@@ -127,40 +126,6 @@ void AppWindow::onUpdate()
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(screen_width, screen_height);
-
-	// ImGui
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-	// Create the docking environment
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
-		ImGuiWindowFlags_NoBackground;
-
-	ImGuiViewport* viewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(viewport->Pos);
-	ImGui::SetNextWindowSize(viewport->Size);
-	ImGui::SetNextWindowViewport(viewport->ID);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-	ImGui::Begin("InvisibleWindow", nullptr, windowFlags);
-	ImGui::PopStyleVar(3);
-	ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
-	ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
-	ImGui::End();
-
-	ImGui::Begin("Credits");
-	ImGui::Text("About");
-	ImGui::Text("Scene Editor v0.0.1");
-	ImGui::Text("By Bruce Anakin C. Miranda");
-	ImGui::Text("Acknowledgements:");
-	ImGui::Text("PardCode");
-	ImGui::Text("Sir Neil");
-	ImGui::End();
 	
 	// Camera
 	m_editor_camera.update();
@@ -172,16 +137,8 @@ void AppWindow::onUpdate()
 		gameobject->draw();
 	}
 
-	// Render UI
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	UI::get().draw();
 
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-	}
-	
 	m_swap_chain->present(false);
 }
 
