@@ -171,6 +171,7 @@
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
     <ClCompile Include="ColorPickerScreen.cpp" />
+    <ClCompile Include="GameObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -326,6 +327,7 @@
       <Filter>GameEngine\UI</Filter>
     </ClInclude>
     <ClInclude Include="ColorPickerScreen.h" />
+    <ClInclude Include="GameObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">

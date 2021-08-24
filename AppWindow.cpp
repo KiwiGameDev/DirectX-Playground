@@ -15,6 +15,8 @@
 #include <iostream>
 #include <random>
 
+#include "GameObjectManager.h"
+
 AppWindow::AppWindow()
 	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
 {
@@ -99,20 +101,17 @@ void AppWindow::onCreate()
 	cbd.m_time = 0;
 	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cbd, sizeof(ConstantBufferData));
 
-	// Create cubes
-	for (int i = 0; i < 1; i++)
-	{
-		Cube* cube = new Cube("Cube_" + i, cube_vb, cube_ib, m_cb, vs, ps);
-		cube->setPosition(Vector3(0.0f, -1.0f, 1.0f));
-		gameobjects.push_back(cube);
-	}
+	// Create cube
+	Cube* cube = new Cube("Cube_00", cube_vb, cube_ib, m_cb, vs, ps);
+	cube->setPosition(Vector3(0.0f, -1.0f, 1.0f));
+	GameObjectManager::get().addGameObject(cube);
 
 	// Create plane
 	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, vs, ps);
 	plane->setScale(Vector3(8.0f, 8.0f, 1.0f));
 	plane->setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
 	plane->setPosition(Vector3(0.0f, -1.0f, 1.0f));
-	gameobjects.push_back(plane);
+	GameObjectManager::get().addGameObject(plane);
 }
 
 void AppWindow::onUpdate()
@@ -130,12 +129,9 @@ void AppWindow::onUpdate()
 	// Camera
 	m_editor_camera.update();
 
-	// Other GameObjects
-	for (GameObject* gameobject : gameobjects)
-	{
-		gameobject->update();
-		gameobject->draw();
-	}
+	// GameObjects
+	GameObjectManager::get().update();
+	GameObjectManager::get().draw();
 
 	UI::get().draw();
 

@@ -9,7 +9,6 @@
 #include "Time.h"
 #include <utility>
 
-
 GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
 	: name(name), m_vb(std::move(vertex_buffer)), m_ib(std::move(index_buffer)), m_cb(std::move(constant_buffer)), m_vs(std::move(vertex_shader)), m_ps(std::move(pixel_shader))
 {
@@ -39,4 +38,9 @@ void GameObject::draw()
 	device_context->setVertexBuffer(m_vb);
 	device_context->setIndexBuffer(m_ib);
 	device_context->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
+}
+
+std::string GameObject::getName() const
+{
+	return name;
 }

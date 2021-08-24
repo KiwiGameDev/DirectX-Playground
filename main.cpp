@@ -2,6 +2,7 @@
 #include "AppWindow.h"
 #include "GraphicsEngine.h"
 #include "CameraManager.h"
+#include "GameObjectManager.h"
 #include "InputSystem.h"
 #include "Random.h"
 #include "Time.h"
@@ -16,6 +17,7 @@ int main()
 		InputSystem::create();
 		CameraManager::create();
 		GraphicsEngine::create();
+		GameObjectManager::create();
 	}
 	catch(...)
 	{
@@ -36,6 +38,7 @@ int main()
 	{
 		try
 		{
+			GameObjectManager::release();
 			GraphicsEngine::release();
 			CameraManager::release();
 			InputSystem::release();
@@ -52,6 +55,7 @@ int main()
 
 	try
 	{
+		GameObjectManager::release();
 		GraphicsEngine::release();
 		CameraManager::release();
 		InputSystem::release();

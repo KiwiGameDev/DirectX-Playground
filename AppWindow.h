@@ -4,7 +4,6 @@
 #include "Cube.h"
 #include "Camera.h"
 #include "Prerequisites.h"
-#include <vector>
 
 class AppWindow : public Window, public IInputListener
 {
@@ -31,8 +30,6 @@ private:
 
 	Camera m_editor_camera;
 	
-	std::vector<GameObject*> gameobjects;
-
 	bool m_is_mouse_locked = false;
 	Point m_mouse_locked_pos;
 };

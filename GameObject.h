@@ -13,6 +13,8 @@ public:
 	
 	void draw();
 
+	std::string getName() const;
+
 private:
 	std::string name;
 	
