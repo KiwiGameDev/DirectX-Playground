@@ -2,13 +2,14 @@
 #include "VertexMesh.h"
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
+#include "VertexShaderManager.h"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <locale>
 #include <codecvt>
 
+
 Mesh::Mesh(const wchar_t* full_path)
-	: Resource(full_path)
 {
 	tinyobj::attrib_t attribs;
 	std::vector<tinyobj::shape_t> shapes;
@@ -63,16 +64,9 @@ Mesh::Mesh(const wchar_t* full_path)
 			index_offset += num_face_verts;
 		}
 	}
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader_byte_code = 0;
-	GraphicsEngine::get().getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader_byte_code);
-	m_vertex_buffer = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(
-		&list_vertices[0],
-		sizeof(VertexMesh),
-		list_vertices.size(),
-		shader_byte_code,
-		size_shader_byte_code);
+	
+	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager()->getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
+	m_vertex_buffer = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(VertexMesh), list_vertices.size(), vs, VertexFormat::POSITION_UV);
 	m_index_buffer = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 }
 

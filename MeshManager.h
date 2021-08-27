@@ -6,7 +6,7 @@ class MeshManager : public ResourceManager
 public:
 	MeshManager();
 
-	MeshPtr createMeshFromFile(const wchar_t* file_path);
+	MeshPtr getMeshFromFile(const wchar_t* file_path);
 
 	~MeshManager();
 

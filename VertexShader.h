@@ -1,19 +1,25 @@
 #pragma once
+#include "Resource.h"
+
 class RenderSystem;
 class DeviceContext;
 class ID3D11VertexShader;
 
-class VertexShader
+class VertexShader : public Resource
 {
 	friend class RenderSystem;
 	friend class DeviceContext;
+	friend class VertexInputLayout;
 	
 public:
-	VertexShader(const void* shader_byte_code, size_t size_byte_code, RenderSystem* system);
+	VertexShader(const wchar_t* full_path, RenderSystem* system);
 
 	~VertexShader();
 
 private:
-	ID3D11VertexShader* m_vs;
-	RenderSystem* m_system;
+	RenderSystem* m_system = nullptr;
+
+	ID3D11VertexShader* m_vs = nullptr;
+	void* m_shader_byte_code = nullptr;
+	size_t m_shader_byte_code_size = 0;
 };

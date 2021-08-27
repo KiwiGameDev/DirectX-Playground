@@ -1,5 +1,8 @@
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
+#include "VertexShaderManager.h"
+#include "PixelShaderManager.h"
+#include "TextureManager.h"
 #include "MeshManager.h"
 
 GraphicsEngine* Singleton<GraphicsEngine>::instance = nullptr;
@@ -13,6 +16,24 @@ GraphicsEngine::GraphicsEngine()
 	catch (...)
 	{
 		throw std::exception("Render System failed to initialize!");
+	}
+	
+	try
+	{
+		m_vertex_shader_manager = new VertexShaderManager();
+	}
+	catch (...)
+	{
+		throw std::exception("Vertex Shader Manager failed to initialize!");
+	}
+	
+	try
+	{
+		m_pixel_shader_manager = new PixelShaderManager();
+	}
+	catch (...)
+	{
+		throw std::exception("Pixel Shader Manager failed to initialize!");
 	}
 	
 	try
@@ -32,34 +53,31 @@ GraphicsEngine::GraphicsEngine()
 	{
 		throw std::exception("Mesh Manager failed to initialize!");
 	}
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader_byte_code = 0;
-	m_render_system->compileVertexShader(L"VertexMeshLayoutShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
-	memcpy(m_mesh_layout_byte_code, shader_byte_code, size_shader_byte_code);
-	m_mesh_layout_size = size_shader_byte_code;
-	m_render_system->releaseCompiledShader();
 }
 
-RenderSystem* GraphicsEngine::getRenderSystem()
+RenderSystem* GraphicsEngine::getRenderSystem() const
 {
 	return m_render_system;
 }
 
-TextureManager* GraphicsEngine::getTextureManager()
+VertexShaderManager* GraphicsEngine::getVertexShaderManager() const
+{
+	return m_vertex_shader_manager;
+}
+
+PixelShaderManager* GraphicsEngine::getPixelShaderManager() const
+{
+	return m_pixel_shader_manager;
+}
+
+TextureManager* GraphicsEngine::getTextureManager() const
 {
 	return m_texture_manager;
 }
 
-MeshManager* GraphicsEngine::getMeshManager()
+MeshManager* GraphicsEngine::getMeshManager() const
 {
 	return m_mesh_manager;
-}
-
-void GraphicsEngine::getVertexMeshLayoutShaderByteCodeAndSize(void** byte_code, size_t* size)
-{
-	*byte_code = m_mesh_layout_byte_code;
-	*size = m_mesh_layout_size;
 }
 
 GraphicsEngine::~GraphicsEngine()

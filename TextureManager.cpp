@@ -6,9 +6,9 @@ TextureManager::TextureManager()
 	
 }
 
-TexturePtr TextureManager::createTextureFromFile(const wchar_t* file_path)
+TexturePtr TextureManager::getTextureFromFile(const wchar_t* file_path)
 {
-	return std::static_pointer_cast<Texture>(createResourceFromFile(file_path));
+	return std::static_pointer_cast<Texture>(getResourceFromFile(file_path));
 }
 
 Resource* TextureManager::createResourceFromFileConcrete(const wchar_t* file_path)

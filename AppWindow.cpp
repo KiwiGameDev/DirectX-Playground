@@ -8,14 +8,20 @@
 #include "CameraManager.h"
 #include "ConstantBufferData.h"
 #include "Vector3.h"
-#include "Vertex.h"
+#include "VertexPositionColor.h"
+#include "GameObjectManager.h"
+#include "Mesh.h"
+#include "MeshManager.h"
+#include "PixelShaderManager.h"
+#include "TextureManager.h"
+#include "VertexShaderManager.h"
 #include "Mathf.h"
 #include "imgui.h"
 #include <Windows.h>
 #include <iostream>
 #include <random>
 
-#include "GameObjectManager.h"
+#include "VertexPositionUV.h"
 
 AppWindow::AppWindow()
 	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
@@ -27,91 +33,72 @@ void AppWindow::onCreate()
 {
 	Window::onCreate();
 
-	InputSystem::get().addListener(this);
-	
 	RECT rect = getClientWindowRect();
-	
-	m_swap_chain = GraphicsEngine::get().getRenderSystem()->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
+	GraphicsEngine& graphics_engine = GraphicsEngine::get();
+	RenderSystem* render_system = graphics_engine.getRenderSystem();
+
+	InputSystem::get().addListener(this);
+
+	m_swap_chain = render_system->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Cube
-	Vertex cube_vertices[] =
-	{
-		{ Vector3(-0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3(-0.5f,  0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f,  0.5f, -0.5f), Vector3(1.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f) },
-		{ Vector3( 0.5f, -0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f) },
-		{ Vector3( 0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3(-0.5f,  0.5f,  0.5f), Vector3(0.0f, 1.0f, 1.0f) },
-		{ Vector3(-0.5f, -0.5f,  0.5f), Vector3(0.0f, 1.0f, 0.0f) }
-	};
-	UINT size_cube_vertices = ARRAYSIZE(cube_vertices);
-
-	unsigned int cube_indices[] =
-	{
-		0, 1, 2,
-		2, 3, 0,
-		4, 5, 6,
-		6, 7, 4,
-		1, 6, 5,
-		5, 2, 1,
-		7, 0, 3,
-		3, 4, 7,
-		3, 2, 5,
-		5, 4, 3,
-		7, 6, 1,
-		1, 0, 7
-	};
-	UINT size_cube_indices = ARRAYSIZE(cube_indices);
+	MeshPtr cube_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/cube.obj");
+	TexturePtr bricks = graphics_engine.getTextureManager()->getTextureFromFile(L"Assets/Textures/brick.png");
 
 	// Quad
-	Vertex quad_vertices[] =
+	VertexPositionColor quad_vertices[] =
 	{
 		{ Vector3(-0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
 		{ Vector3(-0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
 		{ Vector3( 0.5f,  0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) },
 		{ Vector3( 0.5f, -0.5f, 0.0f), Vector3(0.9f, 0.9f, 0.9f) }
 	};
-	UINT size_quad_vertices = ARRAYSIZE(cube_vertices);
-
+	UINT size_quad_vertices = ARRAYSIZE(quad_vertices);
+	
 	unsigned int quad_indices[] =
 	{
 		0, 1, 2,
 		2, 3, 0
 	};
-	UINT size_quad_indices = ARRAYSIZE(cube_indices);
+	UINT size_quad_indices = ARRAYSIZE(quad_indices);
 	
-	IndexBufferPtr cube_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(cube_indices, size_cube_indices);
-	IndexBufferPtr quad_ib = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(quad_indices, size_quad_indices);
-	
-	void* shader_byte_code = nullptr;
-	size_t size_shader_byte_code = 0;
-	GraphicsEngine::get().getRenderSystem()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader_byte_code);
-	VertexShaderPtr vs = GraphicsEngine::get().getRenderSystem()->createVertexShader(shader_byte_code, size_shader_byte_code);
-	VertexBufferPtr cube_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(cube_vertices, sizeof(Vertex), size_cube_vertices, shader_byte_code, size_shader_byte_code);
-	VertexBufferPtr quad_vb = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(quad_vertices, sizeof(Vertex), size_quad_vertices, shader_byte_code, size_shader_byte_code);
-	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
-	
-	GraphicsEngine::get().getRenderSystem()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader_byte_code);
-	PixelShaderPtr ps = GraphicsEngine::get().getRenderSystem()->createPixelShader(shader_byte_code, size_shader_byte_code);
-	GraphicsEngine::get().getRenderSystem()->releaseCompiledShader();
+	IndexBufferPtr quad_ib = render_system->createIndexBuffer(quad_indices, size_quad_indices);
+
+	// Teapot
+	MeshPtr teapot = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/teapot.obj");
+
+	// Shaders
+	VertexShaderPtr unlit_vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"UnlitVertexShader.hlsl");
+	VertexShaderPtr textured_vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
+	PixelShaderPtr unlit_ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"UnlitPixelShader.hlsl");
+	PixelShaderPtr textured_ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
+
+	// Vertex buffers
+	VertexBufferPtr quad_vb = render_system->createVertexBuffer(quad_vertices, sizeof(VertexPositionColor), size_quad_vertices, unlit_vs, VertexFormat::POSITION_COLOR);
 
 	// Create constant buffer
 	ConstantBufferData cbd;
 	cbd.m_time = 0;
-	m_cb = GraphicsEngine::get().getRenderSystem()->createConstantBuffer(&cbd, sizeof(ConstantBufferData));
+	m_cb = render_system->createConstantBuffer(&cbd, sizeof(ConstantBufferData));
 
 	// Create cube
-	Cube* cube = new Cube("Cube_00", cube_vb, cube_ib, m_cb, vs, ps);
+	Cube* cube = new Cube("Cube_00", cube_mesh->getVertexBuffer(), cube_mesh->getIndexBuffer(), m_cb, textured_vs, textured_ps);
 	cube->setPosition(Vector3(0.0f, -1.0f, 1.0f));
+	cube->setTexture(bricks);
 	GameObjectManager::get().addGameObject(cube);
 
 	// Create plane
-	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, vs, ps);
+	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, unlit_vs, unlit_ps);
 	plane->setScale(Vector3(8.0f, 8.0f, 1.0f));
 	plane->setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
 	plane->setPosition(Vector3(0.0f, -1.0f, 1.0f));
 	GameObjectManager::get().addGameObject(plane);
+
+	// Create teapot
+	GameObject* teapot_go = new GameObject("teapot", teapot->getVertexBuffer(), teapot->getIndexBuffer(), m_cb, textured_vs, textured_ps);
+	teapot_go->setPosition(Vector3(0.0f, 1.0f, 1.0f));
+	teapot_go->setTexture(bricks);
+	GameObjectManager::get().addGameObject(teapot_go);
 }
 
 void AppWindow::onUpdate()

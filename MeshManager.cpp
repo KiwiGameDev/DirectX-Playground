@@ -6,9 +6,9 @@ MeshManager::MeshManager()
 	
 }
 
-MeshPtr MeshManager::createMeshFromFile(const wchar_t* file_path)
+MeshPtr MeshManager::getMeshFromFile(const wchar_t* file_path)
 {
-	return std::static_pointer_cast<Mesh>(createResourceFromFile(file_path));
+	return std::static_pointer_cast<Mesh>(getResourceFromFile(file_path));
 }
 
 Resource* MeshManager::createResourceFromFileConcrete(const wchar_t* file_path)

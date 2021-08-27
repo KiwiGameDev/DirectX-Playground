@@ -18,7 +18,7 @@ cbuffer constant: register(b0)
     float m_time;
 }
 
-VS_OUTPUT vsmain(VS_INPUT input)
+VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 	

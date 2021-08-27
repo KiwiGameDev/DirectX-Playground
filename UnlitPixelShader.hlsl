@@ -12,7 +12,7 @@ cbuffer constant: register(b0)
 	float m_time;
 }
 
-float4 psmain(PS_INPUT input) : SV_TARGET
+float4 main(PS_INPUT input) : SV_TARGET
 {
     return float4(input.color.rgb, 1.0f);
 }

@@ -13,14 +13,18 @@ public:
 	
 	void draw();
 
+	void setTexture(const TexturePtr& texture);
+
 	std::string getName() const;
 
 private:
 	std::string name;
+
+	TexturePtr m_texture = nullptr;
 	
-	VertexBufferPtr m_vb;
-	IndexBufferPtr m_ib;
-	ConstantBufferPtr m_cb;
-	VertexShaderPtr m_vs;
-	PixelShaderPtr m_ps;
+	VertexBufferPtr m_vb = nullptr;
+	IndexBufferPtr m_ib = nullptr;
+	ConstantBufferPtr m_cb = nullptr;
+	VertexShaderPtr m_vs = nullptr;
+	PixelShaderPtr m_ps = nullptr;
 };

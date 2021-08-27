@@ -6,7 +6,7 @@ ResourceManager::ResourceManager()
 	
 }
 
-ResourcePtr ResourceManager::createResourceFromFile(const wchar_t* file_path)
+ResourcePtr ResourceManager::getResourceFromFile(const wchar_t* file_path)
 {
 	std::wstring full_path = std::filesystem::absolute(file_path);
 

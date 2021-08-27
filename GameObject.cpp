@@ -37,7 +37,17 @@ void GameObject::draw()
 	device_context->setConstantBuffer(m_ps, m_cb);
 	device_context->setVertexBuffer(m_vb);
 	device_context->setIndexBuffer(m_ib);
+	if (m_texture != nullptr)
+	{
+		device_context->setTextureVertexShader(m_texture);
+		device_context->setTexturePixelShader(m_texture);
+	}
 	device_context->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
+}
+
+void GameObject::setTexture(const TexturePtr& texture)
+{
+	m_texture = texture;
 }
 
 std::string GameObject::getName() const

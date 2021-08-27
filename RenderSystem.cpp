@@ -85,13 +85,13 @@ SwapChainPtr RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
 	return sc;
 }
 
-VertexBufferPtr RenderSystem::createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader)
+VertexBufferPtr RenderSystem::createVertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, VertexShaderPtr vertex_shader, VertexFormat vertex_format)
 {
 	VertexBufferPtr vb = nullptr;
 	
 	try
 	{
-		vb = std::make_shared<VertexBuffer>(list_vertices, size_vertices, size_list, shader_byte_code, size_byte_shader, this);
+		vb = std::make_shared<VertexBuffer>(list_vertices, size_vertices, size_list, vertex_shader, vertex_format, this);
 	}
 	catch (...)
 	{
@@ -133,78 +133,6 @@ ConstantBufferPtr RenderSystem::createConstantBuffer(void* buffer, UINT size_buf
 	return cb;
 }
 
-VertexShaderPtr RenderSystem::createVertexShader(const void* shader_byte_code, size_t size_shader_byte_code)
-{
-	VertexShaderPtr vs = nullptr;
-
-	try
-	{
-		vs = std::make_shared<VertexShader>(shader_byte_code, size_shader_byte_code, this);
-	}
-	catch (...)
-	{
-
-	}
-	
-	return vs;
-}
-
-PixelShaderPtr RenderSystem::createPixelShader(const void* shader_byte_code, size_t size_shader_byte_code)
-{
-	PixelShaderPtr ps = nullptr;
-
-	try
-	{
-		ps = std::make_shared<PixelShader>(shader_byte_code, size_shader_byte_code, this);
-	}
-	catch (...)
-	{
-
-	}
-	
-	return ps;
-}
-
-bool RenderSystem::compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* size_shader_byte_code)
-{
-	ID3DBlob* error_blob = nullptr;
-	if (!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob)))
-	{
-		if (error_blob)
-			error_blob->Release();
-
-		return false;
-	}
-
-	*shader_byte_code = m_blob->GetBufferPointer();
-	*size_shader_byte_code = m_blob->GetBufferSize();
-
-	return true;
-}
-
-bool RenderSystem::compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* size_shader_byte_code)
-{
-	ID3DBlob* error_blob = nullptr;
-	if (!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob)))
-	{
-		if (error_blob)
-			error_blob->Release();
-
-		return false;
-	}
-
-	*shader_byte_code = m_blob->GetBufferPointer();
-	*size_shader_byte_code = m_blob->GetBufferSize();
-
-	return true;
-}
-
-void RenderSystem::releaseCompiledShader()
-{
-	if (m_blob)
-		m_blob->Release();
-}
-
 void RenderSystem::setSolidRasterizerState()
 {
 	m_imm_device_context->setRasterizerState(m_rasterizer_solid);
@@ -222,9 +150,6 @@ DeviceContextPtr RenderSystem::getImmediateDeviceContext()
 
 RenderSystem::~RenderSystem()
 {
-	if (m_vsblob) m_vsblob->Release();
-	if (m_psblob) m_psblob->Release();
-	
 	m_dxgi_device->Release();
 	m_dxgi_adapter->Release();
 	m_dxgi_factory->Release();

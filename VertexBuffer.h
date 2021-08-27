@@ -1,4 +1,5 @@
 #pragma once
+#include "VertexInputLayout.h"
 #include <Windows.h>
 
 class RenderSystem;
@@ -11,7 +12,7 @@ class VertexBuffer
 	friend class DeviceContext;
 
 public:
-	VertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, void* shader_byte_code, UINT size_byte_shader, RenderSystem* system);
+	VertexBuffer(void* list_vertices, UINT size_vertices, UINT size_list, VertexShaderPtr vertex_shader, VertexFormat vertex_format, RenderSystem* system);
 
 	UINT getSizeVertices();
 
@@ -22,7 +23,7 @@ private:
 	UINT m_size_list;
 
 	ID3D11Buffer* m_buffer;
-	ID3D11InputLayout* m_layout;
+	VertexInputLayout m_layout;
 
 	RenderSystem* m_system;
 };

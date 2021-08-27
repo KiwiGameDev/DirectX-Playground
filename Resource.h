@@ -1,13 +1,9 @@
 #pragma once
-#include <string>
 
 class Resource
 {
 public:
-	Resource(const wchar_t* full_path);
+	Resource() = default;
 
-	virtual ~Resource();
-
-private:
-	std::wstring m_full_path;
+	virtual ~Resource() = default;
 };

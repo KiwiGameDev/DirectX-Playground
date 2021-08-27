@@ -8,11 +8,11 @@ class ResourceManager
 public:
 	ResourceManager();
 
-	ResourcePtr createResourceFromFile(const wchar_t* file_path);
-
 	virtual ~ResourceManager();
 
 protected:
+	ResourcePtr getResourceFromFile(const wchar_t* file_path);
+	
 	virtual Resource* createResourceFromFileConcrete(const wchar_t* file_path) = 0;
 
 private:

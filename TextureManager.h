@@ -6,7 +6,7 @@ class TextureManager : public ResourceManager
 public:
 	TextureManager();
 
-	TexturePtr createTextureFromFile(const wchar_t* file_path);
+	TexturePtr getTextureFromFile(const wchar_t* file_path);
 	
 	~TextureManager();
 

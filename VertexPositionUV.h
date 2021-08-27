@@ -1,8 +1,9 @@
 #pragma once
+#include "Vector2.h"
 #include "Vector3.h"
 
-struct Vertex
+struct VertexPositionUV
 {
 	Vector3 Position;
-	Vector3 Color;
+	Vector2 UV;
 };

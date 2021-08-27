@@ -4,7 +4,6 @@
 #include <DirectXTex.h>
 
 Texture::Texture(const wchar_t* full_path)
-	: Resource(full_path)
 {
 	DirectX::ScratchImage image_data;
 	HRESULT res = LoadFromWICFile(full_path, DirectX::WIC_FLAGS_NONE, nullptr, image_data);

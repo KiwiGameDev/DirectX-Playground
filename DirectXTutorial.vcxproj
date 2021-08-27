@@ -175,6 +175,7 @@
     <ClCompile Include="Libs\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Libs\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="MenuScreen.cpp" />
+    <ClCompile Include="PixelShaderManager.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenNames.cpp" />
     <ClCompile Include="Transformable.cpp" />
@@ -192,7 +193,9 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="VertexInputLayout.cpp" />
     <ClCompile Include="VertexShader.cpp" />
+    <ClCompile Include="VertexShaderManager.cpp" />
     <ClCompile Include="ViewportScreen.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -221,6 +224,7 @@
     <ClInclude Include="Libs\ImGui\imstb_textedit.h" />
     <ClInclude Include="Libs\ImGui\imstb_truetype.h" />
     <ClInclude Include="MenuScreen.h" />
+    <ClInclude Include="PixelShaderManager.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenNames.h" />
     <ClInclude Include="Transformable.h" />
@@ -245,15 +249,31 @@
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VertexPositionColor.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexFormat.h" />
+    <ClInclude Include="VertexInputLayout.h" />
     <ClInclude Include="VertexMesh.h" />
+    <ClInclude Include="VertexPositionUV.h" />
     <ClInclude Include="VertexShader.h" />
+    <ClInclude Include="VertexShaderManager.h" />
     <ClInclude Include="ViewportScreen.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="TexturedPixelShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="TexturedVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="UnlitPixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -269,7 +289,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
+    <FxCompile Include="UnlitVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
