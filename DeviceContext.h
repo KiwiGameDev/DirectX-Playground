@@ -34,6 +34,7 @@ public:
 	void setPixelShader(const PixelShaderPtr& pixel_shader);
 
 	void setRasterizerState(ID3D11RasterizerState* rasterizer_state);
+	void setSamplerState(const SamplerStatePtr& sampler_state);
 
 	void drawTriangleList(UINT vertex_count, UINT start_vertex_index);
 	void drawIndexedTriangleList(UINT index_count, UINT start_index_location, UINT start_vertex_location);

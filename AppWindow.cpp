@@ -24,7 +24,7 @@
 #include "VertexPositionUV.h"
 
 AppWindow::AppWindow()
-	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.01f, 1000.0f)
+	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.001f, 100.0f)
 {
 	CameraManager::get().setEditorCamera(&m_editor_camera);
 }
@@ -64,17 +64,21 @@ void AppWindow::onCreate()
 	
 	IndexBufferPtr quad_ib = render_system->createIndexBuffer(quad_indices, size_quad_indices);
 
-	// Teapot
-	MeshPtr teapot = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/teapot.obj");
+	// Meshes
+	MeshPtr teapot_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/teapot.obj");
+	MeshPtr armadillo_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/armadillo.obj");
+	MeshPtr bunny_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/bunny.obj");
 
 	// Shaders
-	VertexShaderPtr unlit_vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"UnlitVertexShader.hlsl");
+	VertexShaderPtr vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"VertexShader.hlsl");
+	VertexShaderPtr colored_vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"ColoredVertexShader.hlsl");
 	VertexShaderPtr textured_vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
-	PixelShaderPtr unlit_ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"UnlitPixelShader.hlsl");
+	PixelShaderPtr ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"PixelShader.hlsl");
+	PixelShaderPtr colored_ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"ColoredPixelShader.hlsl");
 	PixelShaderPtr textured_ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
 
 	// Vertex buffers
-	VertexBufferPtr quad_vb = render_system->createVertexBuffer(quad_vertices, sizeof(VertexPositionColor), size_quad_vertices, unlit_vs, VertexFormat::POSITION_COLOR);
+	VertexBufferPtr quad_vb = render_system->createVertexBuffer(quad_vertices, sizeof(VertexPositionColor), size_quad_vertices, colored_vs, VertexFormat::POSITION_COLOR);
 
 	// Create constant buffer
 	ConstantBufferData cbd;
@@ -88,17 +92,27 @@ void AppWindow::onCreate()
 	GameObjectManager::get().addGameObject(cube);
 
 	// Create plane
-	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, unlit_vs, unlit_ps);
+	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, colored_vs, colored_ps);
 	plane->setScale(Vector3(8.0f, 8.0f, 1.0f));
 	plane->setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
 	plane->setPosition(Vector3(0.0f, -1.0f, 1.0f));
 	GameObjectManager::get().addGameObject(plane);
 
 	// Create teapot
-	GameObject* teapot_go = new GameObject("teapot", teapot->getVertexBuffer(), teapot->getIndexBuffer(), m_cb, textured_vs, textured_ps);
+	GameObject* teapot_go = new GameObject("teapot", teapot_mesh->getVertexBuffer(), teapot_mesh->getIndexBuffer(), m_cb, textured_vs, textured_ps);
 	teapot_go->setPosition(Vector3(0.0f, 1.0f, 1.0f));
 	teapot_go->setTexture(bricks);
 	GameObjectManager::get().addGameObject(teapot_go);
+
+	// Create armadillo
+	GameObject* armadillo_go = new GameObject("armadillo", armadillo_mesh->getVertexBuffer(), armadillo_mesh->getIndexBuffer(), m_cb, vs, ps);
+	armadillo_go->setPosition(Vector3(2.0f, 1.0f, 1.0f));
+	GameObjectManager::get().addGameObject(armadillo_go);
+
+	// Create bunny
+	GameObject* bunny_go = new GameObject("bunny", bunny_mesh->getVertexBuffer(), bunny_mesh->getIndexBuffer(), m_cb, vs, ps);
+	bunny_go->setPosition(Vector3(-2.0f, 1.0f, 1.0f));
+	GameObjectManager::get().addGameObject(bunny_go);
 }
 
 void AppWindow::onUpdate()

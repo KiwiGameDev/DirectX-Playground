@@ -7,6 +7,7 @@
 class RenderSystem
 {
 	friend class SwapChain;
+	friend class SamplerState;
 	friend class ConstantBuffer;
 	friend class VertexBuffer;
 	friend class VertexInputLayout;
@@ -43,4 +44,5 @@ private:
 
 	ID3D11RasterizerState* m_rasterizer_solid;
 	ID3D11RasterizerState* m_rasterizer_wireframe;
+	SamplerStatePtr m_sampler_state;
 };

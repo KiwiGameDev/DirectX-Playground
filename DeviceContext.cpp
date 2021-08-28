@@ -9,6 +9,8 @@
 #include "Texture.h"
 #include <d3d11.h>
 
+#include "SamplerState.h"
+
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
 	: m_device_context(device_context), m_system(system)
 {
@@ -81,6 +83,11 @@ void DeviceContext::setPixelShader(const PixelShaderPtr& pixel_shader)
 void DeviceContext::setRasterizerState(ID3D11RasterizerState* rasterizer_state)
 {
 	m_device_context->RSSetState(rasterizer_state);
+}
+
+void DeviceContext::setSamplerState(const SamplerStatePtr& sampler_state)
+{
+	m_device_context->PSSetSamplers(0, 1, &sampler_state->m_sampler_state);
 }
 
 void DeviceContext::drawTriangleList(UINT vertex_count, UINT start_vertex_index)

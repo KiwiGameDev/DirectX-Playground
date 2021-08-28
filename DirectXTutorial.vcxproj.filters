@@ -201,6 +201,7 @@
     <ClCompile Include="VertexInputLayout.cpp">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\VertexInputLayout</Filter>
     </ClCompile>
+    <ClCompile Include="SamplerState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -374,12 +375,13 @@
     <ClInclude Include="VertexPositionColor.h">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\Vertex</Filter>
     </ClInclude>
+    <ClInclude Include="SamplerState.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="UnlitVertexShader.hlsl">
+    <FxCompile Include="ColoredVertexShader.hlsl">
       <Filter>App</Filter>
     </FxCompile>
-    <FxCompile Include="UnlitPixelShader.hlsl">
+    <FxCompile Include="ColoredPixelShader.hlsl">
       <Filter>App</Filter>
     </FxCompile>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
@@ -389,6 +391,12 @@
       <Filter>App</Filter>
     </FxCompile>
     <FxCompile Include="TexturedVertexShader.hlsl">
+      <Filter>App</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>App</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
       <Filter>App</Filter>
     </FxCompile>
   </ItemGroup>
