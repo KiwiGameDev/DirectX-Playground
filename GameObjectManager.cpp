@@ -26,6 +26,11 @@ GameObject* GameObjectManager::getGameObject(const std::string& name) const
 	return name_to_gameobject_map.at(name);
 }
 
+const std::unordered_map<std::string, GameObject*>& GameObjectManager::getGameObjectMap() const
+{
+	return name_to_gameobject_map;
+}
+
 void GameObjectManager::addGameObject(GameObject* gameobject)
 {
 	name_to_gameobject_map.insert({ gameobject->getName(), gameobject });

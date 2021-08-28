@@ -168,6 +168,7 @@
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputSystem.cpp" />
+    <ClCompile Include="InspectorScreen.cpp" />
     <ClCompile Include="Libs\ImGui\imgui.cpp" />
     <ClCompile Include="Libs\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Libs\ImGui\imgui_impl_dx11.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="MenuScreen.cpp" />
     <ClCompile Include="PixelShaderManager.cpp" />
     <ClCompile Include="SamplerState.cpp" />
+    <ClCompile Include="SceneHierarchyScreen.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenNames.cpp" />
     <ClCompile Include="Transformable.cpp" />
@@ -216,6 +218,7 @@
     <ClInclude Include="IInputListener.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="InspectorScreen.h" />
     <ClInclude Include="Libs\ImGui\imconfig.h" />
     <ClInclude Include="Libs\ImGui\imgui.h" />
     <ClInclude Include="Libs\ImGui\imgui_impl_dx11.h" />
@@ -227,6 +230,7 @@
     <ClInclude Include="MenuScreen.h" />
     <ClInclude Include="PixelShaderManager.h" />
     <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SceneHierarchyScreen.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenNames.h" />
     <ClInclude Include="Transformable.h" />

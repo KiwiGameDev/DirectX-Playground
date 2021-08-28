@@ -9,6 +9,7 @@
 #include "ConstantBufferData.h"
 #include "Vector3.h"
 #include "VertexPositionColor.h"
+#include "VertexPositionUV.h"
 #include "GameObjectManager.h"
 #include "Mesh.h"
 #include "MeshManager.h"
@@ -20,8 +21,6 @@
 #include <Windows.h>
 #include <iostream>
 #include <random>
-
-#include "VertexPositionUV.h"
 
 AppWindow::AppWindow()
 	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.001f, 100.0f)

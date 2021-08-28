@@ -13,6 +13,7 @@ public:
 	void draw();
 	
 	GameObject* getGameObject(const std::string& name) const;
+	const std::unordered_map<std::string, GameObject*>& getGameObjectMap() const;
 
 	void addGameObject(GameObject* gameobject);
 	void removeGameObject(const std::string& name);

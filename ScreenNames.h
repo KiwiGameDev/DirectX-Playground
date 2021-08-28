@@ -7,4 +7,6 @@ namespace ScreenNames
 	const std::string Menu = "Menu";
 	const std::string Credits = "Credits";
 	const std::string ColorPicker = "ColorPicker";
+	const std::string Inspector = "Inspector";
+	const std::string SceneHierarchy = "SceneHierarchy";
 };

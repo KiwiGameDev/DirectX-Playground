@@ -76,6 +76,9 @@
     <Filter Include="GameEngine\GraphicsEngine\RenderSystem\Vertex">
       <UniqueIdentifier>{3153515f-b31c-4f50-a05f-ced52e64d138}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameEngine\GraphicsEngine\RenderSystem\SamplerState">
+      <UniqueIdentifier>{051ad1e7-f07b-4edc-a522-cca382469df4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -201,7 +204,11 @@
     <ClCompile Include="VertexInputLayout.cpp">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\VertexInputLayout</Filter>
     </ClCompile>
-    <ClCompile Include="SamplerState.cpp" />
+    <ClCompile Include="SamplerState.cpp">
+      <Filter>GameEngine\GraphicsEngine\RenderSystem\SamplerState</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneHierarchyScreen.cpp" />
+    <ClCompile Include="InspectorScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -375,7 +382,11 @@
     <ClInclude Include="VertexPositionColor.h">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\Vertex</Filter>
     </ClInclude>
-    <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SamplerState.h">
+      <Filter>GameEngine\GraphicsEngine\RenderSystem\SamplerState</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneHierarchyScreen.h" />
+    <ClInclude Include="InspectorScreen.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColoredVertexShader.hlsl">
