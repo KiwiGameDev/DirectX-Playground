@@ -24,10 +24,10 @@ UI::UI(HWND hwnd)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	RenderSystem* render_system = GraphicsEngine::get().getRenderSystem();
+	RenderSystem& render_system = GraphicsEngine::get().getRenderSystem();
 
 	ImGui_ImplWin32_Init(hwnd);
-	ImGui_ImplDX11_Init(render_system->m_d3d_device, render_system->m_imm_device_context->m_device_context);
+	ImGui_ImplDX11_Init(render_system.m_d3d_device, render_system.m_imm_device_context->m_device_context);
 
 	ImGui::StyleColorsDark();
 

@@ -3,8 +3,7 @@
 #include <d3dcompiler.h>
 #include <exception>
 
-PixelShader::PixelShader(const wchar_t* full_path, RenderSystem* system)
-	: m_system(system)
+PixelShader::PixelShader(const wchar_t* full_path, RenderSystem& system)
 {
 	ID3DBlob* blob = nullptr;
 	ID3DBlob* error_blob = nullptr;
@@ -21,7 +20,7 @@ PixelShader::PixelShader(const wchar_t* full_path, RenderSystem* system)
 	m_shader_byte_code = malloc(m_shader_byte_code_size);
 	memcpy(m_shader_byte_code, blob->GetBufferPointer(), m_shader_byte_code_size);
 	
-	if (!SUCCEEDED(m_system->m_d3d_device->CreatePixelShader(m_shader_byte_code, m_shader_byte_code_size, nullptr, &m_ps)))
+	if (!SUCCEEDED(system.m_d3d_device->CreatePixelShader(m_shader_byte_code, m_shader_byte_code_size, nullptr, &m_ps)))
 		throw std::exception("Vertex Shader failed to initialize!");
 
 	blob->Release();

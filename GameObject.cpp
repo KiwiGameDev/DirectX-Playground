@@ -22,7 +22,7 @@ void GameObject::update()
 
 void GameObject::draw()
 {
-	DeviceContextPtr device_context = GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext();
+	DeviceContextPtr device_context = GraphicsEngine::get().getRenderSystem().getImmediateDeviceContext();
 	
 	ConstantBufferData cbd;
 	cbd.m_world = getTransform();

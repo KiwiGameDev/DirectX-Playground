@@ -34,15 +34,15 @@ void AppWindow::onCreate()
 
 	RECT rect = getClientWindowRect();
 	GraphicsEngine& graphics_engine = GraphicsEngine::get();
-	RenderSystem* render_system = graphics_engine.getRenderSystem();
+	RenderSystem& render_system = graphics_engine.getRenderSystem();
 
 	InputSystem::get().addListener(this);
 
-	m_swap_chain = render_system->createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
+	m_swap_chain = render_system.createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
 	// Cube
-	MeshPtr cube_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/cube.obj");
-	TexturePtr bricks = graphics_engine.getTextureManager()->getTextureFromFile(L"Assets/Textures/brick.png");
+	MeshPtr cube_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/cube.obj");
+	TexturePtr bricks = graphics_engine.getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
 
 	// Quad
 	VertexPositionColor quad_vertices[] =
@@ -61,28 +61,28 @@ void AppWindow::onCreate()
 	};
 	UINT size_quad_indices = ARRAYSIZE(quad_indices);
 	
-	IndexBufferPtr quad_ib = render_system->createIndexBuffer(quad_indices, size_quad_indices);
+	IndexBufferPtr quad_ib = render_system.createIndexBuffer(quad_indices, size_quad_indices);
 
 	// Meshes
-	MeshPtr teapot_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/teapot.obj");
-	MeshPtr armadillo_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/armadillo.obj");
-	MeshPtr bunny_mesh = graphics_engine.getMeshManager()->getMeshFromFile(L"Assets/Meshes/bunny.obj");
+	MeshPtr teapot_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/teapot.obj");
+	MeshPtr armadillo_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/armadillo.obj");
+	MeshPtr bunny_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/bunny.obj");
 
 	// Shaders
-	VertexShaderPtr vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"VertexShader.hlsl");
-	VertexShaderPtr colored_vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"ColoredVertexShader.hlsl");
-	VertexShaderPtr textured_vs = graphics_engine.getVertexShaderManager()->getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
-	PixelShaderPtr ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"PixelShader.hlsl");
-	PixelShaderPtr colored_ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"ColoredPixelShader.hlsl");
-	PixelShaderPtr textured_ps = graphics_engine.getPixelShaderManager()->getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
+	VertexShaderPtr vs = graphics_engine.getVertexShaderManager().getVertexShaderFromFile(L"VertexShader.hlsl");
+	VertexShaderPtr colored_vs = graphics_engine.getVertexShaderManager().getVertexShaderFromFile(L"ColoredVertexShader.hlsl");
+	VertexShaderPtr textured_vs = graphics_engine.getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
+	PixelShaderPtr ps = graphics_engine.getPixelShaderManager().getPixelShaderFromFile(L"PixelShader.hlsl");
+	PixelShaderPtr colored_ps = graphics_engine.getPixelShaderManager().getPixelShaderFromFile(L"ColoredPixelShader.hlsl");
+	PixelShaderPtr textured_ps = graphics_engine.getPixelShaderManager().getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
 
 	// Vertex buffers
-	VertexBufferPtr quad_vb = render_system->createVertexBuffer(quad_vertices, sizeof(VertexPositionColor), size_quad_vertices, colored_vs, VertexFormat::POSITION_COLOR);
+	VertexBufferPtr quad_vb = render_system.createVertexBuffer(quad_vertices, sizeof(VertexPositionColor), size_quad_vertices, colored_vs, VertexFormat::POSITION_COLOR);
 
 	// Create constant buffer
 	ConstantBufferData cbd;
 	cbd.m_time = 0;
-	m_cb = render_system->createConstantBuffer(&cbd, sizeof(ConstantBufferData));
+	m_cb = render_system.createConstantBuffer(&cbd, sizeof(ConstantBufferData));
 
 	// Create cube
 	Cube* cube = new Cube("Cube_00", cube_mesh->getVertexBuffer(), cube_mesh->getIndexBuffer(), m_cb, textured_vs, textured_ps);
@@ -123,8 +123,8 @@ void AppWindow::onUpdate()
 	RECT screen_rect = getClientWindowRect();
 	float screen_width = (float)(screen_rect.right - screen_rect.left);
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
-	GraphicsEngine::get().getRenderSystem()->getImmediateDeviceContext()->setViewportSize(screen_width, screen_height);
+	GraphicsEngine::get().getRenderSystem().getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
+	GraphicsEngine::get().getRenderSystem().getImmediateDeviceContext()->setViewportSize(screen_width, screen_height);
 	
 	// Camera
 	m_editor_camera.update();

@@ -65,9 +65,9 @@ Mesh::Mesh(const wchar_t* full_path)
 		}
 	}
 	
-	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager()->getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
-	m_vertex_buffer = GraphicsEngine::get().getRenderSystem()->createVertexBuffer(&list_vertices[0], sizeof(VertexMesh), list_vertices.size(), vs, VertexFormat::POSITION_UV);
-	m_index_buffer = GraphicsEngine::get().getRenderSystem()->createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
+	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
+	m_vertex_buffer = GraphicsEngine::get().getRenderSystem().createVertexBuffer(&list_vertices[0], sizeof(VertexMesh), list_vertices.size(), vs, VertexFormat::POSITION_UV);
+	m_index_buffer = GraphicsEngine::get().getRenderSystem().createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 }
 
 const VertexBufferPtr& Mesh::getVertexBuffer()

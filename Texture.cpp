@@ -12,7 +12,7 @@ Texture::Texture(const wchar_t* full_path)
 		throw std::exception("Texture failed to load successfully!");
 
 	res = CreateTexture(
-		GraphicsEngine::get().getRenderSystem()->m_d3d_device,
+		GraphicsEngine::get().getRenderSystem().m_d3d_device,
 		image_data.GetImages(),
 		image_data.GetImageCount(),
 		image_data.GetMetadata(),
@@ -24,7 +24,7 @@ Texture::Texture(const wchar_t* full_path)
 	desc.Texture2D.MipLevels = image_data.GetMetadata().mipLevels;
 	desc.Texture2D.MostDetailedMip = 0;
 
-	GraphicsEngine::get().getRenderSystem()->m_d3d_device->CreateShaderResourceView(m_texture, &desc, &m_shader_resource_view);
+	GraphicsEngine::get().getRenderSystem().m_d3d_device->CreateShaderResourceView(m_texture, &desc, &m_shader_resource_view);
 }
 
 ID3D11ShaderResourceView* Texture::getShaderResourceView() const

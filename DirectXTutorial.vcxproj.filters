@@ -148,7 +148,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
-    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Libs\ImGui\imgui.cpp">
       <Filter>GameEngine\ImGui</Filter>
     </ClCompile>
@@ -185,7 +184,6 @@
     <ClCompile Include="CreditsScreen.cpp">
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
-    <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="ColorPickerScreen.cpp">
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
@@ -207,8 +205,18 @@
     <ClCompile Include="SamplerState.cpp">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\SamplerState</Filter>
     </ClCompile>
-    <ClCompile Include="SceneHierarchyScreen.cpp" />
-    <ClCompile Include="InspectorScreen.cpp" />
+    <ClCompile Include="SceneHierarchyScreen.cpp">
+      <Filter>GameEngine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InspectorScreen.cpp">
+      <Filter>GameEngine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -308,7 +316,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="Libs\ImGui\imconfig.h">
       <Filter>GameEngine\ImGui</Filter>
     </ClInclude>
@@ -354,7 +361,6 @@
     <ClInclude Include="CreditsScreen.h">
       <Filter>GameEngine\UI</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="ColorPickerScreen.h">
       <Filter>GameEngine\UI</Filter>
     </ClInclude>
@@ -385,8 +391,18 @@
     <ClInclude Include="SamplerState.h">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\SamplerState</Filter>
     </ClInclude>
-    <ClInclude Include="SceneHierarchyScreen.h" />
-    <ClInclude Include="InspectorScreen.h" />
+    <ClInclude Include="SceneHierarchyScreen.h">
+      <Filter>GameEngine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="InspectorScreen.h">
+      <Filter>GameEngine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColoredVertexShader.hlsl">

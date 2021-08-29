@@ -1,11 +1,11 @@
 #pragma once
 #include "Singleton.h"
+#include "RenderSystem.h"
+#include "PixelShaderManager.h"
+#include "VertexShaderManager.h"
+#include "MeshManager.h"
+#include "TextureManager.h"
 
-class RenderSystem;
-class VertexShaderManager;
-class PixelShaderManager;
-class TextureManager;
-class MeshManager;
 class DeviceContext;
 
 class GraphicsEngine : public Singleton<GraphicsEngine>
@@ -13,19 +13,19 @@ class GraphicsEngine : public Singleton<GraphicsEngine>
 	friend class Singleton<GraphicsEngine>;
 
 public:
-	RenderSystem* getRenderSystem() const;
-	VertexShaderManager* getVertexShaderManager() const;
-	PixelShaderManager* getPixelShaderManager() const;
-	TextureManager* getTextureManager() const;
-	MeshManager* getMeshManager() const;
+	RenderSystem& getRenderSystem();
+	VertexShaderManager& getVertexShaderManager();
+	PixelShaderManager& getPixelShaderManager();
+	MeshManager& getMeshManager();
+	TextureManager& getTextureManager();
 	
 protected:
 	GraphicsEngine();
 	~GraphicsEngine();
 	
-	RenderSystem* m_render_system = nullptr;
-	VertexShaderManager* m_vertex_shader_manager = nullptr;
-	PixelShaderManager* m_pixel_shader_manager = nullptr;
-	TextureManager* m_texture_manager = nullptr;
-	MeshManager* m_mesh_manager = nullptr;
+	RenderSystem m_render_system;
+	VertexShaderManager m_vertex_shader_manager;
+	PixelShaderManager m_pixel_shader_manager;
+	MeshManager m_mesh_manager;
+	TextureManager m_texture_manager;
 };

@@ -12,13 +12,11 @@ class VertexShader : public Resource
 	friend class VertexInputLayout;
 	
 public:
-	VertexShader(const wchar_t* full_path, RenderSystem* system);
+	VertexShader(const wchar_t* full_path, RenderSystem& render_system);
 
 	~VertexShader();
 
 private:
-	RenderSystem* m_system = nullptr;
-
 	ID3D11VertexShader* m_vs = nullptr;
 	void* m_shader_byte_code = nullptr;
 	size_t m_shader_byte_code_size = 0;

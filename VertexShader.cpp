@@ -3,8 +3,7 @@
 #include <d3dcompiler.h>
 #include <exception>
 
-VertexShader::VertexShader(const wchar_t* full_path, RenderSystem* system)
-	: Resource(), m_system(system)
+VertexShader::VertexShader(const wchar_t* full_path, RenderSystem& render_system)
 {
 	ID3DBlob* blob = nullptr;
 	ID3DBlob* error_blob = nullptr;
@@ -21,7 +20,7 @@ VertexShader::VertexShader(const wchar_t* full_path, RenderSystem* system)
 	m_shader_byte_code = malloc(m_shader_byte_code_size);
 	memcpy(m_shader_byte_code, blob->GetBufferPointer(), m_shader_byte_code_size);
 	
-	if (!SUCCEEDED(m_system->m_d3d_device->CreateVertexShader(m_shader_byte_code, m_shader_byte_code_size, nullptr, &m_vs)))
+	if (!SUCCEEDED(render_system.m_d3d_device->CreateVertexShader(m_shader_byte_code, m_shader_byte_code_size, nullptr, &m_vs)))
 		throw std::exception("Vertex Shader failed to initialize!");
 
 	blob->Release();
