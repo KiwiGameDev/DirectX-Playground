@@ -1,15 +1,13 @@
 #pragma once
-#include "IUpdateable.h"
 #include "Transformable.h"
 #include "Vector2.h"
-#include "Point.h"
 
-class Camera : public IUpdateable, public Transformable
+class Camera : public Transformable
 {
 public:
 	Camera(float fov, float aspect, float near, float far);
 	
-	void update() override;
+	void update();
 
 	void onKeyDown(int key);
 	void onKeyUp(int key);

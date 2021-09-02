@@ -16,15 +16,18 @@
 #include "PixelShaderManager.h"
 #include "TextureManager.h"
 #include "VertexShaderManager.h"
+#include "ComponentSystem.h"
 #include "Mathf.h"
 #include "imgui.h"
 #include <Windows.h>
-#include <iostream>
 #include <random>
+
+#include "Random.h"
 
 AppWindow::AppWindow()
 	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.001f, 100.0f)
 {
+	m_editor_camera.setPosition(0.0f, 5.0f, -5.0f);
 	CameraManager::get().setEditorCamera(&m_editor_camera);
 }
 
@@ -39,10 +42,6 @@ void AppWindow::onCreate()
 	InputSystem::get().addListener(this);
 
 	m_swap_chain = render_system.createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
-
-	// Cube
-	MeshPtr cube_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/cube.obj");
-	TexturePtr bricks = graphics_engine.getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
 
 	// Quad
 	VertexPositionColor quad_vertices[] =
@@ -65,8 +64,8 @@ void AppWindow::onCreate()
 
 	// Meshes
 	MeshPtr teapot_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/teapot.obj");
-	MeshPtr armadillo_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/armadillo.obj");
-	MeshPtr bunny_mesh = graphics_engine.getMeshManager().getMeshFromFile(L"Assets/Meshes/bunny.obj");
+	MeshPtr cube_mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(L"Assets/Meshes/cube.obj");
+	TexturePtr bricks = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
 
 	// Shaders
 	VertexShaderPtr vs = graphics_engine.getVertexShaderManager().getVertexShaderFromFile(L"VertexShader.hlsl");
@@ -84,34 +83,18 @@ void AppWindow::onCreate()
 	cbd.m_time = 0;
 	m_cb = render_system.createConstantBuffer(&cbd, sizeof(ConstantBufferData));
 
-	// Create cube
-	Cube* cube = new Cube("Cube_00", cube_mesh->getVertexBuffer(), cube_mesh->getIndexBuffer(), m_cb, textured_vs, textured_ps);
-	cube->setPosition(Vector3(0.0f, -1.0f, 1.0f));
-	cube->setTexture(bricks);
-	GameObjectManager::get().addGameObject(cube);
-
 	// Create plane
-	GameObject* plane = new GameObject("Plane", quad_vb, quad_ib, m_cb, colored_vs, colored_ps);
-	plane->setScale(Vector3(8.0f, 8.0f, 1.0f));
-	plane->setRotation(Vector3(90.0f * Mathf::deg2rad, 0.0f, 0.0f));
-	plane->setPosition(Vector3(0.0f, -1.0f, 1.0f));
+	PhysicsCube* plane = new PhysicsCube("Plane_00", cube_mesh->getVertexBuffer(), cube_mesh->getIndexBuffer(), m_cb, colored_vs, colored_ps);
+	plane->setScale(Vector3(32.0f, 0.1f, 32.0f));
+	plane->setPosition(Vector3(0.0f, 0.0f, 0.0f));
 	GameObjectManager::get().addGameObject(plane);
+	plane->setRigidBodyType(reactphysics3d::BodyType::STATIC);
 
 	// Create teapot
-	GameObject* teapot_go = new GameObject("teapot", teapot_mesh->getVertexBuffer(), teapot_mesh->getIndexBuffer(), m_cb, textured_vs, textured_ps);
+	GameObject* teapot_go = new GameObject("Teapot_00", teapot_mesh->getVertexBuffer(), teapot_mesh->getIndexBuffer(), m_cb, textured_vs, textured_ps);
 	teapot_go->setPosition(Vector3(0.0f, 1.0f, 1.0f));
 	teapot_go->setTexture(bricks);
 	GameObjectManager::get().addGameObject(teapot_go);
-
-	// Create armadillo
-	GameObject* armadillo_go = new GameObject("armadillo", armadillo_mesh->getVertexBuffer(), armadillo_mesh->getIndexBuffer(), m_cb, vs, ps);
-	armadillo_go->setPosition(Vector3(2.0f, 1.0f, 1.0f));
-	GameObjectManager::get().addGameObject(armadillo_go);
-
-	// Create bunny
-	GameObject* bunny_go = new GameObject("bunny", bunny_mesh->getVertexBuffer(), bunny_mesh->getIndexBuffer(), m_cb, vs, ps);
-	bunny_go->setPosition(Vector3(-2.0f, 1.0f, 1.0f));
-	GameObjectManager::get().addGameObject(bunny_go);
 }
 
 void AppWindow::onUpdate()
@@ -129,10 +112,12 @@ void AppWindow::onUpdate()
 	// Camera
 	m_editor_camera.update();
 
-	// GameObjects
+	// Update
 	GameObjectManager::get().update();
-	GameObjectManager::get().draw();
+	ComponentSystem::get().getPhysicsSystem().update();
 
+	// Draw
+	GameObjectManager::get().draw();
 	UI::get().draw();
 
 	m_swap_chain->present(false);
@@ -165,6 +150,11 @@ void AppWindow::onKeyDown(int key)
 void AppWindow::onKeyUp(int key)
 {
 	m_editor_camera.onKeyUp(key);
+
+	if (key == 'J')
+	{
+		spawnCubes();
+	}
 }
 
 void AppWindow::onMouseMove(const Point& mouse_pos)
@@ -199,3 +189,22 @@ void AppWindow::onRightMouseUp(const Point& mouse_pos)
 	m_is_mouse_locked = false;
 	InputSystem::get().showCursor(true);
 }
+
+void AppWindow::spawnCubes()
+{
+	for (int i = 0; i < 10; i++)
+	{
+		// Cube
+		MeshPtr cube_mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(L"Assets/Meshes/cube.obj");
+		TexturePtr bricks = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
+		VertexShaderPtr textured_vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
+		PixelShaderPtr textured_ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
+
+		PhysicsCube* cube = new PhysicsCube("PhysicsCube_" + std::to_string(m_cubes_count++), cube_mesh->getVertexBuffer(), cube_mesh->getIndexBuffer(), m_cb, textured_vs, textured_ps);
+		cube->setPosition({ Random::get().range(-1.0f, -1.0f), 10.0f, Random::get().range(-1.0f, -1.0f) });
+		cube->setOrientationEuler({ Random::get().range(-3.0f, -3.0f), Random::get().range(-3.0f, -3.0f), Random::get().range(-3.0f, -3.0f) });
+		cube->setTexture(bricks);
+		GameObjectManager::get().addGameObject(cube);
+	}
+}
+

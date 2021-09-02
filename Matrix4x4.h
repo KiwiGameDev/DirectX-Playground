@@ -69,6 +69,24 @@ struct Matrix4x4
 		return mat;
 	}
 
+	static Matrix4x4 rotation(const Vector4& q)
+	{
+		Matrix4x4 mat(1.0f);
+		float xSqr = q.x * q.x;
+		float ySqr = q.y * q.y;
+		float zSqr = q.z * q.z;
+		mat.m_mat[0][0] = 1 - 2.0f * ySqr - 2.0f * zSqr;
+		mat.m_mat[1][0] = 2.0f * (q.x * q.y - q.w * q.z);
+		mat.m_mat[2][0] = 2.0f * (q.x * q.z + q.w * q.y);
+		mat.m_mat[0][1] = 2.0f * (q.x * q.y + q.w * q.z);
+		mat.m_mat[1][1] = 1 - 2.0f * xSqr - 2.0f * zSqr;
+		mat.m_mat[2][1] = 2.0f * (q.y * q.z - q.w * q.x);
+		mat.m_mat[0][2] = 2.0f * (q.x * q.z - q.w * q.y);
+		mat.m_mat[1][2] = 2.0f * (q.y * q.z + q.w * q.x);
+		mat.m_mat[2][2] = 1 - 2.0f * xSqr - 2.0f * ySqr;
+		return mat;
+	}
+
 	static Matrix4x4 orthoLH(float width, float height, float near_plane, float far_plane)
 	{
 		Matrix4x4 mat(1.0f);
@@ -180,6 +198,11 @@ struct Matrix4x4
 		}
 
 		memcpy(this, &out, sizeof(Matrix4x4));
+	}
+
+	float* getMatrix()
+	{
+		return *m_mat;
 	}
 
 	float m_mat[4][4];

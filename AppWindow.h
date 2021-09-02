@@ -1,7 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "IInputListener.h"
-#include "Cube.h"
+#include "PhysicsCube.h"
 #include "Camera.h"
 #include "Prerequisites.h"
 
@@ -25,6 +25,8 @@ public:
 	void onRightMouseUp(const Point& mouse_pos) override;
 
 private:
+	void spawnCubes();
+	
 	SwapChainPtr m_swap_chain;
 	ConstantBufferPtr m_cb;
 
@@ -32,4 +34,5 @@ private:
 	
 	bool m_is_mouse_locked = false;
 	Point m_mouse_locked_pos;
+	int m_cubes_count = 0;
 };

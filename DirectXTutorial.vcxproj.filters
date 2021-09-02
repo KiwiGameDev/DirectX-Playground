@@ -79,6 +79,15 @@
     <Filter Include="GameEngine\GraphicsEngine\RenderSystem\SamplerState">
       <UniqueIdentifier>{051ad1e7-f07b-4edc-a522-cca382469df4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="App\Shaders">
+      <UniqueIdentifier>{b2576efd-40e4-47ae-8546-ffef99771100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\GameObject">
+      <UniqueIdentifier>{7e78e4cd-dc84-4781-ac50-c45825e9bfbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\ComponentSystem">
+      <UniqueIdentifier>{61a565f6-3173-47c6-b98b-6b7c170feb51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -132,7 +141,6 @@
     <ClCompile Include="MeshManager.cpp">
       <Filter>GameEngine\GraphicsEngine\ResourceManager\MeshManager</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Random.cpp">
       <Filter>GameEngine\Math</Filter>
     </ClCompile>
@@ -143,9 +151,6 @@
       <Filter>GameEngine</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>GameEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
     <ClCompile Include="Libs\ImGui\imgui.cpp">
@@ -211,11 +216,27 @@
     <ClCompile Include="InspectorScreen.cpp">
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
-    <ClCompile Include="GameObjectManager.cpp">
-      <Filter>GameEngine</Filter>
-    </ClCompile>
     <ClCompile Include="CameraManager.cpp">
       <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>GameEngine\ComponentSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
+      <Filter>GameEngine\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameEngine\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsSystem.cpp" />
+    <ClCompile Include="PhysicsCube.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentSystem.cpp">
+      <Filter>GameEngine\ComponentSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxPhysicsComponent.cpp">
+      <Filter>GameEngine\ComponentSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -291,7 +312,6 @@
     <ClInclude Include="VertexMesh.h">
       <Filter>GameEngine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="Random.h">
       <Filter>GameEngine\Math</Filter>
     </ClInclude>
@@ -307,13 +327,7 @@
     <ClInclude Include="ConstantBufferData.h">
       <Filter>GameEngine\GraphicsEngine\RenderSystem\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="IUpdateable.h">
-      <Filter>GameEngine</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>GameEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
     <ClInclude Include="Libs\ImGui\imconfig.h">
@@ -397,34 +411,50 @@
     <ClInclude Include="InspectorScreen.h">
       <Filter>GameEngine\UI</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectManager.h">
-      <Filter>GameEngine</Filter>
-    </ClInclude>
     <ClInclude Include="CameraManager.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>GameEngine\ComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>GameEngine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameEngine\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsSystem.h" />
+    <ClInclude Include="PhysicsCube.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentSystem.h">
+      <Filter>GameEngine\ComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxPhysicsComponent.h">
+      <Filter>GameEngine\ComponentSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="ColoredVertexShader.hlsl">
-      <Filter>App</Filter>
-    </FxCompile>
-    <FxCompile Include="ColoredPixelShader.hlsl">
-      <Filter>App</Filter>
-    </FxCompile>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
       <Filter>GameEngine\GraphicsEngine</Filter>
     </FxCompile>
-    <FxCompile Include="TexturedPixelShader.hlsl">
-      <Filter>App</Filter>
+    <FxCompile Include="ColoredPixelShader.hlsl">
+      <Filter>App\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="TexturedVertexShader.hlsl">
-      <Filter>App</Filter>
+    <FxCompile Include="ColoredVertexShader.hlsl">
+      <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
-      <Filter>App</Filter>
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TexturedPixelShader.hlsl">
+      <Filter>App\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TexturedVertexShader.hlsl">
+      <Filter>App\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
-      <Filter>App</Filter>
+      <Filter>App\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

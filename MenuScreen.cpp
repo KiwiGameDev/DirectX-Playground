@@ -37,30 +37,14 @@ void MenuScreen::draw()
 		
 		if (ImGui::BeginMenu("Game Object"))
 		{
-			if (ImGui::MenuItem("Create Cube"))
+			if (ImGui::MenuItem("Create 10 Physics Cubes"))
 			{
-				
-			}
-			
-			if (ImGui::MenuItem("Create Sphere"))
-			{
-				
-			}
-			
-			if (ImGui::MenuItem("Create Plane"))
-			{
-				
-			}
-			
-			if (ImGui::BeginMenu("Light"))
-			{
-				if (ImGui::MenuItem("Point Light"))
+				for (int i = 0; i < 10; i++)
 				{
 					
 				}
-				
-				ImGui::EndMenu();
 			}
+			
 			
 			ImGui::EndMenu();
 		}

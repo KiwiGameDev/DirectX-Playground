@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Mathf.h"
 #include "Time.h"
 
 Camera::Camera(float fov, float aspect, float near, float far)
@@ -49,10 +50,12 @@ void Camera::onKeyUp(int key)
 
 void Camera::onMouseMove(const Vector2& delta_pos)
 {
-	Vector3 rotation = getRotation();
+	Vector3 rotation = getOrientationEuler();
 	rotation.x += delta_pos.y * Time::get().deltaTime() * 4.0f;
 	rotation.y += delta_pos.x * Time::get().deltaTime() * 4.0f;
-	setRotation(rotation);
+	rotation.x = Mathf::clamp(rotation.x, -1.5f, 1.5f);
+	rotation.z = 0.0f;
+	setOrientationEuler(rotation);
 }
 
 void Camera::setFOV(float new_fov)

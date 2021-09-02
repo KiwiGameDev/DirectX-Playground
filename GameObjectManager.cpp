@@ -34,6 +34,7 @@ const std::unordered_map<std::string, GameObject*>& GameObjectManager::getGameOb
 void GameObjectManager::addGameObject(GameObject* gameobject)
 {
 	name_to_gameobject_map.insert({ gameobject->getName(), gameobject });
+	gameobject->awake();
 }
 
 void GameObjectManager::removeGameObject(const std::string& name)

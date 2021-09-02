@@ -8,6 +8,7 @@
 #include "CameraManager.h"
 #include "Time.h"
 #include <utility>
+#include <iostream>
 
 GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
 	: name(name), m_vb(std::move(vertex_buffer)), m_ib(std::move(index_buffer)), m_cb(std::move(constant_buffer)), m_vs(std::move(vertex_shader)), m_ps(std::move(pixel_shader))
@@ -15,9 +16,23 @@ GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, I
 	
 }
 
-void GameObject::update()
+void GameObject::awake()
 {
 	
+}
+
+void GameObject::update()
+{
+	if (!m_is_enabled)
+		return;
+
+	for (Component* component : m_component_list)
+	{
+		if (component->getType() == Component::Type::Script)
+		{
+			component->perform();
+		}
+	}
 }
 
 void GameObject::draw()
@@ -48,6 +63,76 @@ void GameObject::draw()
 void GameObject::setTexture(const TexturePtr& texture)
 {
 	m_texture = texture;
+}
+
+void GameObject::attachComponent(Component* component)
+{
+	if (m_component_map.find(component->getName()) == m_component_map.end())
+	{
+		m_component_list.push_back(component);
+		m_component_map.insert({ component->getName(), component });
+		component->attachOwner(this);
+		component->awake();
+	}
+	else
+	{
+		std::cerr << component->getName() << " is already attached!\n";
+	}
+}
+
+void GameObject::detachComponent(Component* component)
+{
+	if (m_component_map.find(component->getName()) != m_component_map.end())
+	{
+		m_component_list.erase(std::ranges::find(m_component_list, component));
+		m_component_map.erase(component->getName());
+	}
+	else
+	{
+		std::cerr << component->getName() << " is already detached!\n";
+	}
+}
+
+Component* GameObject::getComponentByName(const std::string& name)
+{
+	return m_component_map.at(name);
+}
+
+Component* GameObject::getComponentByType(Component::Type type)
+{
+	auto itr = std::ranges::find_if(m_component_list, [type](const Component* component)
+	{
+		return component->getType() == type;
+	});
+
+	if (itr != m_component_list.end())
+		return *itr;
+
+	return nullptr;
+}
+
+std::vector<Component*> GameObject::getComponentsByType(Component::Type type)
+{
+	std::vector<Component*> components_match;
+
+	for (Component* component : m_component_list)
+	{
+		if (component->getType() == type)
+		{
+			components_match.push_back(component);
+		}
+	}
+
+	return components_match;
+}
+
+std::vector<Component*> GameObject::getComponentsByTypeRecursive(Component::Type type)
+{
+	std::vector<Component*> components_match;
+
+	// TODO: Get components of type including children
+
+	return components_match;
 }
 
 std::string GameObject::getName() const
