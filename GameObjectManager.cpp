@@ -1,5 +1,7 @@
 #include "GameObjectManager.h"
 
+#include <iostream>
+
 #include "BoxPhysicsComponent.h"
 #include "EditorApplication.h"
 #include "GameObject.h"
@@ -64,9 +66,43 @@ void GameObjectManager::saveGameObjectsStartingState()
 
 void GameObjectManager::onEditorStateChanged()
 {
+	if (EditorApplication::get().getState() == EditorApplication::State::Play || EditorApplication::get().getState() == EditorApplication::State::Step)
+	{
+		clearAllCommands();
+	}
+	
 	if (EditorApplication::get().getState() == EditorApplication::State::Stop)
 	{
 		loadGameObjectsStartingState();
+	}
+}
+
+void GameObjectManager::addAndExecuteCommand(ICommand* command)
+{
+	command->execute();
+	m_command_stack.push(command);
+	std::cout << "Commands size " << m_command_stack.size() << '\n';
+}
+
+void GameObjectManager::removeandUnexecuteLastCommand()
+{
+	if (m_command_stack.empty())
+		return;
+
+	std::cout << "Commands size " << m_command_stack.size() << '\n';
+	
+	ICommand* command = m_command_stack.top();
+	command->unexecute();
+	delete command;
+	
+	m_command_stack.pop();
+}
+
+void GameObjectManager::clearAllCommands()
+{
+	while (!m_command_stack.empty())
+	{
+		m_command_stack.pop();
 	}
 }
 

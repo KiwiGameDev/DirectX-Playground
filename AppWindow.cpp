@@ -112,7 +112,7 @@ void AppWindow::onUpdate()
 	float screen_height = (float)(screen_rect.bottom - screen_rect.top);
 	GraphicsEngine::get().getRenderSystem().getImmediateDeviceContext()->clearRenderTarget(m_swap_chain, 0.1f, 0.1f, 0.1f, 1.0f);
 	GraphicsEngine::get().getRenderSystem().getImmediateDeviceContext()->setViewportSize(screen_width, screen_height);
-	
+
 	// Camera
 	m_editor_camera.update();
 	
@@ -166,6 +166,10 @@ void AppWindow::onKeyUp(int key)
 	if (key == 'J')
 	{
 		spawnCubes();
+	}
+	else if (key == 'Z')
+	{
+		GameObjectManager::get().removeandUnexecuteLastCommand();
 	}
 }
 

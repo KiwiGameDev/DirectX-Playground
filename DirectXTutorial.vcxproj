@@ -165,6 +165,7 @@
     <ClCompile Include="CreditsScreen.cpp" />
     <ClCompile Include="EditorApplication.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="MoveGameObjectCommand.cpp" />
     <ClCompile Include="PhysicsCube.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="PixelShaderManager.cpp" />
     <ClCompile Include="PlayMenuScreen.cpp" />
+    <ClCompile Include="RotateGameObjectCommand.cpp" />
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="SceneHierarchyScreen.cpp" />
     <ClCompile Include="Screen.cpp" />
@@ -222,7 +224,9 @@
     <ClInclude Include="EditorApplication.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventCallback.h" />
+    <ClInclude Include="ICommand.h" />
     <ClInclude Include="IEventCallback.h" />
+    <ClInclude Include="MoveGameObjectCommand.h" />
     <ClInclude Include="PhysicsCube.h" />
     <ClInclude Include="DeviceContext.h" />
     <ClInclude Include="GameObject.h" />
@@ -245,6 +249,7 @@
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="PixelShaderManager.h" />
     <ClInclude Include="PlayMenuScreen.h" />
+    <ClInclude Include="RotateGameObjectCommand.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="SceneHierarchyScreen.h" />
     <ClInclude Include="Screen.h" />

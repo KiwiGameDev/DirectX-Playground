@@ -92,12 +92,22 @@ void InputSystem::removeListener(IInputListener* input_listener)
 	m_listeners.erase(input_listener);
 }
 
+void InputSystem::showCursor(bool visible)
+{
+	ShowCursor(visible);
+}
+
 void InputSystem::setCursorPosition(const Point& pos)
 {
 	SetCursorPos(pos.x, pos.y);
 }
 
-void InputSystem::showCursor(bool visible)
+bool InputSystem::isKeyDown(int key)
 {
-	ShowCursor(visible);
+	return m_keys_state[key] & 0x80;
+}
+
+bool InputSystem::isLeftMouseButtonDown()
+{
+	return m_keys_state[VK_LBUTTON] & 0x80;
 }

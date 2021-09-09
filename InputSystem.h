@@ -15,8 +15,12 @@ public:
 	void addListener(IInputListener* input_listener);
 	void removeListener(IInputListener* input_listener);
 
-	void setCursorPosition(const Point& pos);
 	void showCursor(bool visible);
+
+	void setCursorPosition(const Point& pos);
+
+	bool isKeyDown(int key);
+	bool isLeftMouseButtonDown();
 
 private:
 	std::unordered_set<IInputListener*> m_listeners;

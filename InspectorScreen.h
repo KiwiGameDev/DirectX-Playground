@@ -1,6 +1,8 @@
 #pragma once
 #include "Screen.h"
 
+class RotateGameObjectCommand;
+class MoveGameObjectCommand;
 class GameObject;
 
 class InspectorScreen : public Screen
@@ -21,4 +23,8 @@ private:
 	const float SCALE_MAX = 10.0f;
 	
 	GameObject* m_selected_gameobject = nullptr;
+
+	bool m_is_editing = false;
+	MoveGameObjectCommand* move_command = nullptr;
+	RotateGameObjectCommand* rotate_command = nullptr;
 };

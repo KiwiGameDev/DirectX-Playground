@@ -1,8 +1,12 @@
 #pragma once
+#include <stack>
+
 #include "Singleton.h"
 #include "Matrix4x4.h"
 #include <reactphysics3d/mathematics/Quaternion.h>
 #include <unordered_map>
+
+#include "ICommand.h"
 
 class GameObject;
 
@@ -23,11 +27,16 @@ public:
 	void saveGameObjectsStartingState();
 	void onEditorStateChanged();
 
+	void addAndExecuteCommand(ICommand* command);
+	void removeandUnexecuteLastCommand();
+	void clearAllCommands();
+
 private:
 	GameObjectManager();
 
 	void loadGameObjectsStartingState();
-	
+
+	std::stack<ICommand*> m_command_stack;
 	std::unordered_map<std::string, GameObject*> m_name_to_gameobject_map;
 	std::unordered_map<std::string, Vector3> m_gameobject_starting_position;
 	std::unordered_map<std::string, reactphysics3d::Quaternion> m_gameobject_starting_rotation;

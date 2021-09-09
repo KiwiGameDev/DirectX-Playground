@@ -241,6 +241,8 @@
     <ClCompile Include="PlayMenuScreen.cpp" />
     <ClCompile Include="EditorApplication.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="MoveGameObjectCommand.cpp" />
+    <ClCompile Include="RotateGameObjectCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -441,6 +443,9 @@
     <ClInclude Include="EventCallback.h" />
     <ClInclude Include="IEventCallback.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="ICommand.h" />
+    <ClInclude Include="MoveGameObjectCommand.h" />
+    <ClInclude Include="RotateGameObjectCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
