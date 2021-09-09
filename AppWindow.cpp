@@ -18,11 +18,11 @@
 #include "VertexShaderManager.h"
 #include "ComponentSystem.h"
 #include "Mathf.h"
+#include "EditorApplication.h"
+#include "Random.h"
 #include "imgui.h"
 #include <Windows.h>
 #include <random>
-
-#include "Random.h"
 
 AppWindow::AppWindow()
 	: m_editor_camera(1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.001f, 100.0f)
@@ -95,6 +95,10 @@ void AppWindow::onCreate()
 	teapot_go->setPosition(Vector3(0.0f, 1.0f, 1.0f));
 	teapot_go->setTexture(bricks);
 	GameObjectManager::get().addGameObject(teapot_go);
+
+	spawnCubes();
+
+	GameObjectManager::get().saveGameObjectsStartingState();
 }
 
 void AppWindow::onUpdate()
@@ -111,10 +115,18 @@ void AppWindow::onUpdate()
 	
 	// Camera
 	m_editor_camera.update();
-
+	
 	// Update
-	GameObjectManager::get().update();
-	ComponentSystem::get().getPhysicsSystem().update();
+	if (EditorApplication::get().getState() == EditorApplication::State::Play || EditorApplication::get().getState() == EditorApplication::State::Step)
+	{
+		GameObjectManager::get().update();
+		ComponentSystem::get().getPhysicsSystem().update();
+	}
+
+	if (EditorApplication::get().getState() == EditorApplication::State::Step)
+	{
+		EditorApplication::get().setState(EditorApplication::State::Pause);
+	}
 
 	// Draw
 	GameObjectManager::get().draw();

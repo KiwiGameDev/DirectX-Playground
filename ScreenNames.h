@@ -9,4 +9,5 @@ namespace ScreenNames
 	const std::string ColorPicker = "ColorPicker";
 	const std::string Inspector = "Inspector";
 	const std::string SceneHierarchy = "SceneHierarchy";
+	const std::string PlayMenu = "PlayMenu";
 };

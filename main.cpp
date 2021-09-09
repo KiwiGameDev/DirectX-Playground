@@ -1,14 +1,15 @@
 #define NOMINMAX
-#include <iostream>
 #include "AppWindow.h"
 #include "GraphicsEngine.h"
 #include "CameraManager.h"
 #include "ComponentSystem.h"
+#include "EditorApplication.h"
 #include "GameObjectManager.h"
 #include "InputSystem.h"
 #include "Random.h"
 #include "Time.h"
 #include "UI.h"
+#include <iostream>
 
 int main()
 {
@@ -19,6 +20,7 @@ int main()
 		InputSystem::create();
 		CameraManager::create();
 		GraphicsEngine::create();
+		EditorApplication::create();
 		GameObjectManager::create();
 		ComponentSystem::create();
 	}
@@ -46,6 +48,7 @@ int main()
 	{
 		ComponentSystem::release();
 		GameObjectManager::release();
+		EditorApplication::release();
 		GraphicsEngine::release();
 		CameraManager::release();
 		InputSystem::release();

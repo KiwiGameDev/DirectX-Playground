@@ -12,6 +12,7 @@
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
+#include "PlayMenuScreen.h"
 
 UI* Singleton<UI>::instance = nullptr;
 
@@ -44,6 +45,7 @@ UI::UI(HWND hwnd)
 	ColorPickerScreen* color_picker = new ColorPickerScreen(ScreenNames::ColorPicker);
 	InspectorScreen* inspector = new InspectorScreen(ScreenNames::Inspector);
 	SceneHierarchyScreen* scene_hierarchy = new SceneHierarchyScreen(inspector, ScreenNames::SceneHierarchy);
+	PlayMenuScreen* play_menu = new PlayMenuScreen(ScreenNames::PlayMenu);
 	
 	screenList.push_back(viewport);
 	screenList.push_back(menu);
@@ -51,6 +53,7 @@ UI::UI(HWND hwnd)
 	screenList.push_back(color_picker);
 	screenList.push_back(inspector);
 	screenList.push_back(scene_hierarchy);
+	screenList.push_back(play_menu);
 
 	nameToScreenMap.insert({ viewport->getName(), viewport });
 	nameToScreenMap.insert({ menu->getName(), menu });
@@ -58,6 +61,7 @@ UI::UI(HWND hwnd)
 	nameToScreenMap.insert({ color_picker->getName(), color_picker });
 	nameToScreenMap.insert({ inspector->getName(), inspector });
 	nameToScreenMap.insert({ scene_hierarchy->getName(), scene_hierarchy });
+	nameToScreenMap.insert({ play_menu->getName(), play_menu });
 }
 
 void UI::create(const Window& window)

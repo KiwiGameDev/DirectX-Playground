@@ -1,6 +1,8 @@
 #pragma once
-#include <unordered_map>
 #include "Singleton.h"
+#include "Matrix4x4.h"
+#include <reactphysics3d/mathematics/Quaternion.h>
+#include <unordered_map>
 
 class GameObject;
 
@@ -18,6 +20,16 @@ public:
 	void addGameObject(GameObject* gameobject);
 	void removeGameObject(const std::string& name);
 
+	void saveGameObjectsStartingState();
+	void onEditorStateChanged();
+
 private:
-	std::unordered_map<std::string, GameObject*> name_to_gameobject_map;
+	GameObjectManager();
+
+	void loadGameObjectsStartingState();
+	
+	std::unordered_map<std::string, GameObject*> m_name_to_gameobject_map;
+	std::unordered_map<std::string, Vector3> m_gameobject_starting_position;
+	std::unordered_map<std::string, reactphysics3d::Quaternion> m_gameobject_starting_rotation;
+	std::unordered_map<std::string, Vector3> m_gameobject_starting_scale;
 };

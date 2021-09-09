@@ -238,6 +238,9 @@
     <ClCompile Include="BoxPhysicsComponent.cpp">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClCompile>
+    <ClCompile Include="PlayMenuScreen.cpp" />
+    <ClCompile Include="EditorApplication.cpp" />
+    <ClCompile Include="Event.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -433,6 +436,11 @@
     <ClInclude Include="BoxPhysicsComponent.h">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClInclude>
+    <ClInclude Include="PlayMenuScreen.h" />
+    <ClInclude Include="EditorApplication.h" />
+    <ClInclude Include="EventCallback.h" />
+    <ClInclude Include="IEventCallback.h" />
+    <ClInclude Include="Event.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
