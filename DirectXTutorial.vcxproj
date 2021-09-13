@@ -189,7 +189,6 @@
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="SceneHierarchyScreen.cpp" />
     <ClCompile Include="Screen.cpp" />
-    <ClCompile Include="ScreenNames.cpp" />
     <ClCompile Include="Transformable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -204,6 +203,7 @@
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UndoRedoScreen.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="VertexInputLayout.cpp" />
     <ClCompile Include="VertexShader.cpp" />
@@ -272,6 +272,7 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UndoRedoScreen.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />

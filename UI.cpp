@@ -13,6 +13,7 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 #include "PlayMenuScreen.h"
+#include "UndoRedoScreen.h"
 
 UI* Singleton<UI>::instance = nullptr;
 
@@ -46,6 +47,7 @@ UI::UI(HWND hwnd)
 	InspectorScreen* inspector = new InspectorScreen(ScreenNames::Inspector);
 	SceneHierarchyScreen* scene_hierarchy = new SceneHierarchyScreen(inspector, ScreenNames::SceneHierarchy);
 	PlayMenuScreen* play_menu = new PlayMenuScreen(ScreenNames::PlayMenu);
+	UndoRedoScreen* undo_redo = new UndoRedoScreen(ScreenNames::UndoRedo);
 	
 	screenList.push_back(viewport);
 	screenList.push_back(menu);
@@ -54,6 +56,7 @@ UI::UI(HWND hwnd)
 	screenList.push_back(inspector);
 	screenList.push_back(scene_hierarchy);
 	screenList.push_back(play_menu);
+	screenList.push_back(undo_redo);
 
 	nameToScreenMap.insert({ viewport->getName(), viewport });
 	nameToScreenMap.insert({ menu->getName(), menu });
@@ -62,6 +65,7 @@ UI::UI(HWND hwnd)
 	nameToScreenMap.insert({ inspector->getName(), inspector });
 	nameToScreenMap.insert({ scene_hierarchy->getName(), scene_hierarchy });
 	nameToScreenMap.insert({ play_menu->getName(), play_menu });
+	nameToScreenMap.insert({ undo_redo->getName(), undo_redo });
 }
 
 void UI::create(const Window& window)

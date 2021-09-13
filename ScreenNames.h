@@ -10,4 +10,5 @@ namespace ScreenNames
 	const std::string Inspector = "Inspector";
 	const std::string SceneHierarchy = "SceneHierarchy";
 	const std::string PlayMenu = "PlayMenu";
+	const std::string UndoRedo = "UndoRedo";
 };

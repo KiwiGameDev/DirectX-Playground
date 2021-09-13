@@ -177,9 +177,6 @@
     <ClCompile Include="UI.cpp">
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenNames.cpp">
-      <Filter>GameEngine\UI</Filter>
-    </ClCompile>
     <ClCompile Include="ViewportScreen.cpp">
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
@@ -238,11 +235,16 @@
     <ClCompile Include="BoxPhysicsComponent.cpp">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClCompile>
-    <ClCompile Include="PlayMenuScreen.cpp" />
     <ClCompile Include="EditorApplication.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="MoveGameObjectCommand.cpp" />
     <ClCompile Include="RotateGameObjectCommand.cpp" />
+    <ClCompile Include="UndoRedoScreen.cpp">
+      <Filter>GameEngine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayMenuScreen.cpp">
+      <Filter>GameEngine\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -438,7 +440,6 @@
     <ClInclude Include="BoxPhysicsComponent.h">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClInclude>
-    <ClInclude Include="PlayMenuScreen.h" />
     <ClInclude Include="EditorApplication.h" />
     <ClInclude Include="EventCallback.h" />
     <ClInclude Include="IEventCallback.h" />
@@ -446,6 +447,12 @@
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="MoveGameObjectCommand.h" />
     <ClInclude Include="RotateGameObjectCommand.h" />
+    <ClInclude Include="UndoRedoScreen.h">
+      <Filter>GameEngine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayMenuScreen.h">
+      <Filter>GameEngine\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">

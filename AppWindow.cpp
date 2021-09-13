@@ -167,10 +167,6 @@ void AppWindow::onKeyUp(int key)
 	{
 		spawnCubes();
 	}
-	else if (key == 'Z')
-	{
-		GameObjectManager::get().removeandUnexecuteLastCommand();
-	}
 }
 
 void AppWindow::onMouseMove(const Point& mouse_pos)

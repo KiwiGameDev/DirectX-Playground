@@ -80,30 +80,68 @@ void GameObjectManager::onEditorStateChanged()
 void GameObjectManager::addAndExecuteCommand(ICommand* command)
 {
 	command->execute();
-	m_command_stack.push(command);
-	std::cout << "Commands size " << m_command_stack.size() << '\n';
+	m_commands_undo.push(command);
+	
+	while (!m_commands_redo.empty())
+	{
+		delete m_commands_redo.top();
+		m_commands_redo.pop();
+	}
+	
+	std::cout << "Commands size " << m_commands_undo.size() << '\n';
 }
 
-void GameObjectManager::removeandUnexecuteLastCommand()
+void GameObjectManager::undoLastCommand()
 {
-	if (m_command_stack.empty())
+	if (m_commands_undo.empty())
 		return;
 
-	std::cout << "Commands size " << m_command_stack.size() << '\n';
+	std::cout << "Commands size " << m_commands_undo.size() << '\n';
 	
-	ICommand* command = m_command_stack.top();
+	ICommand* command = m_commands_undo.top();
 	command->unexecute();
-	delete command;
 	
-	m_command_stack.pop();
+	m_commands_redo.push(command);
+	m_commands_undo.pop();
+}
+
+void GameObjectManager::redoLastCommand()
+{
+	if (m_commands_redo.empty())
+		return;
+
+	std::cout << "Commands size " << m_commands_undo.size() << '\n';
+
+	ICommand* command = m_commands_redo.top();
+	command->execute();
+
+	m_commands_undo.push(command);
+	m_commands_redo.pop();
 }
 
 void GameObjectManager::clearAllCommands()
 {
-	while (!m_command_stack.empty())
+	while (!m_commands_undo.empty())
 	{
-		m_command_stack.pop();
+		delete m_commands_undo.top();
+		m_commands_undo.pop();
 	}
+
+	while (!m_commands_redo.empty())
+	{
+		delete m_commands_redo.top();
+		m_commands_redo.pop();
+	}
+}
+
+uint16_t GameObjectManager::getUndoCommandsCount() const
+{
+	return m_commands_undo.size();
+}
+
+uint16_t GameObjectManager::getRedoCommandsCount() const
+{
+	return m_commands_redo.size();
 }
 
 void GameObjectManager::loadGameObjectsStartingState()
