@@ -1,10 +1,10 @@
 #include "EditorApplication.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
+#include "Transform.h"
+#include "BoxPhysicsComponent.h"
 #include <json.hpp>
 #include <fstream>
-
-#include "BoxPhysicsComponent.h"
 
 EditorApplication* Singleton<EditorApplication>::instance = nullptr;
 

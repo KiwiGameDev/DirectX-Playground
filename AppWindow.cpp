@@ -38,7 +38,7 @@ void AppWindow::onCreate()
 	
 	// Create gameobjects
 	GameObjectManager::get().addGameObject(GameObjectFactory::createTeapot("Teapot_00"));
-	GameObjectManager::get().addGameObject(GameObjectFactory::createStaticPhysicsPlane("Plane_00"));
+	GameObjectManager::get().addGameObject(GameObjectFactory::createStaticPhysicsPlane("StaticPhysicsPlane_00"));
 
 	spawnCubes();
 
