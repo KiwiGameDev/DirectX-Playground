@@ -72,22 +72,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(SolutionDir)Libs\nlohmann;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Libs\DirectXTex\bin;$(SolutionDir)Libs\ReactPhysics3D;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(SolutionDir)Libs\nlohmann;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Libs\DirectXTex\bin;$(SolutionDir)Libs\ReactPhysics3D;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(SolutionDir)Libs\nlohmann;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Libs\DirectXTex\bin;$(SolutionDir)Libs\ReactPhysics3D;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Libs\tinyobjloader\include;$(SolutionDir)Libs\DirectXTex\include;$(SolutionDir)Libs\ImGui;$(SolutionDir)Libs\ReactPhysics3D\include;$(SolutionDir)Libs\nlohmann;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Libs\DirectXTex\bin;$(SolutionDir)Libs\ReactPhysics3D;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -165,8 +165,8 @@
     <ClCompile Include="CreditsScreen.cpp" />
     <ClCompile Include="EditorApplication.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="MoveGameObjectCommand.cpp" />
-    <ClCompile Include="PhysicsCube.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
@@ -189,7 +189,7 @@
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="SceneHierarchyScreen.cpp" />
     <ClCompile Include="Screen.cpp" />
-    <ClCompile Include="Transformable.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
@@ -224,10 +224,10 @@
     <ClInclude Include="EditorApplication.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventCallback.h" />
+    <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="IEventCallback.h" />
     <ClInclude Include="MoveGameObjectCommand.h" />
-    <ClInclude Include="PhysicsCube.h" />
     <ClInclude Include="DeviceContext.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectManager.h" />
@@ -254,7 +254,7 @@
     <ClInclude Include="SceneHierarchyScreen.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenNames.h" />
-    <ClInclude Include="Transformable.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Mathf.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Mesh.h" />

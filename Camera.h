@@ -1,11 +1,11 @@
 #pragma once
-#include "Transformable.h"
+#include "GameObject.h"
 #include "Vector2.h"
 
-class Camera : public Transformable
+class Camera : public GameObject
 {
 public:
-	Camera(float fov, float aspect, float near, float far);
+	Camera(const std::string& name, float fov, float aspect, float near, float far);
 	
 	void update();
 

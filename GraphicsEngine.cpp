@@ -1,10 +1,12 @@
 #include "GraphicsEngine.h"
+#include "ConstantBufferData.h"
 
 GraphicsEngine* Singleton<GraphicsEngine>::instance = nullptr;
 
 GraphicsEngine::GraphicsEngine()
 {
-
+	ConstantBufferData cbd;
+	m_cb = m_render_system.createConstantBuffer(&cbd, sizeof(ConstantBufferData));
 }
 
 RenderSystem& GraphicsEngine::getRenderSystem()
@@ -25,6 +27,11 @@ PixelShaderManager& GraphicsEngine::getPixelShaderManager()
 TextureManager& GraphicsEngine::getTextureManager()
 {
 	return m_texture_manager;
+}
+
+ConstantBufferPtr GraphicsEngine::getConstantBuffer()
+{
+	return m_cb;
 }
 
 MeshManager& GraphicsEngine::getMeshManager()

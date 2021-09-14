@@ -2,6 +2,7 @@
 #include "UI.h"
 #include "CreditsScreen.h"
 #include "ColorPickerScreen.h"
+#include "EditorApplication.h"
 #include "imgui.h"
 #include "ScreenNames.h"
 
@@ -17,19 +18,14 @@ void MenuScreen::draw()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("Open..", "Ctrl+O"))
+			if (ImGui::MenuItem("Open...", "Ctrl+O"))
 			{
 				
 			}
-			
-			if (ImGui::MenuItem("Save", "Ctrl+S"))
-			{
-				
-			}
-			
+
 			if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 			{
-				
+				EditorApplication::get().saveScene();
 			}
 
 			ImGui::EndMenu();

@@ -2,45 +2,34 @@
 #include "ComponentSystem.h"
 #include "GameObject.h"
 
-BoxPhysicsComponent::BoxPhysicsComponent(const std::string& name, Vector3 half_extents, GameObject* owner)
-	: Component(name, owner, Type::Physics), m_half_extents(half_extents)
+BoxPhysicsComponent::BoxPhysicsComponent(Vector3 half_extents, reactphysics3d::BodyType body_type, GameObject* owner)
+	: m_half_extents(half_extents), m_body_type(body_type), Component(owner)
 {
-	
+	ComponentSystem::get().getPhysicsSystem().addComponent(this);
 }
 
-void BoxPhysicsComponent::awake()
+void BoxPhysicsComponent::onStart()
 {
-	ComponentSystem::get().getPhysicsSystem().registerComponent(this);
+	// Create a rigid body in the world
+	Vector3 nativePos = getOwner()->getComponent<Transform>().getPosition();
+	reactphysics3d::Vector3 pos(nativePos.x, nativePos.y, nativePos.z);
+	reactphysics3d::Quaternion rot(getOwner()->getComponent<Transform>().getOrientation());
 	reactphysics3d::PhysicsCommon* physics_common = ComponentSystem::get().getPhysicsSystem().getPhysicsCommon();
 	reactphysics3d::PhysicsWorld* physics_world = ComponentSystem::get().getPhysicsSystem().getPhysicsWorld();
-
-	// Create a rigid body in the world
-	reactphysics3d::Transform transform;
-	Vector3 pos = getOwner()->getPosition();
-	transform.setPosition({ pos.x, pos.y, pos.z });
-	transform.setOrientation(getOwner()->getOrientation());
-
 	reactphysics3d::BoxShape* boxShape = physics_common->createBoxShape({ m_half_extents.x, m_half_extents.y, m_half_extents.z });
-	m_rigidbody = physics_world->createRigidBody(transform);
-	m_rigidbody->addCollider(boxShape, reactphysics3d::Transform::identity());
-	m_rigidbody->updateMassPropertiesFromColliders();
+	m_rigidbody = physics_world->createRigidBody(reactphysics3d::Transform(pos, rot));
+	m_collider = m_rigidbody->addCollider(boxShape, reactphysics3d::Transform::identity());
 	m_rigidbody->setMass(3.0f);
-	m_rigidbody->setType(reactphysics3d::BodyType::DYNAMIC);
+	m_rigidbody->setType(m_body_type);
 	m_rigidbody->setIsAllowedToSleep(false);
 }
 
 void BoxPhysicsComponent::perform()
 {
-	const reactphysics3d::Transform& transform = m_rigidbody->getTransform();
-	reactphysics3d::Vector3 reactPos = transform.getPosition();
-	reactphysics3d::Quaternion q = transform.getOrientation();
-
-	// Copy transform from React Physics 3D to GameObject
-	getOwner()->setPosition(reactPos.x, reactPos.y, reactPos.z);
-	getOwner()->setOrientation(q);
+	
 }
 
-void BoxPhysicsComponent::prePerform()
+void BoxPhysicsComponent::prePhysicsUpdate()
 {
 	if (!m_was_adjusted)
 		return;
@@ -48,12 +37,23 @@ void BoxPhysicsComponent::prePerform()
 	m_was_adjusted = false;
 
 	// Copy transform to React Physics 3D
-	Vector3 pos = getOwner()->getPosition();
-	reactphysics3d::Quaternion orientation = getOwner()->getOrientation();
-	reactphysics3d::Vector3 reactPos(pos.x, pos.y, pos.z);
-	m_rigidbody->setTransform(reactphysics3d::Transform(reactPos, orientation));
+	const Transform& transform = getOwner()->getComponent<Transform>();
+	Vector3 nativePos = transform.getPosition();
+	reactphysics3d::Vector3 pos(nativePos.x, nativePos.y, nativePos.z);
+	reactphysics3d::Quaternion rot = transform.getOrientation();
+	m_rigidbody->setTransform(reactphysics3d::Transform(pos, rot));
 	m_rigidbody->setLinearVelocity({ 0.0f, 0.0f, 0.0f });
 	m_rigidbody->setAngularVelocity({ 0.0f, 0.0f, 0.0f });
+}
+
+void BoxPhysicsComponent::postPhysicsUpdate()
+{
+	// Copy transform from React Physics 3D to GameObject
+	const reactphysics3d::Transform& transform = m_rigidbody->getTransform();
+	reactphysics3d::Vector3 reactPos = transform.getPosition();
+	reactphysics3d::Quaternion q = transform.getOrientation();
+	getOwner()->getComponent<Transform>().setPosition(reactPos.x, reactPos.y, reactPos.z);
+	getOwner()->getComponent<Transform>().setOrientation(q);
 }
 
 void BoxPhysicsComponent::setAdjusted(bool value)
@@ -68,5 +68,6 @@ reactphysics3d::RigidBody* BoxPhysicsComponent::getRigidBody() const
 
 BoxPhysicsComponent::~BoxPhysicsComponent()
 {
-	ComponentSystem::get().getPhysicsSystem().unregisterComponent(this);
+	delete m_collider;
+	ComponentSystem::get().getPhysicsSystem().removeComponent(this);
 }

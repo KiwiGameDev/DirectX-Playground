@@ -20,17 +20,18 @@ void InspectorScreen::draw()
 {
 	ImGui::Begin("Inspector");
 
-	if (m_selected_gameobject != nullptr)
+	if (m_selected_gameobject != nullptr && m_selected_gameobject->hasComponent<Transform>())
 	{
 		bool is_edit_this_frame = false;
-		Vector3 position_vec = m_selected_gameobject->getPosition();
-		Vector3 rotation_vec = m_selected_gameobject->getOrientationEuler();
-		Vector3 scale_vec = m_selected_gameobject->getScale();
+		Transform& transform = m_selected_gameobject->getComponent<Transform>();
+		Vector3 position_vec = transform.getPosition();
+		Vector3 rotation_vec = transform.getOrientationEuler();
+		Vector3 scale_vec = transform.getScale();
 		float position[3] = { position_vec.x, position_vec.y, position_vec.z };
 		float rotation[3] = { rotation_vec.x, rotation_vec.y, rotation_vec.z };
 		float scale[3] = { scale_vec.x, scale_vec.y, scale_vec.z };
 		
-		if (ImGui::SliderFloat3("Position", position, POSITION_MIN, POSITION_MAX))
+		if (ImGui::DragFloat3("Position", position))
 		{
 			if (move_command == nullptr)
 			{
@@ -41,10 +42,10 @@ void InspectorScreen::draw()
 				move_command->updateNewPosition(Vector3(position[0], position[1], position[2]));
 			}
 			
-			m_selected_gameobject->setPosition(position[0], position[1], position[2]);
+			transform.setPosition(position[0], position[1], position[2]);
 			is_edit_this_frame = true;
 		}
-		if (ImGui::SliderFloat3("Rotation", rotation, ROTATION_MIN, ROTATION_MAX))
+		if (ImGui::DragFloat3("Rotation", rotation))
 		{
 			if (rotate_command == nullptr)
 			{
@@ -55,12 +56,12 @@ void InspectorScreen::draw()
 				rotate_command->updateNewOrientation(reactphysics3d::Quaternion::fromEulerAngles(rotation[0], rotation[1], rotation[2]));
 			}
 			
-			m_selected_gameobject->setOrientationEuler(rotation[0], rotation[1], rotation[2]);
+			transform.setOrientationEuler(rotation[0], rotation[1], rotation[2]);
 			is_edit_this_frame = true;
 		}
-		if (ImGui::SliderFloat3("Scale", scale, SCALE_MIN, SCALE_MAX))
+		if (ImGui::DragFloat3("Scale", scale))
 		{
-			m_selected_gameobject->setScale(scale[0], scale[1], scale[2]);
+			transform.setScale(scale[0], scale[1], scale[2]);
 			is_edit_this_frame = true;
 		}
 
@@ -68,17 +69,17 @@ void InspectorScreen::draw()
 		{
 			m_is_editing = true;
 			
-			Component* component = m_selected_gameobject->getComponentByType(Component::Type::Physics);
-
-			if (BoxPhysicsComponent* physics_component = dynamic_cast<BoxPhysicsComponent*>(component))
+			if (m_selected_gameobject->hasComponent<BoxPhysicsComponent>())
 			{
-				physics_component->setAdjusted(true);
+				m_selected_gameobject->getComponent<BoxPhysicsComponent>().setAdjusted(true);
 			}
 		}
 		
 		// No longer editing
 		if (m_is_editing && !is_edit_this_frame && !InputSystem::get().isLeftMouseButtonDown())
 		{
+			m_is_editing = false;
+			
 			if (move_command != nullptr)
 			{
 				GameObjectManager::get().addAndExecuteCommand(move_command);
@@ -89,10 +90,7 @@ void InspectorScreen::draw()
 				GameObjectManager::get().addAndExecuteCommand(rotate_command);
 				rotate_command = nullptr;
 			}
-			
 			// TODO: Scale command
-
-			m_is_editing = false;
 		}
 	}
 	

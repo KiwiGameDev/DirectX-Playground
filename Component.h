@@ -1,34 +1,27 @@
 #pragma once
-#include <string>
-
 class GameObject;
 
 class Component
 {
 public:
-	enum class Type
-	{
-		Invalid = -1,
-		Script,
-		Physics,
-		Renderer,
-		Input,
-	};
-	
-	Component(const std::string& name, GameObject* owner, Type type);
+	Component(GameObject* owner);
 
 	void attachOwner(GameObject* owner);
 	void detachOwner();
 
-	virtual void awake() = 0;
-	virtual void perform() = 0;
+	void start();
 
-	std::string getName() const;
+	virtual void perform() = 0;
+	
 	GameObject* getOwner() const;
-	Type getType() const;
+
+	virtual ~Component() = default;
+
+protected:
+	virtual void onStart() = 0;
 
 private:
-	std::string m_name;
 	GameObject* m_owner;
-	Type m_type;
+
+	bool m_has_started = false;
 };

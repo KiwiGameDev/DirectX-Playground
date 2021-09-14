@@ -88,6 +88,12 @@
     <Filter Include="GameEngine\ComponentSystem">
       <UniqueIdentifier>{61a565f6-3173-47c6-b98b-6b7c170feb51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameEngine\Commands">
+      <UniqueIdentifier>{cafa126e-5258-40c1-a5fe-58f1f617f404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\EventSystem">
+      <UniqueIdentifier>{b0ca7b3e-2a51-4b37-afae-4ef93040333f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -145,9 +151,6 @@
       <Filter>GameEngine\Math</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
-      <Filter>GameEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Transformable.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -225,25 +228,38 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>GameEngine\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsSystem.cpp" />
-    <ClCompile Include="PhysicsCube.cpp">
-      <Filter>App</Filter>
-    </ClCompile>
     <ClCompile Include="ComponentSystem.cpp">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClCompile>
     <ClCompile Include="BoxPhysicsComponent.cpp">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClCompile>
-    <ClCompile Include="EditorApplication.cpp" />
-    <ClCompile Include="Event.cpp" />
-    <ClCompile Include="MoveGameObjectCommand.cpp" />
-    <ClCompile Include="RotateGameObjectCommand.cpp" />
     <ClCompile Include="UndoRedoScreen.cpp">
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
     <ClCompile Include="PlayMenuScreen.cpp">
       <Filter>GameEngine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RotateGameObjectCommand.cpp">
+      <Filter>GameEngine\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveGameObjectCommand.cpp">
+      <Filter>GameEngine\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorApplication.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsSystem.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>GameEngine\EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>GameEngine\ComponentSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectFactory.cpp">
+      <Filter>GameEngine\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,9 +342,6 @@
       <Filter>GameEngine\Math</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
-      <Filter>GameEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="Transformable.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBufferData.h">
@@ -430,28 +443,47 @@
     <ClInclude Include="GameObject.h">
       <Filter>GameEngine\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsSystem.h" />
-    <ClInclude Include="PhysicsCube.h">
-      <Filter>App</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentSystem.h">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClInclude>
     <ClInclude Include="BoxPhysicsComponent.h">
       <Filter>GameEngine\ComponentSystem</Filter>
     </ClInclude>
-    <ClInclude Include="EditorApplication.h" />
-    <ClInclude Include="EventCallback.h" />
-    <ClInclude Include="IEventCallback.h" />
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="ICommand.h" />
-    <ClInclude Include="MoveGameObjectCommand.h" />
-    <ClInclude Include="RotateGameObjectCommand.h" />
     <ClInclude Include="UndoRedoScreen.h">
       <Filter>GameEngine\UI</Filter>
     </ClInclude>
     <ClInclude Include="PlayMenuScreen.h">
       <Filter>GameEngine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="RotateGameObjectCommand.h">
+      <Filter>GameEngine\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveGameObjectCommand.h">
+      <Filter>GameEngine\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsSystem.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorApplication.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommand.h">
+      <Filter>GameEngine\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="IEventCallback.h">
+      <Filter>GameEngine\EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventCallback.h">
+      <Filter>GameEngine\EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>GameEngine\EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>GameEngine\ComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectFactory.h">
+      <Filter>GameEngine\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
 #pragma once
 #include "Window.h"
 #include "IInputListener.h"
-#include "PhysicsCube.h"
 #include "Camera.h"
 #include "Prerequisites.h"
 
@@ -28,7 +27,6 @@ private:
 	void spawnCubes();
 	
 	SwapChainPtr m_swap_chain;
-	ConstantBufferPtr m_cb;
 
 	Camera m_editor_camera;
 	

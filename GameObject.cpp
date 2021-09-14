@@ -8,17 +8,28 @@
 #include "CameraManager.h"
 #include "Time.h"
 #include <utility>
-#include <iostream>
+
+GameObject::GameObject(const std::string& name)
+	: name(name)
+{
+	addComponent<Transform>(this);
+}
 
 GameObject::GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader)
 	: name(name), m_vb(std::move(vertex_buffer)), m_ib(std::move(index_buffer)), m_cb(std::move(constant_buffer)), m_vs(std::move(vertex_shader)), m_ps(std::move(pixel_shader))
 {
-	
+	addComponent<Transform>(this);
 }
 
-void GameObject::awake()
+void GameObject::start()
 {
+	if (!m_is_enabled)
+		return;
 	
+	for (auto name_component_pair : m_component_map)
+	{
+		name_component_pair.second->start();
+	}
 }
 
 void GameObject::update()
@@ -26,21 +37,23 @@ void GameObject::update()
 	if (!m_is_enabled)
 		return;
 
-	for (Component* component : m_component_list)
+	for (auto name_component_pair : m_component_map)
 	{
-		if (component->getType() == Component::Type::Script)
-		{
-			component->perform();
-		}
+		name_component_pair.second->perform();
 	}
 }
 
 void GameObject::draw()
 {
+	if (!m_is_enabled)
+		return;
+	if (m_vb == nullptr || m_ib == nullptr || m_vs == nullptr || m_ib == nullptr)
+		return;
+	
 	DeviceContextPtr device_context = GraphicsEngine::get().getRenderSystem().getImmediateDeviceContext();
 	
 	ConstantBufferData cbd;
-	cbd.m_world = getTransform();
+	cbd.m_world = getComponent<Transform>().getTransformMatrix();
 	cbd.m_view = CameraManager::get().getEditorCamera()->getViewMatrix();
 	cbd.m_proj = CameraManager::get().getEditorCamera()->getProjectionMatrix();
 	cbd.m_time = Time::get().timeSinceApplicationStart();
@@ -65,77 +78,17 @@ void GameObject::setTexture(const TexturePtr& texture)
 	m_texture = texture;
 }
 
-void GameObject::attachComponent(Component* component)
-{
-	if (m_component_map.find(component->getName()) == m_component_map.end())
-	{
-		m_component_list.push_back(component);
-		m_component_map.insert({ component->getName(), component });
-		component->attachOwner(this);
-		component->awake();
-	}
-	else
-	{
-		std::cerr << component->getName() << " is already attached!\n";
-	}
-}
-
-void GameObject::detachComponent(Component* component)
-{
-	if (m_component_map.find(component->getName()) != m_component_map.end())
-	{
-		m_component_list.erase(std::ranges::find(m_component_list, component));
-		m_component_map.erase(component->getName());
-	}
-	else
-	{
-		std::cerr << component->getName() << " is already detached!\n";
-	}
-}
-
-Component* GameObject::getComponentByName(const std::string& name)
-{
-	return m_component_map.at(name);
-}
-
-Component* GameObject::getComponentByType(Component::Type type)
-{
-	auto itr = std::ranges::find_if(m_component_list, [type](const Component* component)
-	{
-		return component->getType() == type;
-	});
-
-	if (itr != m_component_list.end())
-		return *itr;
-
-	return nullptr;
-}
-
-std::vector<Component*> GameObject::getComponentsByType(Component::Type type)
-{
-	std::vector<Component*> components_match;
-
-	for (Component* component : m_component_list)
-	{
-		if (component->getType() == type)
-		{
-			components_match.push_back(component);
-		}
-	}
-
-	return components_match;
-}
-
-std::vector<Component*> GameObject::getComponentsByTypeRecursive(Component::Type type)
-{
-	std::vector<Component*> components_match;
-
-	// TODO: Get components of type including children
-
-	return components_match;
-}
-
 std::string GameObject::getName() const
 {
 	return name;
+}
+
+bool GameObject::getIsEnabled() const
+{
+	return m_is_enabled;
+}
+
+GameObject::~GameObject()
+{
+	// TODO: Delete all components
 }

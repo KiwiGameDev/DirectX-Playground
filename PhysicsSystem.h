@@ -8,9 +8,8 @@ class PhysicsSystem
 public:
 	PhysicsSystem();
 
-	void registerComponent(BoxPhysicsComponent* component);
-	void unregisterComponent(BoxPhysicsComponent* component);
-	void unregisterComponentByName(const std::string& name);
+	void addComponent(BoxPhysicsComponent* physics_component);
+	void removeComponent(BoxPhysicsComponent* physics_component);
 
 	void update();
 	
@@ -18,14 +17,12 @@ public:
 	reactphysics3d::PhysicsWorld* getPhysicsWorld() const;
 
 	BoxPhysicsComponent* getComponentByName(const std::string& name) const;
-	const std::vector<BoxPhysicsComponent*>& getAllComponents() const;
 
 	~PhysicsSystem();
 
 private:
 	reactphysics3d::PhysicsCommon* m_physics_common;
 	reactphysics3d::PhysicsWorld* m_physics_world;
-
-	std::vector<BoxPhysicsComponent*> m_component_list;
+	
 	std::unordered_map<std::string, BoxPhysicsComponent*> m_component_map;
 };

@@ -1,7 +1,4 @@
 #include "GameObjectManager.h"
-
-#include <iostream>
-
 #include "BoxPhysicsComponent.h"
 #include "EditorApplication.h"
 #include "GameObject.h"
@@ -11,6 +8,15 @@ GameObjectManager* Singleton<GameObjectManager>::instance = nullptr;
 GameObjectManager::GameObjectManager()
 {
 	EditorApplication::get().addStateChangedEventListener(new EventCallback(this, &GameObjectManager::onEditorStateChanged));
+}
+
+void GameObjectManager::start()
+{
+	for (auto nameGameObjectPair : m_name_to_gameobject_map)
+	{
+		GameObject* gameObject = nameGameObjectPair.second;
+		gameObject->start();
+	}
 }
 
 void GameObjectManager::update()
@@ -44,7 +50,6 @@ const std::unordered_map<std::string, GameObject*>& GameObjectManager::getGameOb
 void GameObjectManager::addGameObject(GameObject* gameobject)
 {
 	m_name_to_gameobject_map.insert({ gameobject->getName(), gameobject });
-	gameobject->awake();
 }
 
 void GameObjectManager::removeGameObject(const std::string& name)
@@ -58,9 +63,9 @@ void GameObjectManager::saveGameObjectsStartingState()
 	{
 		std::string name = name_gameobject_pair.first;
 		GameObject* gameobject = name_gameobject_pair.second;
-		m_gameobject_starting_position.insert_or_assign(name, gameobject->getPosition());
-		m_gameobject_starting_rotation.insert_or_assign(name, gameobject->getOrientation());
-		m_gameobject_starting_scale.insert_or_assign(name, gameobject->getScale());
+		m_gameobject_starting_position.insert_or_assign(name, gameobject->getComponent<Transform>().getPosition());
+		m_gameobject_starting_rotation.insert_or_assign(name, gameobject->getComponent<Transform>().getOrientation());
+		m_gameobject_starting_scale.insert_or_assign(name, gameobject->getComponent<Transform>().getScale());
 	}
 }
 
@@ -87,16 +92,12 @@ void GameObjectManager::addAndExecuteCommand(ICommand* command)
 		delete m_commands_redo.top();
 		m_commands_redo.pop();
 	}
-	
-	std::cout << "Commands size " << m_commands_undo.size() << '\n';
 }
 
 void GameObjectManager::undoLastCommand()
 {
 	if (m_commands_undo.empty())
 		return;
-
-	std::cout << "Commands size " << m_commands_undo.size() << '\n';
 	
 	ICommand* command = m_commands_undo.top();
 	command->unexecute();
@@ -109,9 +110,7 @@ void GameObjectManager::redoLastCommand()
 {
 	if (m_commands_redo.empty())
 		return;
-
-	std::cout << "Commands size " << m_commands_undo.size() << '\n';
-
+	
 	ICommand* command = m_commands_redo.top();
 	command->execute();
 
@@ -150,15 +149,14 @@ void GameObjectManager::loadGameObjectsStartingState()
 	{
 		std::string name = name_gameobject_pair.first;
 		GameObject* gameobject = name_gameobject_pair.second;
-		gameobject->setPosition(m_gameobject_starting_position[name]);
-		gameobject->setOrientation(m_gameobject_starting_rotation[name]);
-		gameobject->setScale(m_gameobject_starting_scale[name]);
+		gameobject->getComponent<Transform>().setPosition(m_gameobject_starting_position[name]);
+		gameobject->getComponent<Transform>().setOrientation(m_gameobject_starting_rotation[name]);
+		gameobject->getComponent<Transform>().setScale(m_gameobject_starting_scale[name]);
 
 		// Physics workaround :)
-		Component* component = gameobject->getComponentByType(Component::Type::Physics);
-		if (BoxPhysicsComponent* physics_component = dynamic_cast<BoxPhysicsComponent*>(component))
+		if (gameobject->hasComponent<BoxPhysicsComponent>())
 		{
-			physics_component->setAdjusted(true);
+			gameobject->getComponent<BoxPhysicsComponent>().setAdjusted(true);
 		}
 	}
 }

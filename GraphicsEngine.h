@@ -18,6 +18,8 @@ public:
 	PixelShaderManager& getPixelShaderManager();
 	MeshManager& getMeshManager();
 	TextureManager& getTextureManager();
+
+	ConstantBufferPtr getConstantBuffer();
 	
 protected:
 	GraphicsEngine();
@@ -28,4 +30,6 @@ protected:
 	PixelShaderManager m_pixel_shader_manager;
 	MeshManager m_mesh_manager;
 	TextureManager m_texture_manager;
+
+	ConstantBufferPtr m_cb;
 };

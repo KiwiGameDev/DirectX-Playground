@@ -15,6 +15,7 @@ class GameObjectManager : public Singleton<GameObjectManager>
 	friend class Singleton<GameObjectManager>;
 
 public:
+	void start();
 	void update();
 	void draw();
 	

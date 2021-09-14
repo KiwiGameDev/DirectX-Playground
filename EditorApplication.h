@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "Singleton.h"
 #include "Event.h"
 
@@ -14,6 +16,9 @@ public:
 		Step,
 		Stop
 	};
+
+	void saveScene();
+	void loadScene(const std::string& file_path);
 
 	void addStateChangedEventListener(IEventCallback* callback);
 	void removeStateChangedEventListener(IEventCallback* callback);
