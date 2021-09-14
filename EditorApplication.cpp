@@ -4,55 +4,66 @@
 #include <json.hpp>
 #include <fstream>
 
+#include "BoxPhysicsComponent.h"
+
 EditorApplication* Singleton<EditorApplication>::instance = nullptr;
 
 void EditorApplication::saveScene()
 {
 	using json = nlohmann::json;
 	
-	auto name_to_gameobject_map = GameObjectManager::get().getGameObjectMap();
+	json out_json;
 	
-	json j;
-	
-	for (auto name_gameobject_pair : name_to_gameobject_map)
+	for (auto name_gameobject_pair : GameObjectManager::get().getGameObjectMap())
 	{
 		std::string name = name_gameobject_pair.first;
 		GameObject* gameobject = name_gameobject_pair.second;
-		Transform& transform = gameobject->getComponent<Transform>();
+		json components_json;
 		
-		j.push_back
-		({
-			{ "name", gameobject->getName() },
-			{
-				"position",
+		if (gameobject->hasComponent<Transform>())
+		{
+			const Transform& transform = gameobject->getComponent<Transform>();
+			components_json.push_back
+			({
+				{ "name", "Transform" },
 				{
-					transform.getPosition().x,
-					transform.getPosition().y,
-					transform.getPosition().z
-				}
-			},
-			{
-				"rotation",
+					"position",
+					{
+						transform.getPosition().x,
+						transform.getPosition().y,
+						transform.getPosition().z
+					}
+				},
 				{
-					transform.getOrientationEuler().x,
-					transform.getOrientationEuler().y,
-					transform.getOrientationEuler().z
-				}
-			},
-			{
-				"scale",
+					"rotation",
+					{
+						transform.getOrientationEuler().x,
+						transform.getOrientationEuler().y,
+						transform.getOrientationEuler().z
+					}
+				},
 				{
-					transform.getScale().x,
-					transform.getScale().y,
-					transform.getScale().z
+					"scale",
+					{
+						transform.getScale().x,
+						transform.getScale().y,
+						transform.getScale().z
+					}
 				}
-			}
-		});
+			});
+		}
+
+		if (gameobject->hasComponent<BoxPhysicsComponent>())
+		{
+			components_json.push_back({{ "name", "BoxPhysicsComponent" }});
+		}
+
+		out_json[name] = components_json;
 	}
 
 	std::ofstream outfile;
-	outfile.open("Saves/scene.json");
-	outfile << j;
+	outfile.open("C:/dev/saves/scene.level");
+	outfile << out_json;
 	outfile.close();
 }
 
