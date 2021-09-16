@@ -1,5 +1,6 @@
 #include "RotateGameObjectCommand.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 RotateGameObjectCommand::RotateGameObjectCommand(GameObject* gameobject, reactphysics3d::Quaternion new_orientation)
 	: m_gameobject(gameobject), m_old_orientation(gameobject->getComponent<Transform>().getOrientation()), m_new_orientation(new_orientation)

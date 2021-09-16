@@ -1,6 +1,7 @@
 #include "BoxPhysicsComponent.h"
 #include "ComponentSystem.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 BoxPhysicsComponent::BoxPhysicsComponent(Vector3 half_extents, reactphysics3d::BodyType body_type, GameObject* owner)
 	: m_half_extents(half_extents), m_body_type(body_type), Component(owner)

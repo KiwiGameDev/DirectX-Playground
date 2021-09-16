@@ -8,7 +8,6 @@
 #include <locale>
 #include <codecvt>
 
-
 Mesh::Mesh(const wchar_t* full_path)
 {
 	tinyobj::attrib_t attribs;
@@ -68,6 +67,37 @@ Mesh::Mesh(const wchar_t* full_path)
 	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
 	m_vertex_buffer = GraphicsEngine::get().getRenderSystem().createVertexBuffer(&list_vertices[0], sizeof(VertexMesh), list_vertices.size(), vs, VertexFormat::POSITION_UV);
 	m_index_buffer = GraphicsEngine::get().getRenderSystem().createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
+
+	size_t name_index_start = input_file.find_last_of('/');
+
+	if (name_index_start != std::string::npos)
+	{
+		size_t name_index_end = input_file.find_last_of('.');
+
+		if (name_index_end != std::string::npos)
+		{
+			m_name = input_file.substr(name_index_start, name_index_end - name_index_start);
+		}
+		else
+		{
+			m_name = input_file.substr(name_index_start, input_file.size() - name_index_start);
+		}
+	}
+	else
+	{
+		m_name = input_file;
+	}
+}
+
+Mesh::Mesh(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer)
+	: m_name(name), m_vertex_buffer(vertex_buffer), m_index_buffer(index_buffer)
+{
+	
+}
+
+std::string Mesh::getName() const
+{
+	return m_name;
 }
 
 const VertexBufferPtr& Mesh::getVertexBuffer()

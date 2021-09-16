@@ -1,5 +1,6 @@
 #include "MoveGameObjectCommand.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 MoveGameObjectCommand::MoveGameObjectCommand(GameObject* gameobject, Vector3 new_position)
 	: m_gameobject(gameobject), m_old_position(gameobject->getComponent<Transform>().getPosition()), m_new_position(new_position)

@@ -1,7 +1,8 @@
 #include "GameObjectManager.h"
-#include "BoxPhysicsComponent.h"
 #include "EditorApplication.h"
 #include "GameObject.h"
+#include "Transform.h"
+#include "BoxPhysicsComponent.h"
 
 GameObjectManager* Singleton<GameObjectManager>::instance = nullptr;
 

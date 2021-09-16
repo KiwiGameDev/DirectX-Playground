@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Vector2.h"
+#include "Matrix4x4.h"
 
 class Camera : public GameObject
 {

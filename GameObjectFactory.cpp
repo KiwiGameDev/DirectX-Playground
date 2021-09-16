@@ -1,8 +1,10 @@
 #include "GameObjectFactory.h"
-#include "BoxPhysicsComponent.h"
+#include "GraphicsEngine.h"
 #include "GameObject.h"
 #include "Mesh.h"
-#include "GraphicsEngine.h"
+#include "BoxPhysicsComponent.h"
+#include "MeshRenderer.h"
+#include "Transform.h"
 #include "Prerequisites.h"
 
 GameObject* GameObjectFactory::createEmptyGameObject(const std::string& name)
@@ -16,12 +18,13 @@ GameObject* GameObjectFactory::createTeapot(const std::string& name)
 	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
 	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
 	ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
-	TexturePtr bricks = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
+	TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
 
-	GameObject* teapot = new GameObject(name, mesh->getVertexBuffer(), mesh->getIndexBuffer(), cb, vs, ps);
+	GameObject* teapot = new GameObject(name);
+	teapot->addComponent<MeshRenderer>(teapot, mesh->getVertexBuffer(), mesh->getIndexBuffer(), cb, vs, ps);
+	teapot->getComponent<MeshRenderer>().setTexture(tex);
 	teapot->addComponent<Transform>(teapot);
 	teapot->getComponent<Transform>().setPosition(Vector3(0.0f, 1.0f, 1.0f));
-	teapot->setTexture(bricks);
 	return teapot;
 }
 
@@ -32,7 +35,8 @@ GameObject* GameObjectFactory::createStaticPhysicsPlane(const std::string& name)
 	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile(L"ColoredPixelShader.hlsl");
 	ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
 
-	GameObject* plane = new GameObject(name, cube_mesh->getVertexBuffer(), cube_mesh->getIndexBuffer(), cb, vs, ps);
+	GameObject* plane = new GameObject(name);
+	plane->addComponent<MeshRenderer>(plane, cube_mesh->getVertexBuffer(), cube_mesh->getIndexBuffer(), cb, vs, ps);
 	plane->addComponent<Transform>(plane);
 	plane->getComponent<Transform>().setScale(Vector3(32.0f, 0.1f, 32.0f));
 	plane->getComponent<Transform>().setPosition(Vector3(0.0f, 0.0f, 0.0f));
@@ -46,11 +50,12 @@ GameObject* GameObjectFactory::createPhysicsCube(const std::string& name)
 	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
 	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
 	ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
-	TexturePtr bricks = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
+	TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
 
-	GameObject* cube = new GameObject(name, mesh->getVertexBuffer(), mesh->getIndexBuffer(), cb, vs, ps);
+	GameObject* cube = new GameObject(name);
+	cube->addComponent<MeshRenderer>(cube, mesh->getVertexBuffer(), mesh->getIndexBuffer(), cb, vs, ps);
+	cube->getComponent<MeshRenderer>().setTexture(tex);
 	cube->addComponent<Transform>(cube);
 	cube->addComponent<BoxPhysicsComponent>(cube->getComponent<Transform>().getScale(), reactphysics3d::BodyType::DYNAMIC, cube);
-	cube->setTexture(bricks);
 	return cube;
 }

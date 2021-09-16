@@ -67,9 +67,37 @@ void EditorApplication::saveScene()
 	outfile.close();
 }
 
-void EditorApplication::loadScene(const std::string& file_path)
+void EditorApplication::loadScene()
 {
+	using json = nlohmann::json;
+
+	std::vector<GameObject*> gameobjects;
 	
+	json j;
+	std::ifstream infile;
+	infile.open("C:/dev/saves/scene.level");
+	infile >> j;
+	infile.close();
+
+	for (const auto& jGameObject : j.items())
+	{
+		GameObject* gameobject = nullptr;
+		std::string gameobject_name = jGameObject.key();
+		
+		for (const auto& component : jGameObject.value())
+		{
+			if (component["name"] == "Transform")
+			{
+				auto jPos = component["position"];
+				auto jRot = component["rotation"];
+				auto jScale = component["scale"];
+
+				Vector3 pos(jPos[0], jPos[1], jPos[2]);
+				Vector3 rot(jRot[0], jRot[1], jRot[2]);
+				Vector3 scale(jScale[0], jScale[1], jScale[2]);
+			}
+		}
+	}
 }
 
 void EditorApplication::addStateChangedEventListener(IEventCallback* callback)

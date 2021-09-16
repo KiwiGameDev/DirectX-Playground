@@ -8,13 +8,10 @@ class GameObject
 {
 public:
 	GameObject(const std::string& name);
-	GameObject(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer, ConstantBufferPtr constant_buffer, VertexShaderPtr vertex_shader, PixelShaderPtr pixel_shader);
 
 	void start();
 	virtual void update();
 	void draw();
-	
-	void setTexture(const TexturePtr& texture);
 	
 	std::string getName() const;
 	bool getIsEnabled() const;
@@ -56,12 +53,4 @@ private:
 	bool m_is_enabled = true;
 	
 	std::unordered_map<const char*, Component*> m_component_map;
-
-	TexturePtr m_texture = nullptr;
-	
-	VertexBufferPtr m_vb = nullptr;
-	IndexBufferPtr m_ib = nullptr;
-	ConstantBufferPtr m_cb = nullptr;
-	VertexShaderPtr m_vs = nullptr;
-	PixelShaderPtr m_ps = nullptr;
 };

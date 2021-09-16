@@ -85,9 +85,6 @@
     <Filter Include="GameEngine\GameObject">
       <UniqueIdentifier>{7e78e4cd-dc84-4781-ac50-c45825e9bfbf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameEngine\ComponentSystem">
-      <UniqueIdentifier>{61a565f6-3173-47c6-b98b-6b7c170feb51}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameEngine\Commands">
       <UniqueIdentifier>{cafa126e-5258-40c1-a5fe-58f1f617f404}</UniqueIdentifier>
     </Filter>
@@ -102,6 +99,9 @@
     </Filter>
     <Filter Include="GameEngine\Physics">
       <UniqueIdentifier>{05f77f27-048a-4bb5-b1c6-cc7a09db4c8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\Components">
+      <UniqueIdentifier>{61a565f6-3173-47c6-b98b-6b7c170feb51}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -220,7 +220,7 @@
       <Filter>GameEngine\UI</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClCompile>
     <ClCompile Include="GameObjectManager.cpp">
       <Filter>GameEngine\GameObject</Filter>
@@ -229,10 +229,10 @@
       <Filter>GameEngine\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="ComponentSystem.cpp">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClCompile>
     <ClCompile Include="BoxPhysicsComponent.cpp">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClCompile>
     <ClCompile Include="UndoRedoScreen.cpp">
       <Filter>GameEngine\UI</Filter>
@@ -253,7 +253,7 @@
       <Filter>GameEngine\EventSystem</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClCompile>
     <ClCompile Include="GameObjectFactory.cpp">
       <Filter>GameEngine\GameObject</Filter>
@@ -269,6 +269,9 @@
     </ClCompile>
     <ClCompile Include="PhysicsSystem.cpp">
       <Filter>GameEngine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>GameEngine\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -435,7 +438,7 @@
       <Filter>GameEngine\UI</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectManager.h">
       <Filter>GameEngine\GameObject</Filter>
@@ -444,10 +447,10 @@
       <Filter>GameEngine\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="ComponentSystem.h">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClInclude>
     <ClInclude Include="BoxPhysicsComponent.h">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClInclude>
     <ClInclude Include="UndoRedoScreen.h">
       <Filter>GameEngine\UI</Filter>
@@ -477,7 +480,7 @@
       <Filter>GameEngine\EventSystem</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>GameEngine\ComponentSystem</Filter>
+      <Filter>GameEngine\Components</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectFactory.h">
       <Filter>GameEngine\GameObject</Filter>
@@ -493,6 +496,12 @@
     </ClInclude>
     <ClInclude Include="PhysicsSystem.h">
       <Filter>GameEngine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="imfilebrowser.h">
+      <Filter>GameEngine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>GameEngine\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

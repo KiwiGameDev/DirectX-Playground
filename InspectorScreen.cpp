@@ -1,14 +1,12 @@
 #include "InspectorScreen.h"
-
-#include <iostream>
-
 #include "GameObjectManager.h"
-#include "BoxPhysicsComponent.h"
+#include "InputSystem.h"
 #include "GameObject.h"
+#include "Transform.h"
+#include "BoxPhysicsComponent.h"
 #include "MoveGameObjectCommand.h"
 #include "RotateGameObjectCommand.h"
 #include "imgui.h"
-#include "InputSystem.h"
 
 InspectorScreen::InspectorScreen(const std::string& name)
 	: Screen(name)

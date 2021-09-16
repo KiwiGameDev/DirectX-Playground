@@ -3,8 +3,9 @@
 #include "CreditsScreen.h"
 #include "ColorPickerScreen.h"
 #include "EditorApplication.h"
-#include "imgui.h"
 #include "ScreenNames.h"
+#include "imgui.h"
+#include "imfilebrowser.h"
 
 MenuScreen::MenuScreen(const std::string& name)
 	: Screen(name)
