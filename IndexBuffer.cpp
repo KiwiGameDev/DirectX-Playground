@@ -21,7 +21,7 @@ IndexBuffer::IndexBuffer(void* list_indices, UINT size_list, RenderSystem* syste
 		throw std::exception("Index Buffer failed to initialize!");
 }
 
-UINT IndexBuffer::getSizeIndices()
+UINT IndexBuffer::getIndicesCount()
 {
 	return m_size_list;
 }

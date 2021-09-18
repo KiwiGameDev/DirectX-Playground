@@ -3,6 +3,7 @@
 #include "GraphicsEngine.h"
 #include "RenderSystem.h"
 #include "VertexShaderManager.h"
+#include "IndexBuffer.h"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <locale>
@@ -68,7 +69,7 @@ Mesh::Mesh(const wchar_t* full_path)
 	m_vertex_buffer = GraphicsEngine::get().getRenderSystem().createVertexBuffer(&list_vertices[0], sizeof(VertexMesh), list_vertices.size(), vs, VertexFormat::POSITION_UV);
 	m_index_buffer = GraphicsEngine::get().getRenderSystem().createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 
-	size_t name_index_start = input_file.find_last_of('/');
+	size_t name_index_start = input_file.find_last_of('\\');
 
 	if (name_index_start != std::string::npos)
 	{
@@ -76,11 +77,11 @@ Mesh::Mesh(const wchar_t* full_path)
 
 		if (name_index_end != std::string::npos)
 		{
-			m_name = input_file.substr(name_index_start, name_index_end - name_index_start);
+			m_name = input_file.substr(name_index_start + 1, name_index_end - name_index_start - 1);
 		}
 		else
 		{
-			m_name = input_file.substr(name_index_start, input_file.size() - name_index_start);
+			m_name = input_file.substr(name_index_start + 1, input_file.size() - name_index_start - 1);
 		}
 	}
 	else
@@ -98,6 +99,11 @@ Mesh::Mesh(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPt
 std::string Mesh::getName() const
 {
 	return m_name;
+}
+
+size_t Mesh::getIndicesCount() const
+{
+	return m_index_buffer->getIndicesCount();
 }
 
 const VertexBufferPtr& Mesh::getVertexBuffer()

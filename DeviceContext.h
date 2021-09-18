@@ -30,6 +30,7 @@ public:
 	void setTexturePixelShader(const TexturePtr& texture);
 	void setVertexBuffer(const VertexBufferPtr& vertex_buffer);
 	void setIndexBuffer(const IndexBufferPtr& index_buffer);
+	void setMesh(const MeshPtr& mesh);
 	void setVertexShader(const VertexShaderPtr& vertex_shader);
 	void setPixelShader(const PixelShaderPtr& pixel_shader);
 

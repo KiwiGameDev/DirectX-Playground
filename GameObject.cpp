@@ -55,5 +55,8 @@ bool GameObject::getIsEnabled() const
 
 GameObject::~GameObject()
 {
-	// TODO: Delete all components
+	for (auto name_component_pair : m_component_map)
+	{
+		delete name_component_pair.second;
+	}
 }

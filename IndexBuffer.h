@@ -13,7 +13,7 @@ class IndexBuffer
 public:
 	IndexBuffer(void* list_indices, UINT size_list, RenderSystem* system);
 
-	UINT getSizeIndices();
+	UINT getIndicesCount();
 	
 	~IndexBuffer();
 

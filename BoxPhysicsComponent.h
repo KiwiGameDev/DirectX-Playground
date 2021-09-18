@@ -17,6 +17,7 @@ public:
 	void setAdjusted(bool value);
 	
 	reactphysics3d::RigidBody* getRigidBody() const;
+	reactphysics3d::BodyType getBodyType() const;
 
 	~BoxPhysicsComponent();
 

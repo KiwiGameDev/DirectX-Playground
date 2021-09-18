@@ -6,6 +6,8 @@
 #include <json.hpp>
 #include <fstream>
 
+#include "MeshRenderer.h"
+
 EditorApplication* Singleton<EditorApplication>::instance = nullptr;
 
 void EditorApplication::saveScene()
@@ -23,39 +25,57 @@ void EditorApplication::saveScene()
 		if (gameobject->hasComponent<Transform>())
 		{
 			const Transform& transform = gameobject->getComponent<Transform>();
-			components_json.push_back
-			({
-				{ "name", "Transform" },
+			components_json.push_back(
 				{
-					"position",
+					{ "name", "Transform" },
 					{
-						transform.getPosition().x,
-						transform.getPosition().y,
-						transform.getPosition().z
-					}
-				},
-				{
-					"rotation",
+						"position",
+						{
+							transform.getPosition().x,
+							transform.getPosition().y,
+							transform.getPosition().z
+						}
+					},
 					{
-						transform.getOrientationEuler().x,
-						transform.getOrientationEuler().y,
-						transform.getOrientationEuler().z
-					}
-				},
-				{
-					"scale",
+						"rotation",
+						{
+							transform.getOrientationEuler().x,
+							transform.getOrientationEuler().y,
+							transform.getOrientationEuler().z
+						}
+					},
 					{
-						transform.getScale().x,
-						transform.getScale().y,
-						transform.getScale().z
+						"scale",
+						{
+							transform.getScale().x,
+							transform.getScale().y,
+							transform.getScale().z
+						}
 					}
 				}
-			});
+			);
 		}
 
 		if (gameobject->hasComponent<BoxPhysicsComponent>())
 		{
-			components_json.push_back({{ "name", "BoxPhysicsComponent" }});
+			reactphysics3d::BodyType type = gameobject->getComponent<BoxPhysicsComponent>().getBodyType();
+			
+			components_json.push_back(
+				{
+					{ "name", "BoxPhysicsComponent" },
+					{ "type", type == reactphysics3d::BodyType::DYNAMIC ? "dynamic" : "static" }
+				}
+			);
+		}
+
+		if (gameobject->hasComponent<MeshRenderer>())
+		{
+			components_json.push_back(
+				{
+					{ "name", "MeshRenderer" },
+					{ "mesh", gameobject->getComponent<MeshRenderer>().getMeshName() }
+				}
+			);
 		}
 
 		out_json[name] = components_json;

@@ -67,6 +67,11 @@ reactphysics3d::RigidBody* BoxPhysicsComponent::getRigidBody() const
 	return m_rigidbody;
 }
 
+reactphysics3d::BodyType BoxPhysicsComponent::getBodyType() const
+{
+	return m_body_type;
+}
+
 BoxPhysicsComponent::~BoxPhysicsComponent()
 {
 	delete m_collider;

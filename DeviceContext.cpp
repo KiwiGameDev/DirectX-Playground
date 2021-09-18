@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include <d3d11.h>
 
+#include "Mesh.h"
 #include "SamplerState.h"
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system)
@@ -68,6 +69,12 @@ void DeviceContext::setVertexBuffer(const VertexBufferPtr& vertex_buffer)
 void DeviceContext::setIndexBuffer(const IndexBufferPtr& index_buffer)
 {
 	m_device_context->IASetIndexBuffer(index_buffer->m_buffer, DXGI_FORMAT_R32_UINT, 0);
+}
+
+void DeviceContext::setMesh(const MeshPtr& mesh)
+{
+	setVertexBuffer(mesh->getVertexBuffer());
+	setIndexBuffer(mesh->getIndexBuffer());
 }
 
 void DeviceContext::setVertexShader(const VertexShaderPtr& vertex_shader)

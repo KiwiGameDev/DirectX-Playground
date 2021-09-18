@@ -5,11 +5,11 @@
 #include "DeviceContext.h"
 #include "ConstantBufferData.h"
 #include "ConstantBuffer.h"
-#include "IndexBuffer.h"
+#include "Mesh.h"
 #include "Transform.h"
 
-MeshRenderer::MeshRenderer(GameObject* owner, VertexBufferPtr vb, IndexBufferPtr ib, ConstantBufferPtr cb, VertexShaderPtr vs, PixelShaderPtr ps)
-	: Component(owner), m_vb(vb), m_ib(ib), m_cb(cb), m_vs(vs), m_ps(ps)
+MeshRenderer::MeshRenderer(GameObject* owner, const MeshPtr& mesh, const ConstantBufferPtr& cb, const VertexShaderPtr& vs, const PixelShaderPtr& ps)
+	: Component(owner), m_mesh(mesh), m_cb(cb), m_vs(vs), m_ps(ps)
 {
 	
 }
@@ -24,7 +24,7 @@ void MeshRenderer::perform()
 	
 }
 
-void MeshRenderer::draw()
+void MeshRenderer::draw() const
 {
 	DeviceContextPtr device_context = GraphicsEngine::get().getRenderSystem().getImmediateDeviceContext();
 
@@ -39,17 +39,21 @@ void MeshRenderer::draw()
 	device_context->setPixelShader(m_ps);
 	device_context->setConstantBuffer(m_vs, m_cb);
 	device_context->setConstantBuffer(m_ps, m_cb);
-	device_context->setVertexBuffer(m_vb);
-	device_context->setIndexBuffer(m_ib);
+	device_context->setMesh(m_mesh);
 	if (m_texture != nullptr)
 	{
 		device_context->setTextureVertexShader(m_texture);
 		device_context->setTexturePixelShader(m_texture);
 	}
-	device_context->drawIndexedTriangleList(m_ib->getSizeIndices(), 0, 0);
+	device_context->drawIndexedTriangleList(m_mesh->getIndicesCount(), 0, 0);
 }
 
 void MeshRenderer::setTexture(const TexturePtr& texture)
 {
 	m_texture = texture;
+}
+
+std::string MeshRenderer::getMeshName() const
+{
+	return m_mesh->getName();
 }

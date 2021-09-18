@@ -13,6 +13,7 @@ public:
 	Mesh(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer);
 
 	std::string getName() const;
+	size_t getIndicesCount() const;
 	const VertexBufferPtr& getVertexBuffer();
 	const IndexBufferPtr& getIndexBuffer();
 	

@@ -36,8 +36,8 @@ void AppWindow::onCreate()
 	InputSystem::get().addListener(this);
 
 	m_swap_chain = render_system.createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
-	
-	// Create gameobjects
+
+	// Create GameObjects
 	GameObjectManager::get().addGameObject(GameObjectFactory::createTeapot("Teapot_00"));
 	GameObjectManager::get().addGameObject(GameObjectFactory::createStaticPhysicsPlane("StaticPhysicsPlane_00"));
 
