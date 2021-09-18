@@ -1,5 +1,6 @@
 #pragma once
 #include "Resource.h"
+#include <string>
 
 class RenderSystem;
 class DeviceContext;
@@ -11,7 +12,7 @@ class PixelShader : public Resource
 	friend class DeviceContext;
 
 public:
-	PixelShader(const wchar_t* full_path, RenderSystem& system);
+	PixelShader(const std::string& file_path, RenderSystem& system);
 	
 	~PixelShader();
 

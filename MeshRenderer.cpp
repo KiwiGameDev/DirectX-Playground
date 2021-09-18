@@ -6,6 +6,7 @@
 #include "ConstantBufferData.h"
 #include "ConstantBuffer.h"
 #include "Mesh.h"
+#include "Texture.h"
 #include "Transform.h"
 
 MeshRenderer::MeshRenderer(GameObject* owner, const MeshPtr& mesh, const ConstantBufferPtr& cb, const VertexShaderPtr& vs, const PixelShaderPtr& ps)
@@ -56,4 +57,14 @@ void MeshRenderer::setTexture(const TexturePtr& texture)
 std::string MeshRenderer::getMeshName() const
 {
 	return m_mesh->getName();
+}
+
+std::string MeshRenderer::getTextureName() const
+{
+	if (m_texture == nullptr)
+	{
+		return "";
+	}
+	
+	return m_texture->getName();
 }

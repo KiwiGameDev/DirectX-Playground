@@ -6,10 +6,10 @@ class PixelShaderManager : public ResourceManager
 public:
 	PixelShaderManager();
 
-	PixelShaderPtr getPixelShaderFromFile(const wchar_t* file_path);
+	PixelShaderPtr getPixelShaderFromFile(const std::string& file_path);
 
 	~PixelShaderManager();
 
 protected:
-	Resource* createResourceFromFileConcrete(const wchar_t* file_path) override;
+	Resource* createResourceFromFileConcrete(const std::string& file_path) override;
 };

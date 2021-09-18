@@ -1,5 +1,6 @@
 #pragma once
 #include "Resource.h"
+#include <string>
 
 class RenderSystem;
 class DeviceContext;
@@ -12,7 +13,7 @@ class VertexShader : public Resource
 	friend class VertexInputLayout;
 	
 public:
-	VertexShader(const wchar_t* full_path, RenderSystem& render_system);
+	VertexShader(const std::string& file_path, RenderSystem& render_system);
 
 	~VertexShader();
 

@@ -6,12 +6,12 @@ TextureManager::TextureManager()
 	
 }
 
-TexturePtr TextureManager::getTextureFromFile(const wchar_t* file_path)
+TexturePtr TextureManager::getTextureFromFile(const std::string& file_path)
 {
 	return std::static_pointer_cast<Texture>(getResourceFromFile(file_path));
 }
 
-Resource* TextureManager::createResourceFromFileConcrete(const wchar_t* file_path)
+Resource* TextureManager::createResourceFromFileConcrete(const std::string& file_path)
 {
 	Texture* tex = nullptr;
 

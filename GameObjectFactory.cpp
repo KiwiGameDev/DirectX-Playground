@@ -14,11 +14,11 @@ GameObject* GameObjectFactory::createEmptyGameObject(const std::string& name)
 
 GameObject* GameObjectFactory::createTeapot(const std::string& name)
 {
-	MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(L"Assets/Meshes/teapot.obj");
-	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
-	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
+	MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile("Assets/Meshes/teapot.obj");
+	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("TexturedVertexShader.hlsl");
+	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile("TexturedPixelShader.hlsl");
 	ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
-	TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
+	TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile("Assets/Textures/brick.png");
 
 	GameObject* teapot = new GameObject(name);
 	teapot->addComponent<MeshRenderer>(teapot, mesh, cb, vs, ps);
@@ -30,9 +30,9 @@ GameObject* GameObjectFactory::createTeapot(const std::string& name)
 
 GameObject* GameObjectFactory::createStaticPhysicsPlane(const std::string& name)
 {
-	MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(L"Assets/Meshes/cube.obj");
-	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"ColoredVertexShader.hlsl");
-	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile(L"ColoredPixelShader.hlsl");
+	MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile("Assets/Meshes/cube.obj");
+	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("ColoredVertexShader.hlsl");
+	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile("ColoredPixelShader.hlsl");
 	ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
 
 	GameObject* plane = new GameObject(name);
@@ -46,11 +46,11 @@ GameObject* GameObjectFactory::createStaticPhysicsPlane(const std::string& name)
 
 GameObject* GameObjectFactory::createPhysicsCube(const std::string& name)
 {
-	MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(L"Assets/Meshes/cube.obj");
-	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
-	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile(L"TexturedPixelShader.hlsl");
+	MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile("Assets/Meshes/cube.obj");
+	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("TexturedVertexShader.hlsl");
+	PixelShaderPtr ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile("TexturedPixelShader.hlsl");
 	ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
-	TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/brick.png");
+	TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile("Assets/Textures/brick.png");
 
 	GameObject* cube = new GameObject(name);
 	cube->addComponent<MeshRenderer>(cube, mesh, cb, vs, ps);

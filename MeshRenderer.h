@@ -15,6 +15,7 @@ public:
 	void setTexture(const TexturePtr& texture);
 
 	std::string getMeshName() const;
+	std::string getTextureName() const;
 
 protected:
 	void onStart() override;

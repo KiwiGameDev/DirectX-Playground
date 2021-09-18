@@ -17,8 +17,8 @@ public:
 		Stop
 	};
 
-	void saveScene();
-	void loadScene();
+	void saveScene(const std::string& file_path);
+	void loadScene(const std::string& file_path);
 
 	void addStateChangedEventListener(IEventCallback* callback);
 	void removeStateChangedEventListener(IEventCallback* callback);

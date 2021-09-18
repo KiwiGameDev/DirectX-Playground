@@ -72,8 +72,12 @@ reactphysics3d::BodyType BoxPhysicsComponent::getBodyType() const
 	return m_body_type;
 }
 
+Vector3 BoxPhysicsComponent::getHalfExtents() const
+{
+	return m_half_extents;
+}
+
 BoxPhysicsComponent::~BoxPhysicsComponent()
 {
-	delete m_collider;
 	ComponentSystem::get().getPhysicsSystem().removeComponent(this);
 }

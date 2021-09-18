@@ -24,6 +24,7 @@ public:
 
 	void addGameObject(GameObject* gameobject);
 	void removeGameObject(const std::string& name);
+	void clearAllGameObjects();
 
 	void saveGameObjectsStartingState();
 	void onEditorStateChanged();

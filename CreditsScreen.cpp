@@ -7,7 +7,7 @@
 CreditsScreen::CreditsScreen(const std::string& name)
 	: Screen(name)
 {
-	m_logo = GraphicsEngine::get().getTextureManager().getTextureFromFile(L"Assets/Textures/dlsu.png");
+	m_logo = GraphicsEngine::get().getTextureManager().getTextureFromFile("Assets/Textures/dlsu.png");
 }
 
 void CreditsScreen::draw()

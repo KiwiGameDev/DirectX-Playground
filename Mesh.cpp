@@ -7,21 +7,16 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <locale>
-#include <codecvt>
 
-Mesh::Mesh(const wchar_t* full_path)
+Mesh::Mesh(const std::string& file_path)
 {
 	tinyobj::attrib_t attribs;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
 	std::string warn;
 	std::string err;
-
-	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &full_path[0], wcslen(full_path), NULL, 0, NULL, NULL);
-	std::string input_file(size_needed, 0);
-	WideCharToMultiByte(CP_UTF8, 0, &full_path[0], wcslen(full_path), &input_file[0], size_needed, NULL, NULL);
-
-	bool res = LoadObj(&attribs, &shapes, &materials, &warn, &err, input_file.c_str());
+	
+	bool res = LoadObj(&attribs, &shapes, &materials, &warn, &err, file_path.c_str());
 
 	if (!err.empty())
 	{
@@ -65,28 +60,19 @@ Mesh::Mesh(const wchar_t* full_path)
 		}
 	}
 	
-	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile(L"TexturedVertexShader.hlsl");
+	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("TexturedVertexShader.hlsl");
 	m_vertex_buffer = GraphicsEngine::get().getRenderSystem().createVertexBuffer(&list_vertices[0], sizeof(VertexMesh), list_vertices.size(), vs, VertexFormat::POSITION_UV);
 	m_index_buffer = GraphicsEngine::get().getRenderSystem().createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
 
-	size_t name_index_start = input_file.find_last_of('\\');
+	size_t name_index_start = file_path.find_last_of('\\');
 
 	if (name_index_start != std::string::npos)
 	{
-		size_t name_index_end = input_file.find_last_of('.');
-
-		if (name_index_end != std::string::npos)
-		{
-			m_name = input_file.substr(name_index_start + 1, name_index_end - name_index_start - 1);
-		}
-		else
-		{
-			m_name = input_file.substr(name_index_start + 1, input_file.size() - name_index_start - 1);
-		}
+		m_name = file_path.substr(name_index_start + 1, file_path.size() - name_index_start - 1);
 	}
 	else
 	{
-		m_name = input_file;
+		m_name = file_path;
 	}
 }
 

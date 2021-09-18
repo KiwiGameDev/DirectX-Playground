@@ -6,15 +6,13 @@
 class ResourceManager
 {
 public:
-	ResourceManager();
-
-	virtual ~ResourceManager();
+	virtual ~ResourceManager() = default;
 
 protected:
-	ResourcePtr getResourceFromFile(const wchar_t* file_path);
+	ResourcePtr getResourceFromFile(const std::string& file_path);
 	
-	virtual Resource* createResourceFromFileConcrete(const wchar_t* file_path) = 0;
+	virtual Resource* createResourceFromFileConcrete(const std::string& file_path) = 0;
 
 private:
-	std::unordered_map<std::wstring, ResourcePtr> m_map_resources;
+	std::unordered_map<std::string, ResourcePtr> m_map_resources;
 };

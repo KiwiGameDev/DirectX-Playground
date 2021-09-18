@@ -7,12 +7,12 @@ PixelShaderManager::PixelShaderManager()
 	
 }
 
-PixelShaderPtr PixelShaderManager::getPixelShaderFromFile(const wchar_t* file_path)
+PixelShaderPtr PixelShaderManager::getPixelShaderFromFile(const std::string& file_path)
 {
 	return std::static_pointer_cast<PixelShader>(getResourceFromFile(file_path));
 }
 
-Resource* PixelShaderManager::createResourceFromFileConcrete(const wchar_t* file_path)
+Resource* PixelShaderManager::createResourceFromFileConcrete(const std::string& file_path)
 {
 	PixelShader* ps = nullptr;
 

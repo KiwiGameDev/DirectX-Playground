@@ -7,12 +7,12 @@ VertexShaderManager::VertexShaderManager()
 	
 }
 
-VertexShaderPtr VertexShaderManager::getVertexShaderFromFile(const wchar_t* file_path)
+VertexShaderPtr VertexShaderManager::getVertexShaderFromFile(const std::string& file_path)
 {
 	return std::static_pointer_cast<VertexShader>(getResourceFromFile(file_path));
 }
 
-Resource* VertexShaderManager::createResourceFromFileConcrete(const wchar_t* file_path)
+Resource* VertexShaderManager::createResourceFromFileConcrete(const std::string& file_path)
 {
 	VertexShader* vs = nullptr;
 

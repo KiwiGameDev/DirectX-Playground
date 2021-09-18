@@ -9,7 +9,7 @@ class Mesh : public Resource
 	friend class DeviceContext;
 
 public:
-	Mesh(const wchar_t* full_path);
+	Mesh(const std::string& file_path);
 	Mesh(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer);
 
 	std::string getName() const;

@@ -48,6 +48,7 @@ UI::UI(HWND hwnd)
 	SceneHierarchyScreen* scene_hierarchy = new SceneHierarchyScreen(inspector, ScreenNames::SceneHierarchy);
 	PlayMenuScreen* play_menu = new PlayMenuScreen(ScreenNames::PlayMenu);
 	UndoRedoScreen* undo_redo = new UndoRedoScreen(ScreenNames::UndoRedo);
+
 	
 	screenList.push_back(viewport);
 	screenList.push_back(menu);

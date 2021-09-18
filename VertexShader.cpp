@@ -3,12 +3,12 @@
 #include <d3dcompiler.h>
 #include <exception>
 
-VertexShader::VertexShader(const wchar_t* full_path, RenderSystem& render_system)
+VertexShader::VertexShader(const std::string& file_path, RenderSystem& render_system)
 {
 	ID3DBlob* blob = nullptr;
 	ID3DBlob* error_blob = nullptr;
 
-	if (!SUCCEEDED(D3DCompileFromFile(full_path, nullptr, nullptr, "main", "vs_5_0", 0, 0, &blob, &error_blob)))
+	if (!SUCCEEDED(D3DCompileFromFile(std::wstring(file_path.begin(), file_path.end()).c_str(), nullptr, nullptr, "main", "vs_5_0", 0, 0, &blob, &error_blob)))
 	{
 		if (error_blob)
 			error_blob->Release();

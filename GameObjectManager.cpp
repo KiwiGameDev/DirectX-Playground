@@ -58,6 +58,16 @@ void GameObjectManager::removeGameObject(const std::string& name)
 	m_name_to_gameobject_map.erase(m_name_to_gameobject_map.find(name));
 }
 
+void GameObjectManager::clearAllGameObjects()
+{
+	for (auto nameGameObjectPair : m_name_to_gameobject_map)
+	{
+		delete nameGameObjectPair.second;
+	}
+
+	m_name_to_gameobject_map.clear();
+}
+
 void GameObjectManager::saveGameObjectsStartingState()
 {
 	for (auto name_gameobject_pair : m_name_to_gameobject_map)

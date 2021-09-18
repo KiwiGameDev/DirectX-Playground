@@ -18,6 +18,7 @@ public:
 	
 	reactphysics3d::RigidBody* getRigidBody() const;
 	reactphysics3d::BodyType getBodyType() const;
+	Vector3 getHalfExtents() const;
 
 	~BoxPhysicsComponent();
 

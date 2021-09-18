@@ -1,5 +1,7 @@
 #pragma once
 #include "Screen.h"
+#include "imgui.h"
+#include "imfilebrowser.h"
 
 class MenuScreen : public Screen
 {
@@ -9,5 +11,6 @@ public:
 	void draw() override;
 
 private:
-	bool isCreditsScreenShowing = false;
+	ImGui::FileBrowser saveFileBrowser;
+	ImGui::FileBrowser openFileBrowser;
 };

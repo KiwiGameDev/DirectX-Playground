@@ -1,16 +1,23 @@
 #include "MenuScreen.h"
 #include "UI.h"
-#include "CreditsScreen.h"
-#include "ColorPickerScreen.h"
 #include "EditorApplication.h"
 #include "ScreenNames.h"
+#include "CreditsScreen.h"
+#include "ColorPickerScreen.h"
 #include "imgui.h"
 #include "imfilebrowser.h"
 
 MenuScreen::MenuScreen(const std::string& name)
-	: Screen(name)
+	: Screen(name), saveFileBrowser(ImGuiFileBrowserFlags_EnterNewFilename)
 {
+	saveFileBrowser.SetTitle("Save Scene");
+	saveFileBrowser.SetTypeFilters({ ".level" });
+	saveFileBrowser.SetPwd("C:/dev/saves");
+	saveFileBrowser.SetInputName("scene.level");
 	
+	openFileBrowser.SetTitle("Open Scene");
+	openFileBrowser.SetTypeFilters({ ".level" });
+	openFileBrowser.SetPwd("C:/dev/saves");
 }
 
 void MenuScreen::draw()
@@ -21,12 +28,12 @@ void MenuScreen::draw()
 		{
 			if (ImGui::MenuItem("Open...", "Ctrl+O"))
 			{
-				
+				openFileBrowser.Open();
 			}
 
 			if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 			{
-				EditorApplication::get().saveScene();
+				saveFileBrowser.Open();
 			}
 
 			ImGui::EndMenu();
@@ -73,5 +80,21 @@ void MenuScreen::draw()
 		}
 		
 		ImGui::EndMainMenuBar();
+	}
+
+	saveFileBrowser.Display();
+	openFileBrowser.Display();
+
+	if (saveFileBrowser.HasSelected())
+	{
+		EditorApplication::get().saveScene(saveFileBrowser.GetSelected().string());
+		saveFileBrowser.ClearSelected();
+		saveFileBrowser.Close();
+	}
+	else if (openFileBrowser.HasSelected())
+	{
+		EditorApplication::get().loadScene(openFileBrowser.GetSelected().string());
+		openFileBrowser.ClearSelected();
+		openFileBrowser.Close();
 	}
 }

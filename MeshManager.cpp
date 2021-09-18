@@ -1,17 +1,12 @@
 #include "MeshManager.h"
 #include "Mesh.h"
 
-MeshManager::MeshManager()
-{
-	
-}
-
-MeshPtr MeshManager::getMeshFromFile(const wchar_t* file_path)
+MeshPtr MeshManager::getMeshFromFile(const std::string& file_path)
 {
 	return std::static_pointer_cast<Mesh>(getResourceFromFile(file_path));
 }
 
-Resource* MeshManager::createResourceFromFileConcrete(const wchar_t* file_path)
+Resource* MeshManager::createResourceFromFileConcrete(const std::string& file_path)
 {
 	Mesh* mesh = nullptr;
 
@@ -25,9 +20,4 @@ Resource* MeshManager::createResourceFromFileConcrete(const wchar_t* file_path)
 	}
 
 	return mesh;
-}
-
-MeshManager::~MeshManager()
-{
-	
 }
