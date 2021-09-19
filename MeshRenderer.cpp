@@ -63,7 +63,7 @@ std::string MeshRenderer::getTextureName() const
 {
 	if (m_texture == nullptr)
 	{
-		return "";
+		return "UNTEXTURED";
 	}
 	
 	return m_texture->getName();

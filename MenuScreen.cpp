@@ -11,7 +11,7 @@ MenuScreen::MenuScreen(const std::string& name)
 	: Screen(name), saveFileBrowser(ImGuiFileBrowserFlags_EnterNewFilename)
 {
 	saveFileBrowser.SetTitle("Save Scene");
-	saveFileBrowser.SetTypeFilters({ ".level" });
+	saveFileBrowser.SetTypeFilters({ ".level"});
 	saveFileBrowser.SetPwd("C:/dev/saves");
 	saveFileBrowser.SetInputName("scene.level");
 	

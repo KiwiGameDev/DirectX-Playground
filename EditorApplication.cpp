@@ -5,161 +5,197 @@
 #include "Transform.h"
 #include "BoxPhysicsComponent.h"
 #include "MeshRenderer.h"
-#include <json.hpp>
 #include <fstream>
-
 
 EditorApplication* Singleton<EditorApplication>::instance = nullptr;
 
 void EditorApplication::saveScene(const std::string& file_path)
 {
-	using json = nlohmann::json;
-	
-	json out_json;
+	std::ofstream outfile;
+	outfile.open(file_path);
 	
 	for (auto name_gameobject_pair : GameObjectManager::get().getGameObjectMap())
 	{
 		std::string name = name_gameobject_pair.first;
 		GameObject* gameobject = name_gameobject_pair.second;
-		json components_json;
+
+		outfile << "GameObject " << name << '\n';
 		
 		if (gameobject->hasComponent<Transform>())
 		{
 			const Transform& transform = gameobject->getComponent<Transform>();
-			components_json.push_back(
-				{
-					{ "name", "Transform" },
-					{
-						"position",
-						{
-							transform.getPosition().x,
-							transform.getPosition().y,
-							transform.getPosition().z
-						}
-					},
-					{
-						"rotation",
-						{
-							transform.getOrientationEuler().x,
-							transform.getOrientationEuler().y,
-							transform.getOrientationEuler().z
-						}
-					},
-					{
-						"scale",
-						{
-							transform.getScale().x,
-							transform.getScale().y,
-							transform.getScale().z
-						}
-					}
-				}
-			);
+			const Vector3 pos = transform.getPosition();
+			const Vector3 rot = transform.getOrientationEuler();
+			const Vector3 scale = transform.getScale();
+
+			outfile << "Component Transform" << '\n';
+			outfile << "Position " << pos.x << " " << pos.y << " " << pos.z << '\n';
+			outfile << "Rotation " << rot.x << " " << rot.y << " " << rot.z << '\n';
+			outfile << "Scale " << scale.x << " " << scale.y << " " << scale.z << '\n';
 		}
 
 		if (gameobject->hasComponent<BoxPhysicsComponent>())
 		{
 			reactphysics3d::BodyType type = gameobject->getComponent<BoxPhysicsComponent>().getBodyType();
-			
-			components_json.push_back(
-				{
-					{ "name", "BoxPhysicsComponent" },
-					{ "type", type == reactphysics3d::BodyType::DYNAMIC ? "dynamic" : "static" }
-				}
-			);
+			outfile << "Component BoxPhysicsComponent" << '\n';
+			outfile << "Type " << (type == reactphysics3d::BodyType::DYNAMIC ? "dynamic" : "static") << '\n';
 		}
 
 		if (gameobject->hasComponent<MeshRenderer>())
 		{
-			components_json.push_back(
-				{
-					{ "name", "MeshRenderer" },
-					{ "mesh", gameobject->getComponent<MeshRenderer>().getMeshName() },
-					{ "texture", gameobject->getComponent<MeshRenderer>().getTextureName() }
-				}
-			);
+			outfile << "Component MeshRenderer" << '\n';
+			outfile << "Mesh " << gameobject->getComponent<MeshRenderer>().getMeshName() << '\n';
+			outfile << "Texture " << gameobject->getComponent<MeshRenderer>().getTextureName() << '\n';
 		}
 
-		out_json[name] = components_json;
+		outfile << "END\n";
 	}
 
-	std::ofstream outfile;
-	outfile.open(file_path);
-	outfile << out_json;
 	outfile.close();
 }
 
 void EditorApplication::loadScene(const std::string& file_path)
 {
-	using json = nlohmann::json;
-	
-	json j;
 	std::ifstream infile;
 	infile.open(file_path);
-	infile >> j;
-	infile.close();
-
+	
 	GameObjectManager::get().clearAllGameObjects();
 
-	for (const auto& jGameObject : j.items())
+	std::string input;
+
+	while (infile >> input)
 	{
-		std::string gameobject_name = jGameObject.key();
-		GameObject* gameobject = new GameObject(gameobject_name);
-
-		for (const auto& component : jGameObject.value())
+		if (input == "GameObject")
 		{
-			std::string component_name = component["name"];
-
-			if (component_name == "Transform")
+			infile >> input;
+			GameObject* gameobject = new GameObject(input);
+			
+			while (infile >> input)
 			{
-				auto jPos = component["position"];
-				auto jRot = component["rotation"];
-				auto jScale = component["scale"];
-
-				Vector3 pos(jPos[0], jPos[1], jPos[2]);
-				Vector3 rot(jRot[0], jRot[1], jRot[2]);
-				Vector3 scale(jScale[0], jScale[1], jScale[2]);
-
-				gameobject->addComponent<Transform>(gameobject);
-				gameobject->getComponent<Transform>().setPosition(pos);
-				gameobject->getComponent<Transform>().setOrientationEuler(rot);
-				gameobject->getComponent<Transform>().setScale(scale);
-			}
-			else if (component_name == "BoxPhysicsComponent")
-			{
-				Vector3 scale = gameobject->addComponent<Transform>(gameobject).getScale();
-				reactphysics3d::BodyType body_type = component["type"] == "dynamic"
-					? reactphysics3d::BodyType::DYNAMIC
-					: reactphysics3d::BodyType::STATIC;
-				
-				gameobject->addComponent<BoxPhysicsComponent>(scale * 0.5f, body_type, gameobject);
-			}
-			else if (component_name == "MeshRenderer")
-			{
-				std::string mesh_name = component["mesh"];
-				std::string texture_name = component["texture"];
-				ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
-				MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(mesh_name);
-				VertexShaderPtr vs = nullptr;
-				PixelShaderPtr ps = nullptr;
-
-				if (texture_name == "")
+				if (input == "Component")
 				{
-					vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("ColoredVertexShader.hlsl");
-					ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile("ColoredPixelShader.hlsl");
+					std::string component_name;
+					infile >> component_name;
+					
+					if (component_name == "Transform")
+					{
+						Vector3 p;
+						Vector3 r;
+						Vector3 s;
+
+						infile >> input;
+						if (input == "Position")
+						{
+							infile >> p.x >> p.y >> p.z;
+						}
+						else
+						{
+							throw new std::exception("Invalid level format!");
+						}
+						
+						infile >> input;
+						if (input == "Rotation")
+						{
+							infile >> r.x >> r.y >> r.z;
+						}
+						else
+						{
+							throw new std::exception("Invalid level format!");
+						}
+						
+						infile >> input;
+						if (input == "Scale")
+						{
+							infile >> s.x >> s.y >> s.z;
+						}
+						else
+						{
+							throw new std::exception("Invalid level format!");
+						}
+
+						gameobject->addComponent<Transform>(gameobject);
+						gameobject->getComponent<Transform>().setPosition(p);
+						gameobject->getComponent<Transform>().setOrientationEuler(r);
+						gameobject->getComponent<Transform>().setScale(s);
+					}
+					else if (component_name == "BoxPhysicsComponent")
+					{
+						std::string type;
+
+						infile >> input;
+						if (input == "Type")
+						{
+							infile >> type;
+						}
+						else
+						{
+							throw new std::exception("Invalid level format!");
+						}
+						
+						Vector3 scale = gameobject->addComponent<Transform>(gameobject).getScale();
+						reactphysics3d::BodyType body_type = input == "dynamic"
+							? reactphysics3d::BodyType::DYNAMIC
+							: reactphysics3d::BodyType::STATIC;
+
+						gameobject->addComponent<BoxPhysicsComponent>(scale * 0.5f, body_type, gameobject);
+					}
+					else if (component_name == "MeshRenderer")
+					{
+						std::string mesh_name;
+						std::string texture_name;
+
+						infile >> input;
+						if (input == "Mesh")
+						{
+							infile >> mesh_name;
+						}
+						else
+						{
+							throw new std::exception("Invalid level file!");
+						}
+						
+						infile >> input;
+						if (input == "Texture")
+						{
+							infile >> texture_name;
+						}
+						else
+						{
+							throw new std::exception("Invalid level file!");
+						}
+						
+						ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
+						MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(mesh_name);
+						TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile(texture_name);
+						VertexShaderPtr vs = nullptr;
+						PixelShaderPtr ps = nullptr;
+
+						if (tex == nullptr)
+						{
+							vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("ColoredVertexShader.hlsl");
+							ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile("ColoredPixelShader.hlsl");
+						}
+						else
+						{
+							vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("TexturedVertexShader.hlsl");
+							ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile("TexturedPixelShader.hlsl");
+						}
+
+						gameobject->addComponent<MeshRenderer>(gameobject, mesh, cb, vs, ps);
+						gameobject->getComponent<MeshRenderer>().setTexture(tex);
+					}
 				}
-				else
+				else if (input == "END")
 				{
-					vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("TexturedVertexShader.hlsl");
-					ps = GraphicsEngine::get().getPixelShaderManager().getPixelShaderFromFile("TexturedPixelShader.hlsl");
+					break;
 				}
-				
-				gameobject->addComponent<MeshRenderer>(gameobject, mesh, cb, vs, ps);
 			}
+
+			GameObjectManager::get().addGameObject(gameobject);
 		}
-
-		GameObjectManager::get().addGameObject(gameobject);
 	}
+	
+	infile.close();
 }
 
 void EditorApplication::addStateChangedEventListener(IEventCallback* callback)
