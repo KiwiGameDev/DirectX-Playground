@@ -53,12 +53,21 @@ void Camera::onKeyUp(int key)
 
 void Camera::onMouseMove(const Vector2& delta_pos)
 {
-	Vector3 rotation = getComponent<Transform>().getOrientationEuler();
-	rotation.x += delta_pos.y * Time::get().deltaTime() * 4.0f;
-	rotation.y += delta_pos.x * Time::get().deltaTime() * 4.0f;
-	rotation.x = Mathf::clamp(rotation.x, -1.5f, 1.5f);
-	rotation.z = 0.0f;
-	getComponent<Transform>().setOrientationEuler(rotation);
+	Transform transform = getComponent<Transform>();
+	reactphysics3d::Quaternion q = transform.getOrientation();
+
+	Vector3 rightDir = transform.getTransformMatrix().getXDirection();
+	float yRotAngleHalf = Mathf::clamp(delta_pos.x * Time::get().deltaTime() * 4.0f, -0.1f, 0.1f);
+	reactphysics3d::Quaternion yRot(0.0f, sinf(yRotAngleHalf), 0.0f, cosf(yRotAngleHalf));
+	
+	float xRotAngleHalf = Mathf::clamp(delta_pos.y * Time::get().deltaTime() * 4.0f, -0.1f, 0.1f);
+	float xRotSinAngleHalf = sinf(xRotAngleHalf);
+	reactphysics3d::Quaternion xRot(rightDir.x * xRotSinAngleHalf, rightDir.y * xRotSinAngleHalf, rightDir.z * xRotSinAngleHalf, cosf(xRotAngleHalf));
+
+	q = xRot * q;
+	q = yRot * q;
+	
+	getComponent<Transform>().setOrientation(q);
 }
 
 void Camera::setFOV(float new_fov)

@@ -43,4 +43,9 @@ namespace Mathf
 
 		return value;
 	}
+
+	static float min(float a, float b)
+	{
+		return a < b ? a : b;
+	}
 };

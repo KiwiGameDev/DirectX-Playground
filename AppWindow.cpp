@@ -41,9 +41,9 @@ void AppWindow::onCreate()
 	
 	// Create GameObjects
 	GameObject* capsule = GameObjectFactory::createCapsule("Capsule_00");
-	capsule->getComponent<Transform>().setPosition(1.0f, 1.0f, 1.0f);
+	capsule->getComponent<Transform>().setPosition(1.0f, 4.0f, 1.0f);
 	GameObject* sphere = GameObjectFactory::createSphere("Sphere_00");
-	sphere->getComponent<Transform>().setPosition(-1.0f, 1.0f, -1.0f);
+	sphere->getComponent<Transform>().setPosition(-2.0f, 2.0f, -2.0f);
 
 	// Add GameObjects
 	GameObjectManager::get().addGameObject(GameObjectFactory::createTeapot("Teapot_00"));
