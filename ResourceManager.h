@@ -8,7 +8,9 @@ class ResourceManager
 public:
 	virtual ~ResourceManager() = default;
 
-protected:
+	void addResource(ResourcePtr resource);
+
+protected:	
 	ResourcePtr getResourceFromFile(const std::string& file_path);
 	
 	virtual Resource* createResourceFromFileConcrete(const std::string& file_path) = 0;

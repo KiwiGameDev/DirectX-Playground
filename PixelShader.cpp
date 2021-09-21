@@ -4,6 +4,7 @@
 #include <exception>
 
 PixelShader::PixelShader(const std::string& file_path, RenderSystem& system)
+	: Resource(file_path)
 {
 	ID3DBlob* blob = nullptr;
 	ID3DBlob* error_blob = nullptr;

@@ -166,6 +166,7 @@
     <ClCompile Include="EditorApplication.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
+    <ClCompile Include="MeshFactory.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="MoveGameObjectCommand.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="IEventCallback.h" />
     <ClInclude Include="imfilebrowser.h" />
+    <ClInclude Include="MeshFactory.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="MoveGameObjectCommand.h" />
     <ClInclude Include="DeviceContext.h" />

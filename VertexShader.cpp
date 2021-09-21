@@ -4,6 +4,7 @@
 #include <exception>
 
 VertexShader::VertexShader(const std::string& file_path, RenderSystem& render_system)
+	: Resource(file_path)
 {
 	ID3DBlob* blob = nullptr;
 	ID3DBlob* error_blob = nullptr;

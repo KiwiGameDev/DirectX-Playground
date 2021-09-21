@@ -273,6 +273,7 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>GameEngine\Components</Filter>
     </ClCompile>
+    <ClCompile Include="MeshFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -503,6 +504,7 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>GameEngine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="MeshFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">

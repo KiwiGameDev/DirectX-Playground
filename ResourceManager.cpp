@@ -1,5 +1,16 @@
 #include "ResourceManager.h"
+#include "Resource.h"
 #include <filesystem>
+
+void ResourceManager::addResource(ResourcePtr resource)
+{
+	auto it = m_map_resources.find(resource->getName());
+
+	if (it != m_map_resources.end())
+		return;
+	
+	m_map_resources.insert({ resource->getName(), resource });
+}
 
 ResourcePtr ResourceManager::getResourceFromFile(const std::string& file_path)
 {

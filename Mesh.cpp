@@ -9,6 +9,7 @@
 #include <locale>
 
 Mesh::Mesh(const std::string& file_path)
+	: Resource(file_path)
 {
 	tinyobj::attrib_t attribs;
 	std::vector<tinyobj::shape_t> shapes;
@@ -63,28 +64,12 @@ Mesh::Mesh(const std::string& file_path)
 	VertexShaderPtr vs = GraphicsEngine::get().getVertexShaderManager().getVertexShaderFromFile("TexturedVertexShader.hlsl");
 	m_vertex_buffer = GraphicsEngine::get().getRenderSystem().createVertexBuffer(&list_vertices[0], sizeof(VertexMesh), list_vertices.size(), vs, VertexFormat::POSITION_UV);
 	m_index_buffer = GraphicsEngine::get().getRenderSystem().createIndexBuffer(&list_indices[0], (UINT)list_indices.size());
-
-	size_t name_index_start = file_path.find_last_of('\\');
-
-	if (name_index_start != std::string::npos)
-	{
-		m_name = file_path.substr(name_index_start + 1, file_path.size() - name_index_start - 1);
-	}
-	else
-	{
-		m_name = file_path;
-	}
 }
 
 Mesh::Mesh(const std::string& name, VertexBufferPtr vertex_buffer, IndexBufferPtr index_buffer)
-	: m_name(name), m_vertex_buffer(vertex_buffer), m_index_buffer(index_buffer)
+	: Resource(name), m_vertex_buffer(vertex_buffer), m_index_buffer(index_buffer)
 {
 	
-}
-
-std::string Mesh::getName() const
-{
-	return m_name;
 }
 
 size_t Mesh::getIndicesCount() const

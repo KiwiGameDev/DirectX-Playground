@@ -18,6 +18,8 @@
 #include <Windows.h>
 #include <random>
 
+#include "MeshFactory.h"
+
 AppWindow::AppWindow()
 	: m_editor_camera("EditorCamera", 1.57f, DEFAULT_WIDTH / DEFAULT_HEIGHT, 0.001f, 100.0f)
 {
@@ -29,17 +31,25 @@ void AppWindow::onCreate()
 {
 	Window::onCreate();
 
-	RECT rect = getClientWindowRect();
-	GraphicsEngine& graphics_engine = GraphicsEngine::get();
-	RenderSystem& render_system = graphics_engine.getRenderSystem();
-
 	InputSystem::get().addListener(this);
 
-	m_swap_chain = render_system.createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
+	RECT rect = getClientWindowRect();
+	m_swap_chain = GraphicsEngine::get().getRenderSystem().createSwapChain(m_hwnd, rect.right - rect.left, rect.bottom - rect.top);
 
+	// Initialize resources
+	MeshFactory::initializeAllMeshes();
+	
 	// Create GameObjects
+	GameObject* capsule = GameObjectFactory::createCapsule("Capsule_00");
+	capsule->getComponent<Transform>().setPosition(1.0f, 1.0f, 1.0f);
+	GameObject* sphere = GameObjectFactory::createSphere("Sphere_00");
+	sphere->getComponent<Transform>().setPosition(-1.0f, 1.0f, -1.0f);
+
+	// Add GameObjects
 	GameObjectManager::get().addGameObject(GameObjectFactory::createTeapot("Teapot_00"));
 	GameObjectManager::get().addGameObject(GameObjectFactory::createStaticPhysicsPlane("StaticPhysicsPlane_00"));
+	GameObjectManager::get().addGameObject(sphere);
+	GameObjectManager::get().addGameObject(capsule);
 
 	spawnCubes();
 
@@ -152,7 +162,7 @@ void AppWindow::spawnCubes()
 {
 	for (int i = 0; i < 10; i++)
 	{
-		GameObject* cube = GameObjectFactory::createPhysicsCube("PhysicsCube_" + std::to_string(m_cubes_count++));
+		GameObject* cube = GameObjectFactory::createTexturedPhysicsCube("PhysicsCube_" + std::to_string(m_cubes_count++));
 		cube->getComponent<Transform>().setPosition({ Random::get().range(-1.0f, 1.0f), 10.0f, Random::get().range(-1.0f, 1.0f) });
 		cube->getComponent<Transform>().setOrientationEuler({ Random::get().range(-3.0f, 3.0f), Random::get().range(-3.0f, 3.0f), Random::get().range(-3.0f, 3.0f) });
 		GameObjectManager::get().addGameObject(cube);
