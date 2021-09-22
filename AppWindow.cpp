@@ -40,9 +40,9 @@ void AppWindow::onCreate()
 	MeshFactory::initializeAllMeshes();
 	
 	// Create GameObjects
-	GameObject* capsule = GameObjectFactory::createCapsule("Capsule_00");
+	GameObject* capsule = GameObjectFactory::createPhysicsCapsule("PhysicsCapsule_00");
 	capsule->getComponent<Transform>().setPosition(1.0f, 4.0f, 1.0f);
-	GameObject* sphere = GameObjectFactory::createSphere("Sphere_00");
+	GameObject* sphere = GameObjectFactory::createPhysicsSphere("PhysicsSphere_00");
 	sphere->getComponent<Transform>().setPosition(-2.0f, 2.0f, -2.0f);
 
 	// Add GameObjects

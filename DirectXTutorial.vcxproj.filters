@@ -231,7 +231,7 @@
     <ClCompile Include="ComponentSystem.cpp">
       <Filter>GameEngine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="BoxPhysicsComponent.cpp">
+    <ClCompile Include="BoxCollider.cpp">
       <Filter>GameEngine\Components</Filter>
     </ClCompile>
     <ClCompile Include="UndoRedoScreen.cpp">
@@ -274,6 +274,13 @@
       <Filter>GameEngine\Components</Filter>
     </ClCompile>
     <ClCompile Include="MeshFactory.cpp" />
+    <ClCompile Include="CapsuleCollider.cpp">
+      <Filter>GameEngine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
+      <Filter>GameEngine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -450,7 +457,7 @@
     <ClInclude Include="ComponentSystem.h">
       <Filter>GameEngine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="BoxPhysicsComponent.h">
+    <ClInclude Include="BoxCollider.h">
       <Filter>GameEngine\Components</Filter>
     </ClInclude>
     <ClInclude Include="UndoRedoScreen.h">
@@ -505,6 +512,13 @@
       <Filter>GameEngine\Components</Filter>
     </ClInclude>
     <ClInclude Include="MeshFactory.h" />
+    <ClInclude Include="CapsuleCollider.h">
+      <Filter>GameEngine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Rigidbody.h">
+      <Filter>GameEngine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">

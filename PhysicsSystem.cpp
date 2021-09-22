@@ -1,6 +1,6 @@
 #include "PhysicsSystem.h"
-#include "BoxPhysicsComponent.h"
 #include "GameObject.h"
+#include "Rigidbody.h"
 #include "Time.h"
 
 PhysicsSystem::PhysicsSystem()
@@ -13,12 +13,12 @@ PhysicsSystem::PhysicsSystem()
 	m_physics_world = m_physics_common->createPhysicsWorld(world_settings);
 }
 
-void PhysicsSystem::addComponent(BoxPhysicsComponent* physics_component)
+void PhysicsSystem::addComponent(Rigidbody* physics_component)
 {
 	m_component_map.insert({ physics_component->getOwner()->getName(), physics_component });
 }
 
-void PhysicsSystem::removeComponent(BoxPhysicsComponent* physics_component)
+void PhysicsSystem::removeComponent(Rigidbody* physics_component)
 {
 	m_component_map.erase(physics_component->getOwner()->getName());
 }
@@ -51,7 +51,7 @@ reactphysics3d::PhysicsWorld* PhysicsSystem::getPhysicsWorld() const
 	return m_physics_world;
 }
 
-BoxPhysicsComponent* PhysicsSystem::getComponentByName(const std::string& name) const
+Rigidbody* PhysicsSystem::getComponentByName(const std::string& name) const
 {
 	return m_component_map.at(name);
 }

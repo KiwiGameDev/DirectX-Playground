@@ -11,5 +11,7 @@ public:
 	static GameObject* createStaticPhysicsPlane(const std::string& name);
 	static GameObject* createTexturedPhysicsCube(const std::string& name);
 	static GameObject* createSphere(const std::string& name);
+	static GameObject* createPhysicsSphere(const std::string& name);
 	static GameObject* createCapsule(const std::string& name);
+	static GameObject* createPhysicsCapsule(const std::string& name);
 };

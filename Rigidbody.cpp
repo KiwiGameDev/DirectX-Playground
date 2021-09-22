@@ -1,40 +1,42 @@
-#include "BoxPhysicsComponent.h"
+#include "Rigidbody.h"
 #include "ComponentSystem.h"
 #include "GameObject.h"
 #include "Transform.h"
 
-BoxPhysicsComponent::BoxPhysicsComponent(Vector3 half_extents, reactphysics3d::BodyType body_type, GameObject* owner)
-	: m_half_extents(half_extents), m_body_type(body_type), Component(owner)
+Rigidbody::Rigidbody(reactphysics3d::BodyType body_type, GameObject* owner)
+	: Component(owner), m_body_type(body_type)
 {
 	ComponentSystem::get().getPhysicsSystem().addComponent(this);
 }
 
-void BoxPhysicsComponent::onStart()
+void Rigidbody::onStart()
 {
 	// Create a rigid body in the world
 	Vector3 nativePos = getOwner()->getComponent<Transform>().getPosition();
 	reactphysics3d::Vector3 pos(nativePos.x, nativePos.y, nativePos.z);
 	reactphysics3d::Quaternion rot(getOwner()->getComponent<Transform>().getOrientation());
-	reactphysics3d::PhysicsCommon* physics_common = ComponentSystem::get().getPhysicsSystem().getPhysicsCommon();
 	reactphysics3d::PhysicsWorld* physics_world = ComponentSystem::get().getPhysicsSystem().getPhysicsWorld();
-	reactphysics3d::BoxShape* boxShape = physics_common->createBoxShape({ m_half_extents.x, m_half_extents.y, m_half_extents.z });
 	m_rigidbody = physics_world->createRigidBody(reactphysics3d::Transform(pos, rot));
-	m_collider = m_rigidbody->addCollider(boxShape, reactphysics3d::Transform::identity());
 	m_rigidbody->setMass(3.0f);
 	m_rigidbody->setType(m_body_type);
 	m_rigidbody->setIsAllowedToSleep(false);
 }
 
-void BoxPhysicsComponent::perform()
+void Rigidbody::perform()
 {
-	
+
 }
 
-void BoxPhysicsComponent::prePhysicsUpdate()
+void Rigidbody::addCollider(reactphysics3d::CollisionShape* collision_shape)
+{
+	m_rigidbody->addCollider(collision_shape, reactphysics3d::Transform::identity());
+}
+
+void Rigidbody::prePhysicsUpdate()
 {
 	if (!m_was_adjusted)
 		return;
-	
+
 	m_was_adjusted = false;
 
 	// Copy transform to React Physics 3D
@@ -47,7 +49,7 @@ void BoxPhysicsComponent::prePhysicsUpdate()
 	m_rigidbody->setAngularVelocity({ 0.0f, 0.0f, 0.0f });
 }
 
-void BoxPhysicsComponent::postPhysicsUpdate()
+void Rigidbody::postPhysicsUpdate()
 {
 	// Copy transform from React Physics 3D to GameObject
 	const reactphysics3d::Transform& transform = m_rigidbody->getTransform();
@@ -57,27 +59,22 @@ void BoxPhysicsComponent::postPhysicsUpdate()
 	getOwner()->getComponent<Transform>().setOrientation(q);
 }
 
-void BoxPhysicsComponent::setAdjusted(bool value)
+void Rigidbody::setAdjusted(bool value)
 {
 	m_was_adjusted = value;
 }
 
-reactphysics3d::RigidBody* BoxPhysicsComponent::getRigidBody() const
+reactphysics3d::RigidBody* Rigidbody::getRigidBody() const
 {
 	return m_rigidbody;
 }
 
-reactphysics3d::BodyType BoxPhysicsComponent::getBodyType() const
+reactphysics3d::BodyType Rigidbody::getBodyType() const
 {
 	return m_body_type;
 }
 
-Vector3 BoxPhysicsComponent::getHalfExtents() const
-{
-	return m_half_extents;
-}
-
-BoxPhysicsComponent::~BoxPhysicsComponent()
+Rigidbody::~Rigidbody()
 {
 	ComponentSystem::get().getPhysicsSystem().removeComponent(this);
 }

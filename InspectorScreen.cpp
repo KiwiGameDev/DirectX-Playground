@@ -3,10 +3,11 @@
 #include "InputSystem.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include "BoxPhysicsComponent.h"
+#include "BoxCollider.h"
 #include "MoveGameObjectCommand.h"
 #include "RotateGameObjectCommand.h"
 #include "imgui.h"
+#include "Rigidbody.h"
 
 InspectorScreen::InspectorScreen(const std::string& name)
 	: Screen(name)
@@ -67,9 +68,9 @@ void InspectorScreen::draw()
 		{
 			m_is_editing = true;
 			
-			if (m_selected_gameobject->hasComponent<BoxPhysicsComponent>())
+			if (m_selected_gameobject->hasComponent<Rigidbody>())
 			{
-				m_selected_gameobject->getComponent<BoxPhysicsComponent>().setAdjusted(true);
+				m_selected_gameobject->getComponent<Rigidbody>().setAdjusted(true);
 			}
 		}
 		

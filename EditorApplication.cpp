@@ -3,8 +3,10 @@
 #include "GameObjectManager.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include "BoxPhysicsComponent.h"
 #include "MeshRenderer.h"
+#include "Rigidbody.h"
+#include "CapsuleCollider.h"
+#include "BoxCollider.h"
 #include <fstream>
 
 EditorApplication* Singleton<EditorApplication>::instance = nullptr;
@@ -34,18 +36,28 @@ void EditorApplication::saveScene(const std::string& file_path)
 			outfile << "Scale " << scale.x << " " << scale.y << " " << scale.z << '\n';
 		}
 
-		if (gameobject->hasComponent<BoxPhysicsComponent>())
-		{
-			reactphysics3d::BodyType type = gameobject->getComponent<BoxPhysicsComponent>().getBodyType();
-			outfile << "Component BoxPhysicsComponent" << '\n';
-			outfile << "Type " << (type == reactphysics3d::BodyType::DYNAMIC ? "dynamic" : "static") << '\n';
-		}
-
 		if (gameobject->hasComponent<MeshRenderer>())
 		{
 			outfile << "Component MeshRenderer" << '\n';
 			outfile << "Mesh " << gameobject->getComponent<MeshRenderer>().getMeshName() << '\n';
 			outfile << "Texture " << gameobject->getComponent<MeshRenderer>().getTextureName() << '\n';
+		}
+
+		if (gameobject->hasComponent<Rigidbody>())
+		{
+			reactphysics3d::BodyType type = gameobject->getComponent<Rigidbody>().getBodyType();
+			outfile << "Component Rigidbody" << '\n';
+			outfile << "Type " << (type == reactphysics3d::BodyType::DYNAMIC ? "dynamic" : "static") << '\n';
+		}
+
+		if (gameobject->hasComponent<BoxCollider>())
+		{
+			outfile << "Component BoxCollider" << '\n';
+		}
+
+		if (gameobject->hasComponent<CapsuleCollider>())
+		{
+			outfile << "Component CapsuleCollider" << '\n';
 		}
 
 		outfile << "END\n";
@@ -118,27 +130,6 @@ void EditorApplication::loadScene(const std::string& file_path)
 						gameobject->getComponent<Transform>().setOrientationEuler(r);
 						gameobject->getComponent<Transform>().setScale(s);
 					}
-					else if (component_name == "BoxPhysicsComponent")
-					{
-						std::string type;
-
-						infile >> input;
-						if (input == "Type")
-						{
-							infile >> type;
-						}
-						else
-						{
-							throw new std::exception("Invalid level format!");
-						}
-						
-						Vector3 scale = gameobject->addComponent<Transform>(gameobject).getScale();
-						reactphysics3d::BodyType body_type = input == "dynamic"
-							? reactphysics3d::BodyType::DYNAMIC
-							: reactphysics3d::BodyType::STATIC;
-
-						gameobject->addComponent<BoxPhysicsComponent>(scale * 0.5f, body_type, gameobject);
-					}
 					else if (component_name == "MeshRenderer")
 					{
 						std::string mesh_name;
@@ -153,7 +144,7 @@ void EditorApplication::loadScene(const std::string& file_path)
 						{
 							throw new std::exception("Invalid level file!");
 						}
-						
+
 						infile >> input;
 						if (input == "Texture")
 						{
@@ -163,7 +154,7 @@ void EditorApplication::loadScene(const std::string& file_path)
 						{
 							throw new std::exception("Invalid level file!");
 						}
-						
+
 						ConstantBufferPtr cb = GraphicsEngine::get().getConstantBuffer();
 						MeshPtr mesh = GraphicsEngine::get().getMeshManager().getMeshFromFile(mesh_name);
 						TexturePtr tex = GraphicsEngine::get().getTextureManager().getTextureFromFile(texture_name);
@@ -183,6 +174,35 @@ void EditorApplication::loadScene(const std::string& file_path)
 
 						gameobject->addComponent<MeshRenderer>(gameobject, mesh, cb, vs, ps);
 						gameobject->getComponent<MeshRenderer>().setTexture(tex);
+					}
+					else if (component_name == "Rigidbody")
+					{
+						std::string type;
+
+						infile >> input;
+						if (input == "Type")
+						{
+							infile >> type;
+						}
+						else
+						{
+							throw new std::exception("Invalid level format!");
+						}
+						
+						reactphysics3d::BodyType body_type = input == "dynamic"
+							? reactphysics3d::BodyType::DYNAMIC
+							: reactphysics3d::BodyType::STATIC;
+
+						gameobject->addComponent<Rigidbody>(body_type, gameobject);
+					}
+					else if (component_name == "BoxCollider")
+					{
+						Vector3 scale = gameobject->getComponent<Transform>().getScale();
+						gameobject->addComponent<BoxCollider>(scale * 0.5f, gameobject);
+					}
+					else if (component_name == "CapsuleCollider")
+					{
+						gameobject->addComponent<CapsuleCollider>(0.5f, 1.0f, gameobject);
 					}
 				}
 				else if (input == "END")

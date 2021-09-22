@@ -2,7 +2,7 @@
 #include "EditorApplication.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include "BoxPhysicsComponent.h"
+#include "Rigidbody.h"
 
 GameObjectManager* Singleton<GameObjectManager>::instance = nullptr;
 
@@ -165,9 +165,9 @@ void GameObjectManager::loadGameObjectsStartingState()
 		gameobject->getComponent<Transform>().setScale(m_gameobject_starting_scale[name]);
 
 		// Physics workaround :)
-		if (gameobject->hasComponent<BoxPhysicsComponent>())
+		if (gameobject->hasComponent<Rigidbody>())
 		{
-			gameobject->getComponent<BoxPhysicsComponent>().setAdjusted(true);
+			gameobject->getComponent<Rigidbody>().setAdjusted(true);
 		}
 	}
 }

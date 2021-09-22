@@ -158,6 +158,7 @@
     <ClCompile Include="AppWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="ColorPickerScreen.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentSystem.cpp" />
@@ -183,7 +184,8 @@
     <ClCompile Include="Libs\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Libs\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="MenuScreen.cpp" />
-    <ClCompile Include="BoxPhysicsComponent.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="PixelShaderManager.cpp" />
     <ClCompile Include="PlayMenuScreen.cpp" />
@@ -191,6 +193,7 @@
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="SceneHierarchyScreen.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -217,6 +220,7 @@
     <ClInclude Include="AppWindow.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="ColorPickerScreen.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentSystem.h" />
@@ -250,7 +254,8 @@
     <ClInclude Include="Libs\ImGui\imstb_textedit.h" />
     <ClInclude Include="Libs\ImGui\imstb_truetype.h" />
     <ClInclude Include="MenuScreen.h" />
-    <ClInclude Include="BoxPhysicsComponent.h" />
+    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="PixelShaderManager.h" />
     <ClInclude Include="PlayMenuScreen.h" />
@@ -259,6 +264,7 @@
     <ClInclude Include="SceneHierarchyScreen.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenNames.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Mathf.h" />
     <ClInclude Include="Matrix4x4.h" />

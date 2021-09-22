@@ -145,7 +145,7 @@ MeshPtr MeshFactory::createCubeMesh()
         indices,
         ARRAYSIZE(indices));
 
-    return std::make_shared<Mesh>("cube.obj", vb, ib);
+    return std::make_shared<Mesh>("cube_colored.obj", vb, ib);
 }
 
 MeshPtr MeshFactory::createTexturedCubeMesh()
@@ -230,7 +230,7 @@ MeshPtr MeshFactory::createTexturedCubeMesh()
         indices,
         ARRAYSIZE(indices));
 
-    return std::make_shared<Mesh>("cube_uv.obj", vb, ib);
+    return std::make_shared<Mesh>("cube.obj", vb, ib);
 }
 
 MeshPtr MeshFactory::createCapsuleMesh(float height, float radius)
