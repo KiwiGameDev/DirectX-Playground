@@ -280,7 +280,9 @@
     <ClCompile Include="Rigidbody.cpp">
       <Filter>GameEngine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>GameEngine\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppWindow.h">
@@ -518,7 +520,9 @@
     <ClInclude Include="Rigidbody.h">
       <Filter>GameEngine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="SphereCollider.h">
+      <Filter>GameEngine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexMeshLayoutShader.hlsl">
